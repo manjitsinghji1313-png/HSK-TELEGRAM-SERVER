@@ -21,27 +21,34 @@ app.post("/webhook", async (req, res) => {
         console.log("📩 TradingView Alert Received");
         console.log(req.body);
 
+        // TradingView nu turant response
+        res.status(200).send("OK");
+
         const message = formatMessage(req.body);
 
         console.log("========== MESSAGE ==========");
         console.log(message);
         console.log("=============================");
 
-        await sendTelegramMessage(message);
-
-        res.status(200).send("Webhook Received");
+        // Telegram background vich
+        sendTelegramMessage(message)
+            .catch(err => {
+                console.error("❌ Telegram Background Error:", err);
+            });
 
     } catch (err) {
 
         console.error("❌ WEBHOOK ERROR:");
         console.error(err);
 
-        res.status(500).send(err.message);
+        // Headers pehlan hi send ho chuke hon taan dubara response na bhejo
+        if (!res.headersSent) {
+            res.status(500).send(err.message);
+        }
 
     }
 
 });
-
 // ==========================
 // HOME
 // ==========================
