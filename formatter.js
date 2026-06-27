@@ -54,7 +54,7 @@ function formatMessage(data) {
 🎯 TG1 : ${data.tg1}
 🎯 TG2 : ${data.tg2} 
 
-🧪 TEST VERSION 2
+
 
 🕒 Time : ${timestamp}
 
