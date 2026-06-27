@@ -19,20 +19,26 @@ function formatMessage(data) {
     // TIMEFRAME FORMAT
     // ==========================
     const tfMap = {
-        "30S": "30 Seconds",
-        "1": "1 Minute",
-        "3": "3 Minutes",
-        "5": "5 Minutes",
-        "15": "15 Minutes",
-        "30": "30 Minutes",
-        "45": "45 Minutes",
-        "60": "1 Hour",
-        "120": "2 Hours",
-        "240": "4 Hours",
-        "D": "1 Day",
-        "W": "1 Week",
-        "M": "1 Month"
-    };
+    "15S": "15 Sec",
+    "30S": "30 Sec",
+    "45S": "45 Sec",
+
+    "1": "1 Min",
+    "2": "2 Min",
+    "3": "3 Min",
+    "5": "5 Min",
+    "15": "15 Min",
+    "30": "30 Min",
+    "45": "45 Min",
+
+    "60": "1 Hour",
+    "120": "2 Hours",
+    "240": "4 Hours",
+
+    "D": "1 Day",
+    "W": "1 Week",
+    "M": "1 Month"
+};
 
     const timeframe = tfMap[data.timeframe] || data.timeframe || "N/A";
 
