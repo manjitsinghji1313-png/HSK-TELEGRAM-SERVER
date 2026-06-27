@@ -12,8 +12,33 @@ function formatMessage(data) {
         second: "2-digit",
         hour12: true
     });
+
     console.log("Timestamp:", timestamp);
 
+    // ==========================
+    // TIMEFRAME FORMAT
+    // ==========================
+    const tfMap = {
+        "30S": "30 Seconds",
+        "1": "1 Minute",
+        "3": "3 Minutes",
+        "5": "5 Minutes",
+        "15": "15 Minutes",
+        "30": "30 Minutes",
+        "45": "45 Minutes",
+        "60": "1 Hour",
+        "120": "2 Hours",
+        "240": "4 Hours",
+        "D": "1 Day",
+        "W": "1 Week",
+        "M": "1 Month"
+    };
+
+    const timeframe = tfMap[data.timeframe] || data.timeframe || "N/A";
+
+    // ==========================
+    // CE ENTRY
+    // ==========================
     if (data.cmd === "CE_ENTRY") {
 
         return `
@@ -22,6 +47,7 @@ function formatMessage(data) {
 🟢 CE ENTRY
 
 📊 Symbol : ${data.symbol}
+⏱ Time Frame : ${timeframe}
 🎯 Strike : CE ${data.strike}
 
 💰 Entry : ${data.price}
@@ -38,6 +64,9 @@ function formatMessage(data) {
 `;
     }
 
+    // ==========================
+    // PE ENTRY
+    // ==========================
     if (data.cmd === "PE_ENTRY") {
 
         return `
@@ -46,15 +75,14 @@ function formatMessage(data) {
 🔴 PE ENTRY
 
 📊 Symbol : ${data.symbol}
+⏱ Time Frame : ${timeframe}
 🎯 Strike : PE ${data.strike}
 
 💰 Entry : ${data.price}
 🛑 SL : ${data.sl}
 
 🎯 TG1 : ${data.tg1}
-🎯 TG2 : ${data.tg2} 
-
-
+🎯 TG2 : ${data.tg2}
 
 🕒 Time : ${timestamp}
 
@@ -64,6 +92,9 @@ function formatMessage(data) {
 `;
     }
 
+    // ==========================
+    // UNKNOWN
+    // ==========================
     return `
 🛡 HSK BRAHMASTRA
 
