@@ -76,7 +76,6 @@ if (data.cmd === "CE_ENTRY") {
 🆔 Trade ID : ${data.tradeId || "N/A"}
 
 🟢 CE ENTRY
-
 🟢 Status : ${data.status || "ACTIVE"}
 
 📊 Symbol : ${data.symbol}
@@ -90,13 +89,9 @@ if (data.cmd === "CE_ENTRY") {
 🏆 TG2 : ${data.tg2}   (+${tg2Points} Points) 
 
 ━━━━━━━━━━━━━━
-
-
 🕒 Time : ${timestamp}
-
 ━━━━━━━━━━━━━━
 📚 **Educational Purpose Only**
-
 ⚠️ **Disclaimer**
 • I am NOT a SEBI Registered Investment Adviser.
 • This content is for educational and informational purposes only.
@@ -114,11 +109,9 @@ if (data.cmd === "PE_ENTRY") {
 
     return `
 🛡 HSK BRAHMASTRA
-
 🆔 Trade ID : ${data.tradeId || "N/A"}
 
 🔴 PE ENTRY
-
 🟢 Status : ${data.status || "ACTIVE"}
 
 📊 Symbol : ${data.symbol}
@@ -131,13 +124,9 @@ if (data.cmd === "PE_ENTRY") {
 🎯 TG1 : ${data.tg1}   (+${tg1Points} Points)
 🏆 TG2 : ${data.tg2}   (+${tg2Points} Points) 
 
-
-
 🕒 Time : ${timestamp}
-
 ━━━━━━━━━━━━━━
 📚 Educational Purpose Only
-
 ⚠️ Disclaimer
 • I am NOT a SEBI Registered Investment Adviser or Research Analyst.
 • This content is for educational and informational purposes only.
@@ -155,7 +144,6 @@ if (data.cmd === "TG1_HIT") {
 
     return `
 🛡 HSK BRAHMASTRA
-
 🆔 Trade ID : ${data.tradeId || "N/A"}
 
 🎯 TG1 HIT
@@ -170,10 +158,8 @@ if (data.cmd === "TG1_HIT") {
 🔒 Stop Loss Shifted To Cost
 
 🕒 Time : ${timestamp}
-
 ━━━━━━━━━━━━━━
 📚 Educational Purpose Only
-
 ⚠️ Trade at Your Own Risk
 `;
 
@@ -188,7 +174,6 @@ if (data.cmd === "TG2_HIT") {
 🛡 HSK BRAHMASTRA
 
 🆔 Trade ID : ${data.tradeId || "N/A"}
-
 🏆 TARGET 2 HIT
 
 🟢 Status : ${data.status || "TARGET HIT"}
@@ -200,10 +185,8 @@ if (data.cmd === "TG2_HIT") {
 🎉 Final Target Achieved
 
 🕒 Time : ${timestamp}
-
 ━━━━━━━━━━━━━━
 📚 Educational Purpose Only
-
 ⚠️ Trade at Your Own Risk
 `;
 
