@@ -170,6 +170,49 @@ function updateTrade(data, status) {
     };
 
 }
+
+// ======================================
+// CLOSE TRADE
+// ======================================
+
+function closeTrade(data, result) {
+
+    const market = getMarket(data.symbol);
+
+    for (const key in tradeData[market].active) {
+
+        const trade = tradeData[market].active[key];
+
+        if (
+            trade.symbol === data.symbol &&
+            trade.timeframe == data.timeframe &&
+            trade.strike == data.strike
+        ) {
+
+            trade.status = result;
+            trade.closeTime = new Date();
+
+            // Save in History
+            tradeData[market].closed.push(trade);
+
+            // Remove from Active
+            delete tradeData[market].active[key];
+
+            return {
+                success: true,
+                trade
+            };
+
+        }
+
+    }
+
+    return {
+        success: false,
+        message: "Trade Not Found"
+    };
+
+}
  
 // ======================================
 // EXPORTS
@@ -178,5 +221,6 @@ function updateTrade(data, status) {
 module.exports = {
     tradeData,
     openTrade,
-    updateTrade
+    updateTrade,
+    closeTrade
 };

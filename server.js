@@ -49,14 +49,14 @@ else if (req.body.cmd === "TG1_HIT") {
 // TG2
 else if (req.body.cmd === "TG2_HIT") {
 
-    result = tradeManager.updateTrade(req.body, "TARGET HIT");
+    result = tradeManager.closeTrade(req.body, "TARGET HIT");
 
-} 
- 
+}
+
 // SL
 else if (req.body.cmd === "SL_HIT") {
 
-    result = tradeManager.updateTrade(req.body, "STOP LOSS");
+    result = tradeManager.closeTrade(req.body, "STOP LOSS");
 
 }
 
