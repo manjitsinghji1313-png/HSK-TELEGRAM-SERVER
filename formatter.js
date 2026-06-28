@@ -91,11 +91,6 @@ if (data.cmd === "CE_ENTRY") {
 
 ━━━━━━━━━━━━━━
 
-📉 Risk : ${slPoints} Points
-
-📈 Reward 1 : ${tg1Points} Points (1 : ${rr1})
-
-🏆 Reward 2 : ${tg2Points} Points (1 : ${rr2})
 
 🕒 Time : ${timestamp}
 
@@ -136,13 +131,7 @@ if (data.cmd === "PE_ENTRY") {
 🎯 TG1 : ${data.tg1} (+${tg1Points} Points)
 🏆 TG2 : ${data.tg2} (+${tg2Points} Points) 
 
-━━━━━━━━━━━━━━
 
-📉 Risk : ${slPoints} Points
-
-📈 Reward 1 : ${tg1Points} Points (1 : ${rr1})
-
-🏆 Reward 2 : ${tg2Points} Points (1 : ${rr2})
 
 🕒 Time : ${timestamp}
 
