@@ -4,7 +4,10 @@ const express = require("express");
 const dotenv = require("dotenv");
 
 const { sendTelegramMessage } = require("./telegram");
-const { formatMessage } = require("./formatter"); 
+const {
+    formatMessage,
+    formatReport
+} = require("./formatter");
 
 const reportManager = require("./reportManager");
 const tradeManager = require("./tradeManager");
@@ -131,6 +134,7 @@ const message = formatMessage({
     }
 
 });
+
 // ==========================
 // HOME
 // ==========================
@@ -141,13 +145,11 @@ app.get("/", async (req, res) => {
     );
 
     res.send("🛡 HSK TELEGRAM SERVER V1 RUNNING");
+
 });
 
-const PORT = process.env.PORT || 3000;
-
-
 // ==========================
-// DAILY REPORT
+// DAILY REPORT (JSON)
 // ==========================
 app.get("/report", (req, res) => {
 
@@ -156,6 +158,23 @@ app.get("/report", (req, res) => {
     res.json(report);
 
 });
+
+// ==========================
+// SEND DAILY REPORT
+// ==========================
+app.get("/sendReport", async (req, res) => {
+
+    const report = reportManager.getReport();
+
+    const message = formatReport(report);
+
+    await sendTelegramMessage(message);
+
+    res.send("✅ Daily Report Sent");
+
+});
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`🚀 HSK TELEGRAM SERVER V1 running on port ${PORT}`);

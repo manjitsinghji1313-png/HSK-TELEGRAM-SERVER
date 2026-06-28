@@ -54,16 +54,6 @@ const tg2 = Number(data.tg2 || 0);
 const slPoints = Math.abs(entry - sl);
 const tg1Points = Math.abs(tg1 - entry);
 const tg2Points = Math.abs(tg2 - entry); 
- 
-// ==========================
-// RISK REWARD
-// ==========================
-
-const rr1 =
-    slPoints > 0 ? (tg1Points / slPoints).toFixed(2) : "0";
-
-const rr2 =
-    slPoints > 0 ? (tg2Points / slPoints).toFixed(2) : "0";
 
 // ==========================
 // CE ENTRY
@@ -219,10 +209,10 @@ if (data.cmd === "SL_HIT") {
 }
 
 
-    // ==========================
-    // UNKNOWN
-    // ==========================
-    return `
+// ==========================
+// UNKNOWN
+// ==========================
+return `
 🛡 HSK BRAHMASTRA
 
 ⚠️ Unknown Alert Received
@@ -231,4 +221,44 @@ if (data.cmd === "SL_HIT") {
 `;
 }
 
-module.exports = { formatMessage };
+// ==========================
+// DAILY REPORT FORMAT
+// ==========================
+function formatReport(report) {
+
+    return `
+🛡 HSK BRAHMASTRA
+
+📊 TODAY'S REPORT
+
+━━━━━━━━━━━━━━
+
+📈 Total Trades : ${report.totalTrades}
+
+🏆 Wins : ${report.wins}
+
+🛑 Losses : ${report.losses}
+
+🎯 Accuracy : ${report.accuracy}%
+
+💰 Total Points : ${report.totalPoints}
+
+🥇 Best Trade : ${report.bestTrade}
+
+📉 Worst Trade : ${report.worstTrade}
+
+━━━━━━━━━━━━━━
+📚 Educational Purpose Only
+
+⚠️ Trade at Your Own Risk
+`;
+
+}
+
+// ==========================
+// EXPORTS
+// ==========================
+module.exports = {
+    formatMessage,
+    formatReport
+};
