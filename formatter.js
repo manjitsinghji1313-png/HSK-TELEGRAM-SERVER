@@ -84,10 +84,10 @@ if (data.cmd === "CE_ENTRY") {
 🎯 Strike : CE ${data.strike}
 
 💰 Entry : ${data.price}
-🛑 SL : ${data.sl}  (-${slPoints} Points)
+🛑 SL : ${data.sl}     (-${slPoints} Points)
 
-🎯 TG1 : ${data.tg1} (+${tg1Points} Points)
-🏆 TG2 : ${data.tg2} (+${tg2Points} Points) 
+🎯 TG1 : ${data.tg1}   (+${tg1Points} Points)
+🏆 TG2 : ${data.tg2}   (+${tg2Points} Points) 
 
 ━━━━━━━━━━━━━━
 
@@ -126,10 +126,10 @@ if (data.cmd === "PE_ENTRY") {
 🎯 Strike : PE ${data.strike}
 
 💰 Entry : ${data.price}
-🛑 SL : ${data.sl}  (-${slPoints} Points)
+🛑 SL : ${data.sl}     (-${slPoints} Points)
 
-🎯 TG1 : ${data.tg1} (+${tg1Points} Points)
-🏆 TG2 : ${data.tg2} (+${tg2Points} Points) 
+🎯 TG1 : ${data.tg1}   (+${tg1Points} Points)
+🏆 TG2 : ${data.tg2}   (+${tg2Points} Points) 
 
 
 
