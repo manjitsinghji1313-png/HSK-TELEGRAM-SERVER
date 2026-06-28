@@ -2,9 +2,11 @@ console.log("🔥 SERVER VERSION 999");
  
 const express = require("express"); 
 const dotenv = require("dotenv");
+
 const { sendTelegramMessage } = require("./telegram");
 const { formatMessage } = require("./formatter"); 
 
+const reportManager = require("./reportManager");
 const tradeManager = require("./tradeManager");
 
 dotenv.config();
@@ -51,12 +53,34 @@ else if (req.body.cmd === "TG2_HIT") {
 
     result = tradeManager.closeTrade(req.body, "TARGET HIT");
 
+    if (result.success) {
+
+        const entry = Number(result.trade.entry);
+        const tg2 = Number(result.trade.tg2);
+
+        const points = Math.abs(tg2 - entry);
+
+        reportManager.addTrade("TARGET HIT", points);
+
+    }
+
 }
 
 // SL
 else if (req.body.cmd === "SL_HIT") {
 
     result = tradeManager.closeTrade(req.body, "STOP LOSS");
+
+    if (result.success) {
+
+        const entry = Number(result.trade.entry);
+        const sl = Number(result.trade.sl);
+
+        const points = -Math.abs(entry - sl);
+
+        reportManager.addTrade("STOP LOSS", points);
+
+    }
 
 }
 
@@ -120,6 +144,18 @@ app.get("/", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+
+// ==========================
+// DAILY REPORT
+// ==========================
+app.get("/report", (req, res) => {
+
+    const report = reportManager.getReport();
+
+    res.json(report);
+
+});
 
 app.listen(PORT, () => {
     console.log(`🚀 HSK TELEGRAM SERVER V1 running on port ${PORT}`);
