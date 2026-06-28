@@ -119,6 +119,99 @@ if (data.cmd === "PE_ENTRY") {
 `;
 
 }
+
+// ==========================
+// TG1 HIT
+// ==========================
+if (data.cmd === "TG1_HIT") {
+
+    return `
+🛡 HSK BRAHMASTRA
+
+🎯 TG1 HIT
+
+🆔 Trade ID : ${data.tradeId || "N/A"}
+
+🟢 Status : ${data.status || "PARTIAL BOOKED"}
+
+📊 Symbol : ${data.symbol}
+⏱ Time Frame : ${timeframe}
+🎯 Strike : ${data.strike}
+
+✅ Partial Profit Booked
+🔒 Stop Loss Shifted To Cost
+
+🕒 Time : ${timestamp}
+
+━━━━━━━━━━━━━━
+📚 Educational Purpose Only
+
+⚠️ Trade at Your Own Risk
+`;
+
+}
+
+// ==========================
+// TG2 HIT
+// ==========================
+if (data.cmd === "TG2_HIT") {
+
+    return `
+🛡 HSK BRAHMASTRA
+
+🏆 TARGET 2 HIT
+
+🆔 Trade ID : ${data.tradeId || "N/A"}
+
+🟢 Status : ${data.status || "TARGET HIT"}
+
+📊 Symbol : ${data.symbol}
+⏱ Time Frame : ${timeframe}
+🎯 Strike : ${data.strike}
+
+🎉 Final Target Achieved
+
+🕒 Time : ${timestamp}
+
+━━━━━━━━━━━━━━
+📚 Educational Purpose Only
+
+⚠️ Trade at Your Own Risk
+`;
+
+} 
+ 
+// ==========================
+// SL HIT
+// ==========================
+if (data.cmd === "SL_HIT") {
+
+    return `
+🛡 HSK BRAHMASTRA
+
+🛑 STOP LOSS HIT
+
+🆔 Trade ID : ${data.tradeId || "N/A"}
+
+🔴 Status : ${data.status || "STOP LOSS"}
+
+📊 Symbol : ${data.symbol}
+⏱ Time Frame : ${timeframe}
+🎯 Strike : ${data.strike}
+
+❌ Trade Closed At Stop Loss
+
+🕒 Time : ${timestamp}
+
+━━━━━━━━━━━━━━
+📚 Educational Purpose Only
+
+⚠️ Trade at Your Own Risk
+`;
+
+}
+
+
     // ==========================
     // UNKNOWN
     // ==========================
