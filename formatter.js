@@ -47,7 +47,9 @@ function formatMessage(data) {
     // ==========================
     if (data.cmd === "CE_ENTRY") {
 
-        return `
+    console.log("🔥 CE FORMATTER V2");
+
+    return `
 🛡 HSK BRAHMASTRA
 
 🟢 CE ENTRY
@@ -65,8 +67,15 @@ function formatMessage(data) {
 🕒 Time : ${timestamp}
 
 ━━━━━━━━━━━━━━
-📚 Educational Purpose Only
-⚠️ Trade at Your Own Risk
+📚 **Educational Purpose Only**
+
+⚠️ **Disclaimer**
+• I am NOT a SEBI Registered Investment Adviser.
+• This content is for educational and informational purposes only.
+• This is NOT financial or investment advice.
+• Please consult your Financial Advisor before making any trading or investment decisions.
+• Trade at your own risk.
+
 `;
     }
 
@@ -75,7 +84,9 @@ function formatMessage(data) {
     // ==========================
     if (data.cmd === "PE_ENTRY") {
 
-        return `
+    console.log("🔥 PE FORMATTER V2");
+
+    return `
 🛡 HSK BRAHMASTRA
 
 🔴 PE ENTRY
@@ -93,8 +104,15 @@ function formatMessage(data) {
 🕒 Time : ${timestamp}
 
 ━━━━━━━━━━━━━━
-📚 Educational Purpose Only
-⚠️ Trade at Your Own Risk
+━━━━━━━━━━━━━━
+📚 **Educational Purpose Only**
+
+⚠️ **Disclaimer**
+• I am NOT a SEBI Registered Investment Adviser or Research Analyst.
+• This content is for educational and informational purposes only.
+• This is NOT financial or investment advice.
+• Please consult your Financial Advisor before making any trading or investment decisions.
+• Trade at your own risk.
 `;
     }
 

@@ -8,8 +8,12 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, {
 
 async function sendTelegramMessage(message) {
     try {
-        await bot.sendMessage(process.env.CHANNEL_ID, message);
+        await bot.sendMessage(process.env.CHANNEL_ID, message, {
+            parse_mode: "Markdown"
+        });
+
         console.log("✅ Telegram message sent");
+
     } catch (error) {
         console.error("❌ Telegram Error:", error.response?.body || error.message);
     }
