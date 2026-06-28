@@ -47,8 +47,6 @@ function formatMessage(data) {
     // ==========================
     if (data.cmd === "CE_ENTRY") {
 
-    console.log("🔥 CE FORMATTER V2");
-
     return `
 🛡 HSK BRAHMASTRA
 
@@ -83,8 +81,6 @@ function formatMessage(data) {
     // PE ENTRY
     // ==========================
     if (data.cmd === "PE_ENTRY") {
-
-    console.log("🔥 PE FORMATTER V2");
 
     return `
 🛡 HSK BRAHMASTRA
