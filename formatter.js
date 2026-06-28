@@ -42,6 +42,29 @@ function formatMessage(data) {
 
     const timeframe = tfMap[data.timeframe] || data.timeframe || "N/A";
 
+    // ==========================
+// POINTS CALCULATION
+// ==========================
+
+const entry = Number(data.price || 0);
+const sl = Number(data.sl || 0);
+const tg1 = Number(data.tg1 || 0);
+const tg2 = Number(data.tg2 || 0);
+
+const slPoints = Math.abs(entry - sl);
+const tg1Points = Math.abs(tg1 - entry);
+const tg2Points = Math.abs(tg2 - entry); 
+ 
+// ==========================
+// RISK REWARD
+// ==========================
+
+const rr1 =
+    slPoints > 0 ? (tg1Points / slPoints).toFixed(2) : "0";
+
+const rr2 =
+    slPoints > 0 ? (tg2Points / slPoints).toFixed(2) : "0";
+
 // ==========================
 // CE ENTRY
 // ==========================
@@ -61,10 +84,18 @@ if (data.cmd === "CE_ENTRY") {
 🎯 Strike : CE ${data.strike}
 
 💰 Entry : ${data.price}
-🛑 SL : ${data.sl}
+🛑 SL : ${data.sl}  (-${slPoints} Points)
 
-🎯 TG1 : ${data.tg1}
-🎯 TG2 : ${data.tg2}
+🎯 TG1 : ${data.tg1} (+${tg1Points} Points)
+🏆 TG2 : ${data.tg2} (+${tg2Points} Points) 
+
+━━━━━━━━━━━━━━
+
+📉 Risk : ${slPoints} Points
+
+📈 Reward 1 : ${tg1Points} Points (1 : ${rr1})
+
+🏆 Reward 2 : ${tg2Points} Points (1 : ${rr2})
 
 🕒 Time : ${timestamp}
 
@@ -100,10 +131,18 @@ if (data.cmd === "PE_ENTRY") {
 🎯 Strike : PE ${data.strike}
 
 💰 Entry : ${data.price}
-🛑 SL : ${data.sl}
+🛑 SL : ${data.sl}  (-${slPoints} Points)
 
-🎯 TG1 : ${data.tg1}
-🎯 TG2 : ${data.tg2}
+🎯 TG1 : ${data.tg1} (+${tg1Points} Points)
+🏆 TG2 : ${data.tg2} (+${tg2Points} Points) 
+
+━━━━━━━━━━━━━━
+
+📉 Risk : ${slPoints} Points
+
+📈 Reward 1 : ${tg1Points} Points (1 : ${rr1})
+
+🏆 Reward 2 : ${tg2Points} Points (1 : ${rr2})
 
 🕒 Time : ${timestamp}
 
