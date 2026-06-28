@@ -3,7 +3,9 @@ console.log("🔥 SERVER VERSION 999");
 const express = require("express"); 
 const dotenv = require("dotenv");
 const { sendTelegramMessage } = require("./telegram");
-const { formatMessage } = require("./formatter");
+const { formatMessage } = require("./formatter"); 
+
+const tradeManager = require("./tradeManager");
 
 dotenv.config();
 
@@ -21,10 +23,52 @@ app.post("/webhook", async (req, res) => {
         console.log("📩 TradingView Alert Received");
         console.log(req.body);
 
-        // TradingView nu turant response
-        res.status(200).send("OK");
+        /// TradingView nu turant response
+res.status(200).send("OK");
 
-        const message = formatMessage(req.body);
+// ==========================
+// TRADE MANAGER
+// ==========================
+
+let result;
+
+// ENTRY
+if (req.body.cmd === "CE_ENTRY" || req.body.cmd === "PE_ENTRY") {
+
+    result = tradeManager.openTrade(req.body);
+
+}
+
+// TG1
+else if (req.body.cmd === "TG1_HIT") {
+
+    result = tradeManager.updateTrade(req.body, "PARTIAL BOOKED");
+
+}
+
+// Unknown Commands
+else {
+
+    result = {
+        success: true,
+        trade: req.body
+    };
+
+}
+
+if (!result.success) {
+
+    console.log("⚠️ " + result.message);
+
+    return;
+
+}
+
+// Telegram Message
+const message = formatMessage({
+    ...req.body,
+    ...result.trade
+});
 
         console.log("========== MESSAGE ==========");
         console.log(message);

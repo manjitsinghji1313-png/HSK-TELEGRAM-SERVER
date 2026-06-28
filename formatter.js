@@ -42,15 +42,19 @@ function formatMessage(data) {
 
     const timeframe = tfMap[data.timeframe] || data.timeframe || "N/A";
 
-    // ==========================
-    // CE ENTRY
-    // ==========================
-    if (data.cmd === "CE_ENTRY") {
+// ==========================
+// CE ENTRY
+// ==========================
+if (data.cmd === "CE_ENTRY") {
 
     return `
 🛡 HSK BRAHMASTRA
 
 🟢 CE ENTRY
+
+🆔 Trade ID : ${data.tradeId || "N/A"}
+
+🟢 Status : ${data.status || "ACTIVE"}
 
 📊 Symbol : ${data.symbol}
 ⏱ Time Frame : ${timeframe}
@@ -75,17 +79,21 @@ function formatMessage(data) {
 • Trade at your own risk.
 
 `;
-    }
+}
 
-    // ==========================
-    // PE ENTRY
-    // ==========================
-    if (data.cmd === "PE_ENTRY") {
+// ==========================
+// PE ENTRY
+// ==========================
+if (data.cmd === "PE_ENTRY") {
 
     return `
 🛡 HSK BRAHMASTRA
 
 🔴 PE ENTRY
+
+🆔 Trade ID : ${data.tradeId || "N/A"}
+
+🟢 Status : ${data.status || "ACTIVE"}
 
 📊 Symbol : ${data.symbol}
 ⏱ Time Frame : ${timeframe}
@@ -100,18 +108,17 @@ function formatMessage(data) {
 🕒 Time : ${timestamp}
 
 ━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━
-📚 **Educational Purpose Only**
+📚 Educational Purpose Only
 
-⚠️ **Disclaimer**
+⚠️ Disclaimer
 • I am NOT a SEBI Registered Investment Adviser or Research Analyst.
 • This content is for educational and informational purposes only.
 • This is NOT financial or investment advice.
 • Please consult your Financial Advisor before making any trading or investment decisions.
 • Trade at your own risk.
 `;
-    }
 
+}
     // ==========================
     // UNKNOWN
     // ==========================
