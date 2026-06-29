@@ -115,11 +115,7 @@ const message = formatMessage({
     ...result.trade
 });
 
-// Telegram Message
-const message = formatMessage({
-    ...req.body,
-    ...result.trade
-});
+
 
         console.log("========== MESSAGE ==========");
         console.log(message);
