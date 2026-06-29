@@ -105,6 +105,16 @@ if (!result.success) {
 
 }
 
+// Debug
+console.log("REQ BODY:", req.body);
+console.log("RESULT TRADE:", result.trade);
+
+// Telegram Message
+const message = formatMessage({
+    ...req.body,
+    ...result.trade
+});
+
 // Telegram Message
 const message = formatMessage({
     ...req.body,
