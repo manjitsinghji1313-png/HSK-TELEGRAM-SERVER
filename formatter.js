@@ -40,6 +40,7 @@ function formatMessage(data) {
     "M": "1 Month"
 };
 
+    console.log("FORMATTER DATA:", data);
     const timeframe = tfMap[data.timeframe] || data.timeframe || "N/A";
 
     // ==========================
@@ -259,6 +260,5 @@ function formatReport(report) {
 // EXPORTS
 // ==========================
 module.exports = {
-    formatMessage,
-    formatReport
+    formatMessage
 };
