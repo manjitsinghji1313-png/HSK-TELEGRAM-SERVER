@@ -15,28 +15,42 @@ app.use(express.json());
 
 app.post("/webhook", async (req, res) => {
 
-    try {
+   try {
 
-        console.log("📩 TradingView Alert Received");
-        console.log(req.body);
+    console.log("📩 TradingView Alert Received");
+    console.log(req.body);
 
-        console.log("TIMEFRAME =", req.body.timeframe);
-        console.log("CMD =", req.body.cmd);
+    console.log("TIMEFRAME =", req.body.timeframe);
+    console.log("CMD =", req.body.cmd);
 
-        // TradingView nu turant response
-        res.status(200).send("OK");
+    // TradingView nu turant response
+    res.status(200).send("OK");
 
-        // Telegram Message
-        const message = formatMessage(req.body);
+    // Background processing
+    setImmediate(async () => {
 
-        console.log("========== MESSAGE ==========");
-        console.log(message);
-        console.log("=============================");
+        try {
 
-        sendTelegramMessage(message)
-            .catch(err => {
-                console.error("❌ Telegram Background Error:", err);
-            });
+            const message = formatMessage(req.body);
+
+            console.log("========== MESSAGE ==========");
+            console.log(message);
+            console.log("=============================");
+
+            await sendTelegramMessage(message);
+
+            console.log("✅ Telegram message sent");
+
+        } catch (err) {
+
+            console.error("❌ Telegram Background Error:");
+            console.error(err);
+
+        }
+
+    });
+
+    return;
 
     } catch (err) {
 

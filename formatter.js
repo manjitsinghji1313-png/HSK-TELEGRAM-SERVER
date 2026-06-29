@@ -63,7 +63,6 @@ if (data.cmd === "CE_ENTRY") {
 
     return `
 🛡 HSK BRAHMASTRA
-🆔 Trade ID : ${data.tradeId || "N/A"}
 
 🟢 CE ENTRY
 🟢 Status : ${data.status || "ACTIVE"}
@@ -99,7 +98,6 @@ if (data.cmd === "PE_ENTRY") {
 
     return `
 🛡 HSK BRAHMASTRA
-🆔 Trade ID : ${data.tradeId || "N/A"}
 
 🔴 PE ENTRY
 🟢 Status : ${data.status || "ACTIVE"}
@@ -134,7 +132,6 @@ if (data.cmd === "TG1_HIT") {
 
     return `
 🛡 HSK BRAHMASTRA
-🆔 Trade ID : ${data.tradeId || "N/A"}
 🎯 TG1 HIT
 
 🟢 Status : ${data.status || "PARTIAL BOOKED"}
@@ -161,7 +158,6 @@ if (data.cmd === "TG2_HIT") {
 
     return `
 🛡 HSK BRAHMASTRA
-🆔 Trade ID : ${data.tradeId || "N/A"}
 🏆 TARGET 2 HIT
 
 🟢 Status : ${data.status || "TARGET HIT"}
@@ -187,7 +183,6 @@ if (data.cmd === "SL_HIT") {
 
     return `
 🛡 HSK BRAHMASTRA
-🆔 Trade ID : ${data.tradeId || "N/A"}
 
 🛑 STOP LOSS HIT
 
