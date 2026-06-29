@@ -28,8 +28,12 @@ app.post("/webhook", async (req, res) => {
         console.log("📩 TradingView Alert Received");
         console.log(req.body);
 
-        /// TradingView nu turant response
-res.status(200).send("OK");
+        // 👇 ADD THESE 2 LINES
+        console.log("TIMEFRAME =", req.body.timeframe);
+        console.log("CMD =", req.body.cmd);
+
+        // TradingView nu turant response
+        res.status(200).send("OK");
 
 // ==========================
 // TRADE MANAGER
