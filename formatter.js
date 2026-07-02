@@ -132,18 +132,17 @@ if (data.cmd === "TG1_HIT") {
 
     return `
 🛡 HSK BRAHMASTRA
-🎯 TG1 HIT
 
-🟢 Status : ${data.status || "PARTIAL BOOKED"}
+🎯 TG1 HIT
 
 📊 Symbol : ${data.symbol}
 ⏱ Time Frame : ${timeframe}
-🎯 Strike : ${data.strike}
 
-✅ Partial Profit Booked
-🔒 Stop Loss Shifted To Cost
+✅ TG1 Booked
+🔒 SL Shifted to CTC
 
 🕒 Time : ${timestamp}
+
 ━━━━━━━━━━━━━━
 📚 Educational Purpose Only
 ⚠️ Trade at Your Own Risk
@@ -186,19 +185,15 @@ if (data.cmd === "SL_HIT") {
 
 🛑 STOP LOSS HIT
 
-🔴 Status : ${data.status || "STOP LOSS"}
-
 📊 Symbol : ${data.symbol}
 ⏱ Time Frame : ${timeframe}
-🎯 Strike : ${data.strike}
 
-❌ Trade Closed At Stop Loss
+❌ Trade Closed
 
 🕒 Time : ${timestamp}
 
 ━━━━━━━━━━━━━━
 📚 Educational Purpose Only
-
 ⚠️ Trade at Your Own Risk
 `;
 
