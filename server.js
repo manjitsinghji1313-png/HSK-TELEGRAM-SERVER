@@ -18,8 +18,9 @@ app.post("/webhook", async (req, res) => {
    try {
 
     console.log("📩 TradingView Alert Received");
-    console.log(req.body);
+    console.log(req.body); 
 
+    console.log(JSON.stringify(req.body, null, 2));
     console.log("TIMEFRAME =", req.body.timeframe);
     console.log("CMD =", req.body.cmd);
 
