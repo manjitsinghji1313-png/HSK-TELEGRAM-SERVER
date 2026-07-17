@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const tradeService = require("../services/tradeService");
+const telegramService = require("../services/telegramService");
 
 // ==========================
 // TradingView Webhook
@@ -19,35 +20,94 @@ router.post("/", async (req, res) => {
 
         const data = req.body;
 
+        let message = "";
+
         switch (data.cmd) {
 
             // ==========================
-            // ENTRY
+            // CE ENTRY
             // ==========================
 
             case "CE_ENTRY":
-            case "PE_ENTRY":
 
                 await tradeService.openTrade(data);
+
+                message =
+`🟢 <b>CE ENTRY</b>
+
+📊 Symbol : ${data.symbol}
+⏱ Timeframe : ${data.timeframe}
+💰 Entry : ${data.price}
+🛑 SL : ${data.sl}
+🎯 TG1 : ${data.tg1}`;
+
                 break;
 
             // ==========================
-            // TARGET
+            // PE ENTRY
+            // ==========================
+
+            case "PE_ENTRY":
+
+                await tradeService.openTrade(data);
+
+                message =
+`🔴 <b>PE ENTRY</b>
+
+📊 Symbol : ${data.symbol}
+⏱ Timeframe : ${data.timeframe}
+💰 Entry : ${data.price}
+🛑 SL : ${data.sl}
+🎯 TG1 : ${data.tg1}`;
+
+                break;
+
+            // ==========================
+            // TARGET HIT
             // ==========================
 
             case "TG1_HIT":
 
                 await tradeService.closeTrade(data);
+
+                message =
+`🎯 <b>TARGET HIT</b>
+
+📊 Symbol : ${data.symbol}
+🆔 Trade : ${data.tradeKey}`;
+
                 break;
 
             // ==========================
-            // STOP LOSS / EXIT
+            // STOP LOSS
             // ==========================
 
             case "SL_HIT":
+
+                await tradeService.closeTrade(data);
+
+                message =
+`🛑 <b>STOP LOSS HIT</b>
+
+📊 Symbol : ${data.symbol}
+🆔 Trade : ${data.tradeKey}`;
+
+                break;
+
+            // ==========================
+            // EXIT
+            // ==========================
+
             case "EXIT":
 
                 await tradeService.closeTrade(data);
+
+                message =
+`📤 <b>TRADE EXIT</b>
+
+📊 Symbol : ${data.symbol}
+🆔 Trade : ${data.tradeKey}`;
+
                 break;
 
             // ==========================
@@ -58,6 +118,14 @@ router.post("/", async (req, res) => {
 
                 console.log("⚠ Unknown Command :", data.cmd);
 
+        }
+
+        // ==========================
+        // SEND TELEGRAM MESSAGE
+        // ==========================
+
+        if (message) {
+            await telegramService.sendMessage(message);
         }
 
         res.status(200).json({
