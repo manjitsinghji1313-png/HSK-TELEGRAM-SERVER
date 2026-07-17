@@ -260,11 +260,13 @@ filteredTrades = filteredTrades.filter(trade => {
 const totalTrades = filteredTrades.length;
 
 const targetHits = filteredTrades.filter(trade =>
-    trade.status === "TARGET HIT"
+    trade.status === "TARGET HIT" ||
+    trade.status === "TG1_HIT"
 ).length;
 
 const stopLoss = filteredTrades.filter(trade =>
-    trade.status === "STOP LOSS"
+    trade.status === "STOP LOSS" ||
+    trade.status === "SL_HIT"
 ).length;
 
 const totalPoints = filteredTrades.reduce((sum, trade) => {

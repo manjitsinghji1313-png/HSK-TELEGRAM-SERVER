@@ -73,10 +73,21 @@ async function closeTrade(data) {
 
     try {
 
-        const updateData = {
-            status: data.status || data.cmd,
-            close_time: new Date().toISOString()
-        };
+                              let finalStatus = data.status || data.cmd;
+
+// Convert webhook commands to readable status
+if (finalStatus === "TG1_HIT") {
+    finalStatus = "TARGET HIT";
+}
+
+if (finalStatus === "SL_HIT") {
+    finalStatus = "STOP LOSS";
+}
+
+const updateData = {
+    status: finalStatus,
+    close_time: new Date().toISOString()
+};
 
         // Update points if received
         if (data.points !== undefined) {
