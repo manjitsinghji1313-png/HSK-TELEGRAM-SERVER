@@ -1,8 +1,10 @@
 require("dotenv").config();
 
+
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
 
+const webhookRoutes = require("./routes/webhook");
 const express = require("express");
 const db = require("./database/db");
 
@@ -28,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/webhook", webhookRoutes);
 // ==============================
 // Health Check API
 // ==============================
