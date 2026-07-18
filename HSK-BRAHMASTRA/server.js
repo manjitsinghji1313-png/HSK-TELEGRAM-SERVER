@@ -143,6 +143,62 @@ app.get("/api/trades/active", async (req, res) => {
 
 app.get("/api/report/today", async (req, res) => {
 
+    // ==========================
+// SEND DAILY REPORT NOW
+// ==========================
+
+app.get("/api/report/send", async (req, res) => {
+
+    try {
+
+        const stats = await db.getDashboardStats();
+
+        const message = `
+📊 HSK BRAHMASTRA
+📅 DAILY REPORT
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Total Trades : ${stats.closedTrades}
+🎯 Target Hit  : ${stats.targetHits}
+🛑 Stop Loss   : ${stats.stopLosses}
+💰 Total Points: ${stats.pnl}
+📈 Win Rate    : ${stats.winRate}%
+
+━━━━━━━━━━━━━━━━━━
+
+⚠ DISCLAIMER
+
+• Educational Purpose Only
+• We Are Not SEBI Registered
+• Trade At Your Own Risk
+
+━━━━━━━━━━━━━━━━━━
+
+🚀 Trade With Discipline
+#HSKBRAHMASTRA
+`;
+
+        await require("./services/telegramService").sendMessage(message);
+
+        res.json({
+            success: true,
+            message: "Daily Report Sent Successfully"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+
+    }
+
+});
+
     try {
 
         const report = await db.getClosedTrades();
