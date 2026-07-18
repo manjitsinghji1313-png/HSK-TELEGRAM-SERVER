@@ -175,12 +175,24 @@ app.get("/api/report/send", async (req, res) => {
 
     try {
 
-        const stats = await db.getDashboardStats();
+        const market = req.query.market || "ALL";
+
+        const stats = await db.getDashboardStats(market);
+
+        const { data: symbolRow } = await supabase
+    .from("trades")
+    .select("market")
+    .neq("status", "ACTIVE")
+    .order("close_time", { ascending: false })
+    .limit(1)
+    .single();
+
+const market = symbolRow?.market || "ALL";
 
         const message = `
 📊 HSK BRAHMASTRA
 📅 DAILY REPORT
-
+📌 Symbol : ${market}
 ━━━━━━━━━━━━━━━━━━
 
 ✅ Total Trades : ${stats.closedTrades}
