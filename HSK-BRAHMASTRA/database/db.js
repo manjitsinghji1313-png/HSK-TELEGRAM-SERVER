@@ -10,16 +10,7 @@ module.exports = {
         const start = new Date();
         start.setHours(0, 0, 0, 0);
 
-        const tradeQuery = () => {
-            let query = supabase.from("trades");
-
-            if (market && market !== "ALL") {
-                query = query.eq("market", market);
-            }
-
-            return query;
-        };
-
+        
         // Members
         const { count: members, error: memberError } = await supabase
             .from("members")
@@ -28,41 +19,75 @@ module.exports = {
         if (memberError) throw memberError;
 
         // Active Trades
-        const { count: activeTrades, error: activeError } = await tradeQuery()
+        let activeQuery = supabase
+            .from("trades")
             .select("*", { count: "exact", head: true })
             .eq("status", "ACTIVE");
+
+        if (market !== "ALL") {
+            activeQuery = activeQuery.eq("market", market);
+        }   
+
+const { count: activeTrades, error: activeError } = await activeQuery;
 
         if (activeError) throw activeError;
 
         // Closed Trades
-        const { count: closedTrades, error: closedError } = await tradeQuery()
-            .select("*", { count: "exact", head: true })
-            .neq("status", "ACTIVE")
-            .gte("close_time", start.toISOString());
+    let closedQuery = supabase
+        .from("trades")
+        .select("*", { count: "exact", head: true })
+        .neq("status", "ACTIVE")
+        .gte("close_time", start.toISOString());
+
+    if (market !== "ALL") {
+        closedQuery = closedQuery.eq("market", market);
+    }
+
+const { count: closedTrades, error: closedError } = await closedQuery;
 
         if (closedError) throw closedError;
 
         // Target Hits
-        const { count: targetHits, error: targetError } = await tradeQuery()
-            .select("*", { count: "exact", head: true })
-            .eq("status", "TARGET HIT")
-            .gte("close_time", start.toISOString());
+    let targetQuery = supabase
+        .from("trades")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "TARGET HIT")
+        .gte("close_time", start.toISOString());
+
+    if (market !== "ALL") {
+        targetQuery = targetQuery.eq("market", market);
+    }
+
+const { count: targetHits, error: targetError } = await targetQuery;
 
         if (targetError) throw targetError;
 
         // Stop Losses
-        const { count: stopLosses, error: stopError } = await tradeQuery()
-            .select("*", { count: "exact", head: true })
-            .eq("status", "STOP LOSS")
-            .gte("close_time", start.toISOString());
+    let stopQuery = supabase
+        .from("trades")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "STOP LOSS")
+        .gte("close_time", start.toISOString());
+
+    if (market !== "ALL") {
+        stopQuery = stopQuery.eq("market", market);
+    }
+
+const { count: stopLosses, error: stopError } = await stopQuery;
 
         if (stopError) throw stopError;
+    // Total Points
+    let pointsQuery = supabase
+        .from("trades")
+        .select("points")
+        .neq("status", "ACTIVE")
+        .gte("close_time", start.toISOString());
 
-        // Total Points
-        const { data: pointRows, error: pointError } = await tradeQuery()
-            .select("points")
-            .neq("status", "ACTIVE")
-            .gte("close_time", start.toISOString());
+    if (market !== "ALL") {
+        pointsQuery = pointsQuery.eq("market", market);
+    }
+
+const { data: pointRows, error: pointError } = await pointsQuery;
 
         if (pointError) throw pointError;
 
