@@ -30,16 +30,29 @@ router.post("/", async (req, res) => {
 
             case "CE_ENTRY":
 
-                await tradeService.openTrade(data);
+    await tradeService.openTrade(data);
 
-                message =
+    message =
 `🟢 <b>CE ENTRY</b>
 
 📊 Symbol : ${data.symbol}
 ⏱ Timeframe : ${data.timeframe}
+🎯 Strike : ${data.strike}
 💰 Entry : ${data.price}
 🛑 SL : ${data.sl}
-🎯 TG1 : ${data.tg1}`;
+🎯 TG1 : ${data.tg1}
+
+🆔 Trade ID : ${data.tradeKey}
+
+━━━━━━━━━━━━━━━━━━
+
+⚠️ <b>Disclaimer</b>
+
+• Educational Purpose Only
+• Not SEBI Registered
+• Trade at Your Own Risk`;
+
+    break;
 
                 break;
 
@@ -49,16 +62,26 @@ router.post("/", async (req, res) => {
 
             case "PE_ENTRY":
 
-                await tradeService.openTrade(data);
+    await tradeService.openTrade(data);
 
-                message =
+    message =
 `🔴 <b>PE ENTRY</b>
 
 📊 Symbol : ${data.symbol}
 ⏱ Timeframe : ${data.timeframe}
+🎯 Strike : ${data.strike}
 💰 Entry : ${data.price}
 🛑 SL : ${data.sl}
-🎯 TG1 : ${data.tg1}`;
+🎯 TG1 : ${data.tg1}
+
+🆔 Trade ID : ${data.tradeKey}
+━━━━━━━━━━━━━━━━━━
+⚠️ <b>Disclaimer</b>
+
+• Educational Purpose Only
+• Not SEBI Registered
+• Trade at Your Own Risk`;
+
 
                 break;
 
