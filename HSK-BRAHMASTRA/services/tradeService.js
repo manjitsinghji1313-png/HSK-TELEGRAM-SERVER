@@ -127,7 +127,7 @@ if (finalStatus === "TARGET HIT") {
     }
 
 }
-async function closeTrade(data) {
+
 module.exports = {
     openTrade,
     closeTrade
