@@ -1,10 +1,12 @@
 require("dotenv").config();
 
 
+
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
 
 const webhookRoutes = require("./routes/webhook");
+require("./services/scheduler");
 const express = require("express");
 const db = require("./database/db");
 
