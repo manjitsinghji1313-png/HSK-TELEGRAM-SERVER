@@ -89,10 +89,24 @@ const updateData = {
     close_time: new Date().toISOString()
 };
 
-        // Update points if received
-        if (data.points !== undefined) {
-            updateData.points = Number(data.points);
-        }
+        // Calculate points automatically for TARGET HIT
+if (finalStatus === "TARGET HIT") {
+
+    const { data: trade, error: fetchError } = await supabase
+        .from("trades")
+        .select("entry, tg1")
+        .eq("trade_key", data.tradeKey)
+        .single();
+
+    if (!fetchError && trade) {
+        updateData.points = Math.abs(Number(trade.tg1) - Number(trade.entry));
+    }
+
+} else if (data.points !== undefined) {
+
+    updateData.points = Number(data.points);
+
+}
 
         const { error } = await supabase
             .from("trades")
@@ -113,7 +127,7 @@ const updateData = {
     }
 
 }
-
+async function closeTrade(data) {
 module.exports = {
     openTrade,
     closeTrade
