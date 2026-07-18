@@ -5,7 +5,7 @@ console.log("✅ dashboardRoutes Loaded");
 const router = express.Router();
 
 const dashboardService = require("../services/dashboardService");
-
+const authMiddleware = require("../middleware/authMiddleware");
 // ==========================
 // TODAY REPORT
 // ==========================
@@ -14,7 +14,7 @@ router.get("/hello", (req, res) => {
     res.send("Dashboard Route Working");
 });
 
-router.get("/report/today", async (req, res) => {
+router.get("/report/today", authMiddleware, async (req, res) => {
 
     try {
 

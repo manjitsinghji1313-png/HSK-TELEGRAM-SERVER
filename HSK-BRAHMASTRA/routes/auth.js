@@ -26,6 +26,7 @@ router.post("/login", async (req, res) => {
         res.json({
             success: true,
             session: result.session,
+            sessionToken: result.sessionToken,
             user: result.user
         });
 

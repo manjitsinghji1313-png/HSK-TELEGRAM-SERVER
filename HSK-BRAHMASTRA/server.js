@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
-
+const authMiddleware = require("./middleware/authMiddleware");
 const webhookRoutes = require("./routes/webhook");
 require("./services/scheduler");
 const express = require("express");
@@ -96,7 +96,7 @@ server.listen(PORT, async () => {
 // DASHBOARD STATS API
 // ==========================
 
-app.get("/api/stats", async (req, res) => {
+app.get("/api/stats", authMiddleware, async (req, res) => {
 
     try {
 
@@ -121,7 +121,7 @@ app.get("/api/stats", async (req, res) => {
 // ACTIVE TRADES API
 // ==========================
 
-app.get("/api/trades/active", async (req, res) => {
+app.get("/api/trades/active", authMiddleware, async (req, res) => {
 
     try {
 
@@ -232,7 +232,7 @@ app.get("/api/report/send", async (req, res) => {
 // CLOSED TRADES API
 // ==========================
 
-app.get("/api/trades/closed", async (req, res) => {
+app.get("/api/trades/closed", authMiddleware, async (req, res) => {
 
     try {
 

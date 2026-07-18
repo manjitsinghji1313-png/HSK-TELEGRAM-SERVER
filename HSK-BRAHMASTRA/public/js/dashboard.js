@@ -7,6 +7,14 @@ let currentMarket = "ALL";
 
 let currentClosedMarket = "ALL";
 let currentClosedDate = "TODAY";
+
+function authHeaders() {
+
+    return {
+        "x-session-token": localStorage.getItem("sessionToken")
+    };
+
+}
 // ==========================
 // USER EMAIL
 // ==========================
@@ -43,9 +51,22 @@ async function loadStats() {
 
     try {
 
-        const response = await fetch("/api/stats");
+    const response = await fetch("/api/stats", {
+            headers: authHeaders()
+});
 
-        const stats = await response.json();
+if (response.status === 401) {
+
+    localStorage.clear();
+
+    alert("Your account has been logged in from another device.");
+
+    window.location.href = "/login.html";
+
+    return;
+}
+
+    const stats = await response.json();
 
         document.getElementById("membersCount").innerText = stats.members;
 
@@ -129,7 +150,6 @@ function renderTrades() {
 attachTradeEvents();
 
 }
-
 // ==========================
 // LOAD ACTIVE TRADES
 // ==========================
@@ -138,11 +158,22 @@ async function loadActiveTrades() {
 
     try {
 
-        const response = await fetch("/api/trades/active");
+        const response = await fetch("/api/trades/active", {
+            headers: authHeaders()
+        });
+
+        if (response.status === 401) {
+
+            localStorage.clear();
+
+            alert("Your account has been logged in from another device.");
+
+            window.location.href = "/login.html";
+
+            return;
+        }
 
         allActiveTrades = await response.json();
-
-        
 
         renderTrades();
 
@@ -153,10 +184,6 @@ async function loadActiveTrades() {
     }
 
 }
-
-loadActiveTrades();
-loadClosedTrades();
-
 // ==========================
 // LOAD CLOSED TRADES
 // ==========================
@@ -165,11 +192,23 @@ async function loadClosedTrades() {
 
     try {
 
-        const response = await fetch("/api/trades/closed");
+        const response = await fetch("/api/trades/closed", {
+            headers: authHeaders()
+        });
+
+        if (response.status === 401) {
+
+            localStorage.clear();
+
+            alert("Your account has been logged in from another device.");
+
+            window.location.href = "/login.html";
+
+            return;
+        }
 
         allClosedTrades = await response.json();
 
-        
         renderClosedTrades();
 
     } catch (err) {
@@ -179,12 +218,11 @@ async function loadClosedTrades() {
     }
 
 }
-
 // ==========================
 // RENDER CLOSED TRADES
 // ==========================
 
-function renderClosedTrades() {
+    function renderClosedTrades() {
 
     const tbody = document.getElementById("closedTradesBody");
 

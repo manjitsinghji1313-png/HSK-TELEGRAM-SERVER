@@ -43,7 +43,12 @@ loginBtn.addEventListener("click", async () => {
             localStorage.setItem(
                 "userEmail",
                 result.user.email
-            );
+        );
+
+            localStorage.setItem(
+            "sessionToken",
+            result.sessionToken
+        );
 
             window.location.href = "/dashboard.html";
 
