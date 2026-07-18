@@ -179,15 +179,6 @@ app.get("/api/report/send", async (req, res) => {
 
         const stats = await db.getDashboardStats(market);
 
-        const { data: symbolRow } = await supabase
-    .from("trades")
-    .select("market")
-    .neq("status", "ACTIVE")
-    .order("close_time", { ascending: false })
-    .limit(1)
-    .single();
-
-const market = symbolRow?.market || "ALL";
 
         const message = `
 📊 HSK BRAHMASTRA
