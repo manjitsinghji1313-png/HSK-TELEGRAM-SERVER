@@ -141,9 +141,33 @@ app.get("/api/trades/active", async (req, res) => {
 
 });
 
+
+
+ // ==========================
+// TODAY REPORT
+// ==========================
+
 app.get("/api/report/today", async (req, res) => {
 
-    // ==========================
+    try {
+
+        const report = await db.getClosedTrades();
+
+        res.json(report);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: "Failed"
+        });
+
+    }
+
+});
+
+// ==========================
 // SEND DAILY REPORT NOW
 // ==========================
 
@@ -179,7 +203,9 @@ app.get("/api/report/send", async (req, res) => {
 #HSKBRAHMASTRA
 `;
 
-        await require("./services/telegramService").sendMessage(message);
+        const telegramService = require("./services/telegramService");
+
+        await telegramService.sendMessage(message);
 
         res.json({
             success: true,
@@ -197,25 +223,7 @@ app.get("/api/report/send", async (req, res) => {
 
     }
 
-});
-
-    try {
-
-        const report = await db.getClosedTrades();
-
-        res.json(report);
-
-    } catch (err) {
-
-        console.error(err);
-
-        res.status(500).json({
-            error: "Failed"
-        });
-
-    }
-
-});
+    });
 
 // ==========================
 // CLOSED TRADES API
@@ -240,3 +248,4 @@ app.get("/api/trades/closed", async (req, res) => {
     }
 
 });
+
