@@ -2,6 +2,20 @@ const supabase = require("../config/supabase");
 
 module.exports = {
 
+    // Total Points
+    const { data: pointRows, error: pointError } = await supabase
+        .from("trades")
+        .select("points")
+        .neq("status", "ACTIVE")
+        .gte("close_time", start.toISOString());
+
+    if (pointError) throw pointError;
+
+    const totalPoints = (pointRows || []).reduce(
+        (sum, row) => sum + Number(row.points || 0),
+        0
+);
+
     // ==========================
     // DASHBOARD STATS
     // ==========================
@@ -66,7 +80,7 @@ module.exports = {
             targetHits: targetHits || 0,
             stopLosses: stopLosses || 0,
             winRate,
-            pnl: 0
+            pnl: totalPoints
         };
     },
 
