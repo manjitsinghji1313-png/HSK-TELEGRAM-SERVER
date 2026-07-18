@@ -45,9 +45,7 @@ router.post("/", async (req, res) => {
 🆔 Trade ID : ${data.tradeKey}
 
 ━━━━━━━━━━━━━━━━━━
-
 ⚠️ <b>Disclaimer</b>
-
 • Educational Purpose Only
 • Not SEBI Registered
 • Trade at Your Own Risk`;
@@ -77,7 +75,6 @@ router.post("/", async (req, res) => {
 🆔 Trade ID : ${data.tradeKey}
 ━━━━━━━━━━━━━━━━━━
 ⚠️ <b>Disclaimer</b>
-
 • Educational Purpose Only
 • Not SEBI Registered
 • Trade at Your Own Risk`;
