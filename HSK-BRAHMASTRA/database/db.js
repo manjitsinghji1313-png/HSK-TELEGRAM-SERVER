@@ -7,6 +7,9 @@ module.exports = {
     // ==========================
     async getDashboardStats() {
 
+        const start = new Date();
+        start.setHours(0, 0, 0, 0);
+
         // Members
         const { count: members, error: memberError } = await supabase
             .from("members")
@@ -26,7 +29,8 @@ module.exports = {
         const { count: closedTrades, error: closedError } = await supabase
             .from("trades")
             .select("*", { count: "exact", head: true })
-            .neq("status", "ACTIVE");
+            .neq("status", "ACTIVE")
+            .gte("close_time", start.toISOString());
 
         if (closedError) throw closedError;
 
@@ -34,7 +38,8 @@ module.exports = {
         const { count: targetHits, error: targetError } = await supabase
             .from("trades")
             .select("*", { count: "exact", head: true })
-            .eq("status", "TARGET HIT");
+            .eq("status", "TARGET HIT")
+            .gte("close_time", start.toISOString());
 
         if (targetError) throw targetError;
 
@@ -42,7 +47,8 @@ module.exports = {
         const { count: stopLosses, error: stopError } = await supabase
             .from("trades")
             .select("*", { count: "exact", head: true })
-            .eq("status", "STOP LOSS");
+            .eq("status", "STOP LOSS")
+            .gte("close_time", start.toISOString());
 
         if (stopError) throw stopError;
 
@@ -88,32 +94,34 @@ module.exports = {
 
         return data;
     },
+// ==========================
+// CLOSED TRADES
+// ==========================
+async getClosedTrades() {
 
-    // ==========================
-    // CLOSED TRADES
-    // ==========================
-    async getClosedTrades() {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
 
-        const { data, error } = await supabase
-            .from("trades")
-            .select(`
-                trade_id,
-                market,
-                side,
-                strike,
-                entry,
-                sl,
-                tg1,
-                points,
-                status,
-                close_time
-            `)
-            .neq("status", "ACTIVE")
-            .order("close_time", { ascending: false });
+    const { data, error } = await supabase
+        .from("trades")
+        .select(`
+            trade_id,
+            market,
+            side,
+            strike,
+            entry,
+            sl,
+            tg1,
+            points,
+            status,
+            close_time
+        `)
+        .neq("status", "ACTIVE")
+        .gte("close_time", start.toISOString())
+        .order("close_time", { ascending: false });
 
-        if (error) throw error;
+    if (error) throw error;
 
-        return data;
-    }
-
+    return data;
+}
 };
