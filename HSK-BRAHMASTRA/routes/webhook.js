@@ -9,30 +9,42 @@ const telegramService = require("../services/telegramService");
 // TradingView Webhook
 // ==========================
 
-router.post("/", async (req, res) => {
+router.post("/", (req, res) => {
 
-    try {
+    const data = req.body;
 
-        console.log("=================================");
-        console.log("📩 WEBHOOK RECEIVED");
-        console.log(req.body);
-        console.log("=================================");
+    console.log("=================================");
+    console.log("📩 WEBHOOK RECEIVED");
+    console.log(data);
+    console.log("=================================");
 
-        const data = req.body;
+    // ✅ TradingView ko turant response
+    res.status(200).json({
+        success: true,
+        message: "OK"
+    });
 
-        let message = "";
+    // ==========================
+    // Background Processing
+    // ==========================
 
-        switch (data.cmd) {
+    (async () => {
 
-            // ==========================
-            // CE ENTRY
-            // ==========================
+        try {
 
-            case "CE_ENTRY":
+            let message = "";
 
-    await tradeService.openTrade(data);
+            switch (data.cmd) {
 
-    message =
+                // ==========================
+                // CE ENTRY
+                // ==========================
+
+                case "CE_ENTRY":
+
+                    await tradeService.openTrade(data);
+
+                    message =
 `🟢 <b>CE ENTRY</b>
 
 📊 Symbol : ${data.symbol}
@@ -50,19 +62,17 @@ router.post("/", async (req, res) => {
 • Not SEBI Registered
 • Trade at Your Own Risk`;
 
-    break;
+                    break;
 
-                break;
+                // ==========================
+                // PE ENTRY
+                // ==========================
 
-            // ==========================
-            // PE ENTRY
-            // ==========================
+                case "PE_ENTRY":
 
-            case "PE_ENTRY":
+                    await tradeService.openTrade(data);
 
-    await tradeService.openTrade(data);
-
-    message =
+                    message =
 `🔴 <b>PE ENTRY</b>
 
 📊 Symbol : ${data.symbol}
@@ -73,96 +83,82 @@ router.post("/", async (req, res) => {
 🎯 TG1 : ${data.tg1}
 
 🆔 Trade ID : ${data.tradeKey}
+
 ━━━━━━━━━━━━━━━━━━
 ⚠️ <b>Disclaimer</b>
 • Educational Purpose Only
 • Not SEBI Registered
 • Trade at Your Own Risk`;
 
+                    break;
 
-                break;
+                // ==========================
+                // TARGET HIT
+                // ==========================
 
-            // ==========================
-            // TARGET HIT
-            // ==========================
+                case "TG1_HIT":
 
-            case "TG1_HIT":
+                    await tradeService.closeTrade(data);
 
-                await tradeService.closeTrade(data);
-
-                message =
+                    message =
 `🎯 <b>TARGET HIT</b>
 
 📊 Symbol : ${data.symbol}
 🆔 Trade : ${data.tradeKey}`;
 
-                break;
+                    break;
 
-            // ==========================
-            // STOP LOSS
-            // ==========================
+                // ==========================
+                // STOP LOSS
+                // ==========================
 
-            case "SL_HIT":
+                case "SL_HIT":
 
-                await tradeService.closeTrade(data);
+                    await tradeService.closeTrade(data);
 
-                message =
+                    message =
 `🛑 <b>STOP LOSS HIT</b>
 
 📊 Symbol : ${data.symbol}
 🆔 Trade : ${data.tradeKey}`;
 
-                break;
+                    break;
 
-            // ==========================
-            // EXIT
-            // ==========================
+                // ==========================
+                // EXIT
+                // ==========================
 
-            case "EXIT":
+                case "EXIT":
 
-                await tradeService.closeTrade(data);
+                    await tradeService.closeTrade(data);
 
-                message =
+                    message =
 `📤 <b>TRADE EXIT</b>
 
 📊 Symbol : ${data.symbol}
 🆔 Trade : ${data.tradeKey}`;
 
-                break;
+                    break;
+
+                default:
+                    console.log("⚠ Unknown Command :", data.cmd);
+            }
 
             // ==========================
-            // UNKNOWN
+            // SEND TELEGRAM
             // ==========================
 
-            default:
+            if (message) {
+                await telegramService.sendMessage(message);
+            }
 
-                console.log("⚠ Unknown Command :", data.cmd);
+        } catch (err) {
+
+            console.error("❌ Background Processing Error:", err);
 
         }
 
-        // ==========================
-        // SEND TELEGRAM MESSAGE
-        // ==========================
-
-        if (message) {
-            await telegramService.sendMessage(message);
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "Webhook Received"
-        });
-
-    } catch (err) {
-
-        console.error("❌ Webhook Error:", err);
-
-        res.status(500).json({
-            success: false,
-            error: err.message
-        });
-
-    }
+    })();
 
 });
 

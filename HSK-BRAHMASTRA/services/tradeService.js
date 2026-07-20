@@ -8,6 +8,11 @@ async function openTrade(data) {
 
     try {
 
+        if (!data.tradeKey) {
+            console.error("❌ Missing tradeKey");
+            return;
+        }
+
         // ==========================
         // Duplicate Check
         // ==========================
@@ -20,7 +25,7 @@ async function openTrade(data) {
 
         if (checkError) {
             console.error("❌ Duplicate Check Error:", checkError);
-            throw checkError;
+            return;
         }
 
         if (existingTrade) {
@@ -52,7 +57,7 @@ async function openTrade(data) {
 
         if (error) {
             console.error("❌ Open Trade Error:", error);
-            throw error;
+            return;
         }
 
         console.log("✅ Trade Saved:", data.tradeKey);
@@ -73,40 +78,53 @@ async function closeTrade(data) {
 
     try {
 
-                              let finalStatus = data.status || data.cmd;
+        if (!data.tradeKey) {
+            console.error("❌ Missing tradeKey");
+            return;
+        }
 
-// Convert webhook commands to readable status
-if (finalStatus === "TG1_HIT") {
-    finalStatus = "TARGET HIT";
-}
+        let finalStatus = data.status || data.cmd;
 
-if (finalStatus === "SL_HIT") {
-    finalStatus = "STOP LOSS";
-}
+        switch (finalStatus) {
+            case "TG1_HIT":
+                finalStatus = "TARGET HIT";
+                break;
 
-const updateData = {
-    status: finalStatus,
-    close_time: new Date().toISOString()
-};
+            case "SL_HIT":
+                finalStatus = "STOP LOSS";
+                break;
+        }
 
-        // Calculate points automatically for TARGET HIT
-if (finalStatus === "TARGET HIT") {
+        const updateData = {
+            status: finalStatus,
+            close_time: new Date().toISOString()
+        };
 
-    const { data: trade, error: fetchError } = await supabase
-        .from("trades")
-        .select("entry, tg1")
-        .eq("trade_key", data.tradeKey)
-        .single();
+        // ==========================
+        // Calculate Points
+        // ==========================
 
-    if (!fetchError && trade) {
-        updateData.points = Math.abs(Number(trade.tg1) - Number(trade.entry));
-    }
+        if (finalStatus === "TARGET HIT") {
 
-} else if (data.points !== undefined) {
+            const { data: trade, error: fetchError } = await supabase
+                .from("trades")
+                .select("entry, tg1")
+                .eq("trade_key", data.tradeKey)
+                .single();
 
-    updateData.points = Number(data.points);
+            if (!fetchError && trade) {
+                updateData.points = Math.abs(Number(trade.tg1) - Number(trade.entry));
+            }
 
-}
+        } else if (data.points !== undefined) {
+
+            updateData.points = Number(data.points);
+
+        }
+
+        // ==========================
+        // Update Trade
+        // ==========================
 
         const { error } = await supabase
             .from("trades")
@@ -115,7 +133,7 @@ if (finalStatus === "TARGET HIT") {
 
         if (error) {
             console.error("❌ Close Trade Error:", error);
-            throw error;
+            return;
         }
 
         console.log("✅ Trade Closed:", data.tradeKey);
