@@ -4,7 +4,7 @@ const router = express.Router();
 const tradeService = require("../services/tradeService");
 const telegramService = require("../services/telegramService");
 
-const placeOrder = require("../broker/placeOrder");
+const placeSuperOrder = require("../broker/placeSuperOrder");
 const exitOrder = require("../broker/exitOrder");
 
 const systemService = require("../services/systemService");
@@ -77,39 +77,36 @@ router.post("/", (req, res) => {
                         // PLACE DHAN ORDER
                         // ==========================
 
-                        await placeOrder({
+                        await placeSuperOrder({
 
-                        
+    tradeKey: data.tradeKey,
 
-                            tradeKey: data.tradeKey,
+    transactionType:
+        data.transactionType || "BUY",
 
-                            transactionType:
-                                data.transactionType || "BUY",
+    productType:
+        data.productType || "INTRADAY",
 
-                            productType:
-                                data.productType || "INTRADAY",
+    orderType:
+        data.orderType || "LIMIT",
 
-                            orderType:
-                                data.orderType || "LIMIT",
+    symbol: data.symbol,
 
-                            symbol: data.symbol,
+    strike: Number(data.strike),
 
-                            strike: Number(data.strike),
+    optionType:
+        data.optionType ||
+        (data.cmd === "CE_ENTRY" ? "CE" : "PE"),
 
-                            optionType:
-                                data.optionType ||
-                                (data.cmd === "CE_ENTRY"
-                                    ? "CE"
-                                    : "PE"),
+    price: Number(data.limitPrice || data.price),
 
-                            price: Number(
-                                data.limitPrice || data.price
-                            ),
+    sl: Number(data.sl),
 
-                            lots: Number(data.lots || 1)
+    tg1: Number(data.tg1),
 
-                        });
+    lots: Number(data.lots || 1)
 
+});
 
                         console.log("================================");
                         console.log("✅ PLACE ORDER RETURNED");
