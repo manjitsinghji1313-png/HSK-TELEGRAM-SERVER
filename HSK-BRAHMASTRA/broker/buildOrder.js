@@ -17,6 +17,20 @@ async function buildOrder({
         strike,
         optionType
     );
+    const option = await findInstrument(
+    symbol,
+    strike,
+    optionType
+);
+
+console.log("================================");
+console.log("OPTION FOUND");
+console.log(option);
+console.log("================================");
+
+if (!option) {
+    throw new Error("Instrument Not Found");
+}
 
     if (!option) {
         throw new Error("Instrument Not Found");
