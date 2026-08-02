@@ -31,6 +31,8 @@ async function buildOrder({
 
         dhanClientId: config.CLIENT_ID,
 
+        correlationId: Date.now().toString(),
+
         transactionType,
 
         exchangeSegment: option.exchange,
