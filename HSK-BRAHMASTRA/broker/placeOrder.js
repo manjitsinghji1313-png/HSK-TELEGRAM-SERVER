@@ -81,24 +81,30 @@ async function placeOrder(orderData) {
 
     } catch (err) {
 
-        console.log("❌ ORDER FAILED");
+    console.log("❌ ORDER FAILED");
 
-        if (err.response) {
+    if (err.response) {
 
-            console.log("================================");
-            console.log("DHAN RESPONSE");
-            console.log(JSON.stringify(err.response.data, null, 2));
-            console.log("================================");
+        console.log("================================");
+        console.log("STATUS :", err.response.status);
 
-        } else {
+        console.log("HEADERS :");
+        console.log(err.response.headers);
 
-            console.log(err.message);
+        console.log("DHAN RESPONSE :");
+        console.log(JSON.stringify(err.response.data, null, 2));
 
-        }
+        console.log("================================");
 
-        throw err;
+    } else {
+
+        console.log(err.message);
 
     }
+
+    throw err;
+
+}
 
 }
 
