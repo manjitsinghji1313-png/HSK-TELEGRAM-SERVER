@@ -79,10 +79,7 @@ router.post("/", (req, res) => {
 
                         await placeOrder({
 
-                        console.log("================================");
-                        console.log("✅ PLACE ORDER RETURNED");
-                        console.log("================================");
-
+                        
 
                             tradeKey: data.tradeKey,
 
@@ -112,6 +109,12 @@ router.post("/", (req, res) => {
                             lots: Number(data.lots || 1)
 
                         });
+
+
+                        console.log("================================");
+                        console.log("✅ PLACE ORDER RETURNED");
+                        console.log("================================");
+
 
                         console.log("✅ DHAN ORDER SUCCESS");
 

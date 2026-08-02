@@ -1,5 +1,16 @@
 require("dotenv").config();
 
+require("dotenv").config();
+
+const pkg = require("node-telegram-bot-api");
+
+console.log("PACKAGE KEYS:", Object.keys(pkg));
+console.log("TYPEOF pkg:", typeof pkg);
+console.log("TYPEOF pkg.default:", typeof pkg.default);
+console.log("TYPEOF pkg.TelegramBot:", typeof pkg.TelegramBot);
+
+process.exit(0);
+
 const { TelegramBot } = require("node-telegram-bot-api");
 const systemService = require("./services/systemService");
 
