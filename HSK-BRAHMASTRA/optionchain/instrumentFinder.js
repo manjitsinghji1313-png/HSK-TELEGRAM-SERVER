@@ -18,6 +18,10 @@ async function findInstrument(symbol, strike, optionType) {
                     row.SEM_OPTION_TYPE === optionType
                 ) {
 
+                    console.log("MATCH FOUND");
+                    console.log(row);
+
+
                     options.push({
 
                         securityId: row.SEM_SMST_SECURITY_ID,
