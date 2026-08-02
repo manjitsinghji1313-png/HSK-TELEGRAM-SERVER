@@ -51,6 +51,14 @@ app.get("/api/health", (req, res) => {
     });
 
 });
+
+app.get("/api/test", (req, res) => {
+    res.send("API Working");
+});
+
+// ==========================
+// SET DHAN IP FROM RENDER
+// ==========================
 app.get("/api/test", (req, res) => {
     res.send("API Working");
 });
@@ -86,6 +94,30 @@ app.get("/api/set-ip", async (req, res) => {
         res.status(500).json(
             err.response?.data || { error: err.message }
         );
+
+    }
+
+});
+
+// ==========================
+// GET CURRENT RENDER IP
+// ==========================
+
+app.get("/myip", async (req, res) => {
+
+    try {
+
+        const response = await axios.get(
+            "https://api.ipify.org?format=json"
+        );
+
+        res.json(response.data);
+
+    } catch (err) {
+
+        res.status(500).json({
+            error: err.message
+        });
 
     }
 
