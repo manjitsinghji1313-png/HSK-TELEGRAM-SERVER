@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+require("./telegramBot");
+
+const express = require("express");
 
 
 const authRoutes = require("./routes/auth");
@@ -7,7 +10,7 @@ const dashboardRoutes = require("./routes/dashboard");
 const authMiddleware = require("./middleware/authMiddleware");
 const webhookRoutes = require("./routes/webhook");
 require("./services/scheduler");
-const express = require("express");
+
 const db = require("./database/db");
 
 const http = require("http");

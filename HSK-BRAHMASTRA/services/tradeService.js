@@ -13,10 +13,6 @@ async function openTrade(data) {
             return;
         }
 
-        // ==========================
-        // Duplicate Check
-        // ==========================
-
         const { data: existingTrade, error: checkError } = await supabase
             .from("trades")
             .select("id")
@@ -32,10 +28,6 @@ async function openTrade(data) {
             console.log("⚠ Trade Already Exists:", data.tradeKey);
             return;
         }
-
-        // ==========================
-        // Save Trade
-        // ==========================
 
         const { error } = await supabase
             .from("trades")
@@ -86,6 +78,7 @@ async function closeTrade(data) {
         let finalStatus = data.status || data.cmd;
 
         switch (finalStatus) {
+
             case "TG1_HIT":
                 finalStatus = "TARGET HIT";
                 break;
@@ -93,11 +86,15 @@ async function closeTrade(data) {
             case "SL_HIT":
                 finalStatus = "STOP LOSS";
                 break;
+
         }
 
         const updateData = {
+
             status: finalStatus,
+
             close_time: new Date().toISOString()
+
         };
 
         // ==========================
@@ -113,7 +110,10 @@ async function closeTrade(data) {
                 .single();
 
             if (!fetchError && trade) {
-                updateData.points = Math.abs(Number(trade.tg1) - Number(trade.entry));
+
+                updateData.points =
+                    Math.abs(Number(trade.tg1) - Number(trade.entry));
+
             }
 
         } else if (data.points !== undefined) {
@@ -122,18 +122,17 @@ async function closeTrade(data) {
 
         }
 
-        // ==========================
-        // Update Trade
-        // ==========================
-
         const { error } = await supabase
             .from("trades")
             .update(updateData)
             .eq("trade_key", data.tradeKey);
 
         if (error) {
+
             console.error("❌ Close Trade Error:", error);
+
             return;
+
         }
 
         console.log("✅ Trade Closed:", data.tradeKey);
@@ -145,8 +144,99 @@ async function closeTrade(data) {
     }
 
 }
+// ==========================
+// SAVE BROKER ORDER
+// ==========================
+
+async function saveBrokerOrder(data) {
+
+    try {
+
+        const { error } = await supabase
+                .from("broker_orders")
+                .upsert(
+                    [{
+
+                        trade_key: data.tradeKey,
+
+                        broker_order_id: data.orderId,
+
+                        security_id: data.securityId,
+
+                        exchange_segment: data.exchangeSegment,
+
+                        quantity: Number(data.quantity),
+
+                        product_type: data.productType,
+
+                        status: data.status || "OPEN"
+
+                    }],
+                    {
+                        onConflict: "trade_key"
+                    }
+                );
+
+        if (error) {
+
+            console.error("❌ Save Broker Order:", error);
+
+            return;
+
+        }
+
+        console.log("✅ Broker Order Saved");
+
+    } catch (err) {
+
+        console.error("❌ saveBrokerOrder()", err);
+
+    }
+
+}
+
+// ==========================
+// GET BROKER ORDER
+// ==========================
+
+async function getBrokerOrder(tradeKey) {
+
+    try {
+
+        const { data, error } = await supabase
+            .from("broker_orders")
+            .select("*")
+            .eq("trade_key", tradeKey)
+            .single();
+
+        if (error) {
+
+            console.error("❌ Get Broker Order:", error);
+
+            return null;
+
+        }
+
+        return data;
+
+    } catch (err) {
+
+        console.error("❌ getBrokerOrder()", err);
+
+        return null;
+
+    }
+
+}
 
 module.exports = {
+
     openTrade,
-    closeTrade
+
+    closeTrade,
+
+    saveBrokerOrder,
+
+    getBrokerOrder
+
 };
