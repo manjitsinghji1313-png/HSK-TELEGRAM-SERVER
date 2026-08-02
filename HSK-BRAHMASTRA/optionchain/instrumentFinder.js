@@ -18,9 +18,20 @@ async function findInstrument(symbol, strike, optionType) {
                     row.SEM_OPTION_TYPE === optionType
                 ) {
 
+                    console.log("================================");
                     console.log("MATCH FOUND");
-                    console.log(row);
+                    console.log("================================");
 
+                    console.log("Trading Symbol :", row.SEM_TRADING_SYMBOL);
+                    console.log("Security ID    :", row.SEM_SMST_SECURITY_ID);
+                    console.log("Exchange ID    :", row.SEM_EXM_EXCH_ID);
+                    console.log("Strike Price   :", row.SEM_STRIKE_PRICE);
+                    console.log("Option Type    :", row.SEM_OPTION_TYPE);
+                    console.log("Expiry Date    :", row.SEM_EXPIRY_DATE);
+                    console.log("Expiry Flag    :", row.SEM_EXPIRY_FLAG);
+                    console.log("Lot Size       :", row.SEM_LOT_UNITS);
+
+                    console.log("================================");
 
                     options.push({
 
@@ -51,23 +62,32 @@ async function findInstrument(symbol, strike, optionType) {
 
             .on("end", () => {
 
-                if (options.length === 0)
+                if (options.length === 0) {
+
+                    console.log("❌ NO MATCH FOUND");
                     return resolve(null);
+
+                }
 
                 // Weekly First
                 let weekly = options.filter(x => x.expiryFlag === "W");
 
                 if (weekly.length > 0) {
 
-                    weekly.sort((a,b)=>a.expiry-b.expiry);
+                    weekly.sort((a, b) => a.expiry - b.expiry);
+
+                    console.log("✅ USING WEEKLY CONTRACT");
+                    console.log(weekly[0]);
 
                     return resolve(weekly[0]);
 
                 }
 
                 // Monthly
+                options.sort((a, b) => a.expiry - b.expiry);
 
-                options.sort((a,b)=>a.expiry-b.expiry);
+                console.log("✅ USING MONTHLY CONTRACT");
+                console.log(options[0]);
 
                 resolve(options[0]);
 
@@ -80,7 +100,5 @@ async function findInstrument(symbol, strike, optionType) {
 }
 
 module.exports = {
-
     findInstrument
-
 };
