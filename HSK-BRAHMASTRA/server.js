@@ -51,30 +51,41 @@ app.get("/api/health", (req, res) => {
     });
 
 });
-
 app.get("/api/test", (req, res) => {
     res.send("API Working");
 });
 
 // ==========================
-// CHECK SERVER PUBLIC IP
+// SET DHAN IP FROM RENDER
 // ==========================
 
-app.get("/myip", async (req, res) => {
+app.get("/api/set-ip", async (req, res) => {
 
     try {
 
-        const { data } = await axios.get(
-            "https://api.ipify.org?format=json"
+        const response = await axios.post(
+            "https://api.dhan.co/v2/ip/setIP",
+            {
+                dhanClientId: config.CLIENT_ID,
+                ip: "74.220.48.219",
+                ipFlag: "PRIMARY"
+            },
+            {
+                headers: {
+                    "access-token": config.ACCESS_TOKEN,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                }
+            }
         );
 
-        res.json(data);
+        res.json(response.data);
 
     } catch (err) {
 
-        res.status(500).json({
-            error: err.message
-        });
+        res.status(500).json(
+            err.response?.data || { error: err.message }
+        );
 
     }
 
