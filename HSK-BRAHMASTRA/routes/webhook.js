@@ -4,7 +4,7 @@ const router = express.Router();
 const tradeService = require("../services/tradeService");
 const telegramService = require("../services/telegramService");
 
-const placeSuperOrder = require("../broker/placeSuperOrder");
+const placeOrder = require("../broker/placeOrder");
 const exitOrder = require("../broker/exitOrder");
 
 const systemService = require("../services/systemService");
@@ -77,7 +77,7 @@ router.post("/", (req, res) => {
                         // PLACE DHAN ORDER
                         // ==========================
 
-                        await placeSuperOrder({
+                        await placeOrder({
 
     tradeKey: data.tradeKey,
 
