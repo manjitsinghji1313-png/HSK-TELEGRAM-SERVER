@@ -3,7 +3,7 @@ require("dotenv").config();
 // require("./telegramBot");
 
 const express = require("express");
-
+const axios = require("axios");
 
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
@@ -54,6 +54,30 @@ app.get("/api/health", (req, res) => {
 
 app.get("/api/test", (req, res) => {
     res.send("API Working");
+});
+
+// ==========================
+// CHECK SERVER PUBLIC IP
+// ==========================
+
+app.get("/myip", async (req, res) => {
+
+    try {
+
+        const { data } = await axios.get(
+            "https://api.ipify.org?format=json"
+        );
+
+        res.json(data);
+
+    } catch (err) {
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
 });
 
 const PORT = process.env.PORT || 3001;
