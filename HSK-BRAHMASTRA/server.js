@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const express = require("express");
 const axios = require("axios");
-
+const config = require("./broker/config");
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
 const authMiddleware = require("./middleware/authMiddleware");
