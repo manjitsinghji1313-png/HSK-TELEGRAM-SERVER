@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-require("./telegramBot");
+// require("./telegramBot");
 
 const express = require("express");
 
