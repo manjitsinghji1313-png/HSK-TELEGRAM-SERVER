@@ -23,6 +23,17 @@ async function placeOrder(orderData) {
         // ==========================
         // Place Order
         // ==========================
+        console.log("================================");
+        console.log("REQUEST URL");
+        console.log(dhan.defaults.baseURL + "/orders");
+
+        console.log("REQUEST HEADERS");
+        console.log(dhan.defaults.headers);
+
+        console.log("REQUEST BODY");
+        console.log(JSON.stringify(order, null, 2));
+        console.log("================================");
+
 
         const response = await dhan.post("/orders", order);
 
