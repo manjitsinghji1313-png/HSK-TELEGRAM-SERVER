@@ -15,6 +15,11 @@ async function placeOrder(orderData) {
         console.log("📤 Sending Order...");
         console.log(order);
 
+        console.log("================================");
+        console.log("FINAL ORDER PAYLOAD");
+        console.log(JSON.stringify(order, null, 2));
+        console.log("================================");
+
         // ==========================
         // Place Order
         // ==========================
@@ -29,39 +34,39 @@ async function placeOrder(orderData) {
         // ==========================
 
         const orderId =
-    response.data.orderId ||
-    response.data.data?.orderId ||
-    null;
+            response.data.orderId ||
+            response.data.data?.orderId ||
+            null;
 
-if (!orderId) {
-    throw new Error("Broker Order ID not received");
-}
+        if (!orderId) {
+            throw new Error("Broker Order ID not received");
+        }
 
-await tradeService.saveBrokerOrder({
+        await tradeService.saveBrokerOrder({
 
-    tradeKey: orderData.tradeKey,
+            tradeKey: orderData.tradeKey,
 
-    orderId: orderId,
+            orderId,
 
-    securityId: order.securityId,
+            securityId: order.securityId,
 
-    exchangeSegment: order.exchangeSegment,
+            exchangeSegment: order.exchangeSegment,
 
-    quantity: order.quantity,
+            quantity: order.quantity,
 
-    productType: order.productType,
+            productType: order.productType,
 
-    status: "OPEN"
+            status: "OPEN"
 
-});
+        });
 
         return {
 
-    orderId,
+            orderId,
 
-    brokerResponse: response.data
+            brokerResponse: response.data
 
-};
+        };
 
     } catch (err) {
 
@@ -69,7 +74,10 @@ await tradeService.saveBrokerOrder({
 
         if (err.response) {
 
-            console.log(err.response.data);
+            console.log("================================");
+            console.log("DHAN RESPONSE");
+            console.log(JSON.stringify(err.response.data, null, 2));
+            console.log("================================");
 
         } else {
 
