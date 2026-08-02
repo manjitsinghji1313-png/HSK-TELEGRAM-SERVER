@@ -1,6 +1,7 @@
 const dhan = require("./dhanApi");
 const buildSuperOrder = require("./buildSuperOrder");
 const tradeService = require("../services/tradeService");
+const axios = require("axios");
 
 async function placeSuperOrder(orderData) {
 
@@ -11,6 +12,13 @@ async function placeSuperOrder(orderData) {
         console.log("================================");
         console.log("SUPER ORDER PAYLOAD");
         console.log(JSON.stringify(order, null, 2));
+        console.log("================================");
+
+        const { data } = await axios.get("https://api.ipify.org?format=json");
+
+        console.log("================================");
+        console.log("CURRENT SERVER IP");
+        console.log(data.ip);
         console.log("================================");
 
         const response = await dhan.post(
