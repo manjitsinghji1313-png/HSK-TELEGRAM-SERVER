@@ -88,7 +88,7 @@ router.post("/", (req, res) => {
         data.productType || "INTRADAY",
 
     orderType:
-        data.orderType || "LIMIT",
+        data.orderType || "MARKET",
 
     symbol: data.symbol,
 

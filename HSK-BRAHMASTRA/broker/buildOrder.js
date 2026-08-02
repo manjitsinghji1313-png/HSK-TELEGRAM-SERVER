@@ -27,11 +27,9 @@ async function buildOrder({
         throw new Error("Instrument Not Found");
     }
 
-    return {
+    const order = {
 
         dhanClientId: config.CLIENT_ID,
-
-        correlationId: Date.now().toString(),
 
         transactionType,
 
@@ -45,19 +43,21 @@ async function buildOrder({
 
         securityId: option.securityId,
 
-        quantity: option.lotSize * lots,
-
-        price: Number(price),
-
-        triggerPrice: 0,
-
-        afterMarketOrder: false,
-
-        amoTime: "",
-
-        disclosedQuantity: 0
+        quantity: option.lotSize * lots
 
     };
+
+    // LIMIT order me hi price bhejna
+    if (orderType === "LIMIT") {
+        order.price = Number(price);
+    }
+
+    console.log("================================");
+    console.log("FINAL ORDER OBJECT");
+    console.log(JSON.stringify(order, null, 2));
+    console.log("================================");
+
+    return order;
 
 }
 
