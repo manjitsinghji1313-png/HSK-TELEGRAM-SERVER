@@ -134,31 +134,9 @@ HSK BRAHMASTRA`
     );
 
 });
-// ==========================
-// START BOT
-// ==========================
 
-(async () => {
 
-    try {
 
-        await bot.telegram.deleteWebhook();
-
-        await bot.launch();
-
-        console.log("🤖 Telegram Bot Started");
-
-    } catch (err) {
-
-        console.error(err);
-
-    }
-
-})();
-
-// Graceful Stop
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
 module.exports = bot;
 

@@ -1,6 +1,7 @@
 require("dotenv").config();
 
-require("./telegramBot");
+const bot = require("./telegramBot");
+
 
 const express = require("express");
 const axios = require("axios");
@@ -26,6 +27,7 @@ const app = express();
 
 
 const server = http.createServer(app);
+app.use(bot.webhookCallback("/telegram"));
 
 // ==============================
 // MIDDLEWARE
@@ -46,8 +48,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/auth", authRoutes);
 
 app.use("/api", dashboardRoutes);
-
 app.use("/webhook", webhookRoutes);
+
+
 
 // ==============================
 // HEALTH API
@@ -293,7 +296,6 @@ app.get("/myip", async (req, res) => {
 
 });
 const PORT = process.env.PORT || 3001;
-
 // ==============================
 // START SERVER
 // ==============================
@@ -328,34 +330,27 @@ server.listen(PORT, async () => {
 
     }
 
-    console.log("====================================");
-
-});
-
-// ==========================
-// DASHBOARD STATS API
-// ==========================
-
-app.get("/api/stats", authMiddleware, async (req, res) => {
+    // ==========================
+    // TELEGRAM WEBHOOK
+    // ==========================
 
     try {
 
-        const stats = await db.getDashboardStats();
+        await bot.telegram.setWebhook(
+            "https://hsk-telegram-server.onrender.com/telegram"
+        );
 
-        res.json(stats);
+        console.log("✅ Telegram Webhook Set");
 
     } catch (err) {
 
-        console.error(err);
-
-        res.status(500).json({
-            error: "Failed to load stats"
-        });
+        console.log("❌ Telegram Webhook Error:", err.message);
 
     }
 
-});
+    console.log("====================================");
 
+});
 // ==========================
 // ACTIVE TRADES API
 // ==========================
