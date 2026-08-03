@@ -6,8 +6,32 @@ const systemService = require("./services/systemService");
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
 const bot = new TelegramBot(BOT_TOKEN, {
-    polling: true
+    polling: false
 });
+
+(async () => {
+
+    try {
+
+        await bot.deleteWebHook();
+
+        try {
+            await bot.stopPolling();
+        } catch (_) {}
+
+        await bot.startPolling({
+            restart: true
+        });
+
+        console.log("✅ Polling Started");
+
+    } catch (err) {
+
+        console.error("Polling Error:", err);
+
+    }
+
+})();
 
 console.log("🤖 Telegram Bot Started");
 
