@@ -68,6 +68,37 @@ app.get("/api/test", (req, res) => {
 // ==========================
 
 app.get("/api/set-ip", async (req, res) => {
+    // ==========================
+// CHECK DHAN DETECTED IP
+// ==========================
+
+app.get("/api/check-ip", async (req, res) => {
+
+    try {
+
+        const response = await axios.get(
+            "https://api.dhan.co/v2/ip/getIP",
+            {
+                headers: {
+                    "access-token": config.ACCESS_TOKEN,
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        res.json(response.data);
+
+    } catch (err) {
+
+        res.status(500).json(
+            err.response?.data || { error: err.message }
+        );
+
+    }
+
+});
+
+
 
     try {
 
