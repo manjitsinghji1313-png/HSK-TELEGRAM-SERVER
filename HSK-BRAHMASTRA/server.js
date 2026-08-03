@@ -69,6 +69,29 @@ app.get("/api/test", (req, res) => {
 
 app.get("/api/set-ip", async (req, res) => {
     // ==========================
+
+
+
+
+    try {
+
+        const response = await axios.post(
+            "https://api.dhan.co/v2/ip/setIP",
+            {
+                dhanClientId: config.CLIENT_ID,
+                ip: "74.220.48.219",
+                ipFlag: "PRIMARY"
+            },
+            {
+                headers: {
+                    "access-token": config.ACCESS_TOKEN,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+    // ==========================
 // CHECK DHAN DETECTED IP
 // ==========================
 
@@ -98,25 +121,6 @@ app.get("/api/check-ip", async (req, res) => {
 
 });
 
-
-
-    try {
-
-        const response = await axios.post(
-            "https://api.dhan.co/v2/ip/setIP",
-            {
-                dhanClientId: config.CLIENT_ID,
-                ip: "74.220.48.219",
-                ipFlag: "PRIMARY"
-            },
-            {
-                headers: {
-                    "access-token": config.ACCESS_TOKEN,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                }
-            }
-        );
 
         res.json(response.data);
 
