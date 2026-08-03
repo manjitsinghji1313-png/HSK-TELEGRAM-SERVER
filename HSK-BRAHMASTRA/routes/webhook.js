@@ -43,6 +43,24 @@ router.post("/", (req, res) => {
                 case "CE_ENTRY":
                 case "PE_ENTRY": {
 
+                // ==========================
+// CREATE ENTRY MESSAGE
+// ==========================
+
+message =
+`${data.cmd === "CE_ENTRY" ? "🟢" : "🔴"} <b>${data.cmd.replace("_"," ")}</b>
+
+📊 Symbol : ${data.symbol}
+⏱ Timeframe : ${data.timeframe}
+🎯 Strike : ${data.strike}
+💰 Entry : ${data.price}
+🛑 SL : ${data.sl}
+🎯 TG1 : ${data.tg1}
+
+🆔 Trade ID : ${data.tradeKey}
+
+━━━━━━━━━━━━━━━━━━`;    
+
                     // ==========================
                     // AUTO TRADING CHECK
                     // ==========================
@@ -52,19 +70,29 @@ router.post("/", (req, res) => {
 
                     if (!autoTrading) {
 
-                        console.log("⛔ AUTO TRADING DISABLED");
+    console.log("⛔ AUTO TRADING DISABLED");
 
-                        message =
-`⛔ <b>AUTO TRADING DISABLED</b>
+    message +=
+`
 
-📊 Symbol : ${data.symbol}
+🚫 <b>Broker Order Blocked</b>
 
-⚠ Signal Received
+⚙ Auto Trading : OFF
 
-🚫 Broker Order Blocked`;
+━━━━━━━━━━━━━━━━━━
+⚠️ <b>Disclaimer</b>
 
-                        break;
-                    }
+• Educational Purpose Only
+• Not SEBI Registered
+• Trade At Your Own Risk`;
+
+console.log("================================");
+console.log("TELEGRAM MESSAGE");
+console.log(message);
+console.log("================================");
+
+    break;
+}
 
                     try {
 
@@ -160,7 +188,29 @@ router.post("/", (req, res) => {
 
                         return;
 
-                    }
+                    }} catch (err) {
+
+    console.log("❌ DHAN ORDER FAILED");
+    console.log(err.message);
+
+    message +=
+`
+
+❌ <b>Broker Order Failed</b>
+
+Reason :
+${err.message}
+
+━━━━━━━━━━━━━━━━━━
+⚠️ <b>Disclaimer</b>
+
+• Educational Purpose Only
+• Not SEBI Registered
+• Trade At Your Own Risk`;
+
+    break;
+
+}
 
                     message =
 `${data.cmd === "CE_ENTRY" ? "🟢" : "🔴"} <b>${data.cmd.replace("_"," ")}</b>
