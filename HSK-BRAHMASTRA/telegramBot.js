@@ -1,52 +1,21 @@
 require("dotenv").config();
 
-const TelegramBot = require("node-telegram-bot-api");
+const { Telegraf } = require("telegraf");
 const systemService = require("./services/systemService");
 
-const BOT_TOKEN = process.env.BOT_TOKEN;
-
-const bot = new TelegramBot(BOT_TOKEN, {
-    polling: false
-});
-
-(async () => {
-
-    try {
-
-        await bot.deleteWebHook();
-
-        try {
-            await bot.stopPolling();
-        } catch (_) {}
-
-        await bot.startPolling({
-            restart: true
-        });
-
-        console.log("✅ Polling Started");
-
-    } catch (err) {
-
-        console.error("Polling Error:", err);
-
-    }
-
-})();
-
-console.log("🤖 Telegram Bot Started");
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // ==========================
-// START TRADE
+// START
 // ==========================
 
-bot.onText(/^\/start$/, async (msg) => {
+bot.command("start", async (ctx) => {
 
     try {
 
         await systemService.setAutoTrading(true);
 
-        await bot.sendMessage(
-            msg.chat.id,
+        await ctx.reply(
 `🟢 AUTO TRADING ENABLED
 
 🤖 Broker : DHAN
@@ -63,27 +32,23 @@ bot.onText(/^\/start$/, async (msg) => {
 
         console.error(err);
 
-        await bot.sendMessage(
-            msg.chat.id,
-            `❌ ${err.message}`
-        );
+        await ctx.reply(`❌ ${err.message}`);
 
     }
 
 });
 
 // ==========================
-// STOP TRADE
+// STOP
 // ==========================
 
-bot.onText(/^\/stop$/, async (msg) => {
+bot.command("stop", async (ctx) => {
 
     try {
 
         await systemService.setAutoTrading(false);
 
-        await bot.sendMessage(
-            msg.chat.id,
+        await ctx.reply(
 `🔴 AUTO TRADING DISABLED
 
 🤖 Broker : DHAN
@@ -100,10 +65,7 @@ bot.onText(/^\/stop$/, async (msg) => {
 
         console.error(err);
 
-        await bot.sendMessage(
-            msg.chat.id,
-            `❌ ${err.message}`
-        );
+        await ctx.reply(`❌ ${err.message}`);
 
     }
 
@@ -113,17 +75,17 @@ bot.onText(/^\/stop$/, async (msg) => {
 // STATUS
 // ==========================
 
-bot.onText(/^\/status$/, async (msg) => {
+bot.command("status", async (ctx) => {
 
     try {
 
-        const settings = await systemService.getSettings();
+        const settings =
+            await systemService.getSettings();
 
         const status =
             settings.auto_trading ? "🟢 ON" : "🔴 OFF";
 
-        await bot.sendMessage(
-            msg.chat.id,
+        await ctx.reply(
 `🤖 HSK BRAHMASTRA
 
 ━━━━━━━━━━━━━━━━━━
@@ -142,25 +104,19 @@ ${settings.updated_at}
 
         console.error(err);
 
-        await bot.sendMessage(
-            msg.chat.id,
-            `❌ ${err.message}`
-        );
+        await ctx.reply(`❌ ${err.message}`);
 
     }
 
 });
 
-console.log("✅ Commands Loaded");
-
 // ==========================
 // HELP
 // ==========================
 
-bot.onText(/^\/help$/, async (msg) => {
+bot.command("help", async (ctx) => {
 
-    await bot.sendMessage(
-        msg.chat.id,
+    await ctx.reply(
 `🤖 HSK BRAHMASTRA BOT
 
 ━━━━━━━━━━━━━━━━━━
@@ -178,35 +134,31 @@ HSK BRAHMASTRA`
     );
 
 });
-
 // ==========================
-// UNKNOWN COMMAND
+// START BOT
 // ==========================
 
-bot.on("message", async (msg) => {
+(async () => {
 
-    if (!msg.text) return;
+    try {
 
-    if (
-        msg.text === "/starttrade" ||
-        msg.text === "/stoptrade" ||
-        msg.text === "/status" ||
-        msg.text === "/help"
-    ) {
-        return;
-    }
+        await bot.telegram.deleteWebhook();
 
-    if (msg.text.startsWith("/")) {
+        await bot.launch();
 
-        await bot.sendMessage(
-            msg.chat.id,
-            `❌ Unknown Command
+        console.log("🤖 Telegram Bot Started");
 
-Type /help`
-        );
+    } catch (err) {
+
+        console.error(err);
 
     }
 
-});
+})();
+
+// Graceful Stop
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
 module.exports = bot;
+
