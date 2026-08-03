@@ -4,40 +4,50 @@ require("dotenv").config();
 
 const express = require("express");
 const axios = require("axios");
-const config = require("./broker/config");
-const authRoutes = require("./routes/auth");
-const dashboardRoutes = require("./routes/dashboard");
-const authMiddleware = require("./middleware/authMiddleware");
-const webhookRoutes = require("./routes/webhook");
-require("./services/scheduler");
-
-const db = require("./database/db");
-
 const http = require("http");
 const path = require("path");
 const cors = require("cors");
 
+const config = require("./broker/config");
 const supabase = require("./config/supabase");
 
-const app = express();
+const authRoutes = require("./routes/auth");
+const dashboardRoutes = require("./routes/dashboard");
+const webhookRoutes = require("./routes/webhook");
 
+const authMiddleware = require("./middleware/authMiddleware");
+
+const db = require("./database/db");
+
+require("./services/scheduler");
+
+const app = express();
 const server = http.createServer(app);
+
+// ==============================
+// MIDDLEWARE
+// ==============================
 
 app.use(cors());
 
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
-
-app.use("/api", dashboardRoutes);
-
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/webhook", webhookRoutes);
 // ==============================
-// Health Check API
+// ROUTES
+// ==============================
+
+app.use("/api/auth", authRoutes);
+
+app.use("/api", dashboardRoutes);
+
+app.use("/webhook", webhookRoutes);
+
+// ==============================
+// HEALTH API
 // ==============================
 
 app.get("/api/health", (req, res) => {
@@ -45,33 +55,29 @@ app.get("/api/health", (req, res) => {
     res.json({
 
         status: "ONLINE",
+
         project: "HSK BRAHMASTRA",
+
         version: "1.0.0"
 
     });
 
 });
+// ==============================
+// TEST API
+// ==============================
 
 app.get("/api/test", (req, res) => {
+
     res.send("API Working");
+
 });
 
-// ==========================
-// SET DHAN IP FROM RENDER
-// ==========================
-app.get("/api/test", (req, res) => {
-    res.send("API Working");
-});
-
-// ==========================
-// SET DHAN IP FROM RENDER
-// ==========================
+// ==============================
+// SET DHAN STATIC IP
+// ==============================
 
 app.get("/api/set-ip", async (req, res) => {
-    // ==========================
-
-
-
 
     try {
 
@@ -91,9 +97,25 @@ app.get("/api/set-ip", async (req, res) => {
             }
         );
 
-    // ==========================
-// CHECK DHAN DETECTED IP
-// ==========================
+        res.json(response.data);
+
+    } catch (err) {
+
+        console.error(err.response?.data || err.message);
+
+        res.status(500).json(
+            err.response?.data || {
+                error: err.message
+            }
+        );
+
+    }
+
+});
+
+// ==============================
+// CHECK DHAN IP STATUS
+// ==============================
 
 app.get("/api/check-ip", async (req, res) => {
 
@@ -113,30 +135,21 @@ app.get("/api/check-ip", async (req, res) => {
 
     } catch (err) {
 
+        console.error(err.response?.data || err.message);
+
         res.status(500).json(
-            err.response?.data || { error: err.message }
+            err.response?.data || {
+                error: err.message
+            }
         );
 
     }
 
 });
 
-
-        res.json(response.data);
-
-    } catch (err) {
-
-        res.status(500).json(
-            err.response?.data || { error: err.message }
-        );
-
-    }
-
-});
-
-// ==========================
-// GET CURRENT RENDER IP
-// ==========================
+// ==============================
+// GET SERVER PUBLIC IP
+// ==============================
 
 app.get("/myip", async (req, res) => {
 
@@ -157,10 +170,10 @@ app.get("/myip", async (req, res) => {
     }
 
 });
-
 const PORT = process.env.PORT || 3001;
+
 // ==============================
-// Start Server
+// START SERVER
 // ==============================
 
 server.listen(PORT, async () => {
@@ -221,7 +234,6 @@ app.get("/api/stats", authMiddleware, async (req, res) => {
 
 });
 
-
 // ==========================
 // ACTIVE TRADES API
 // ==========================
@@ -245,10 +257,7 @@ app.get("/api/trades/active", authMiddleware, async (req, res) => {
     }
 
 });
-
-
-
- // ==========================
+// ==========================
 // TODAY REPORT
 // ==========================
 
@@ -284,11 +293,11 @@ app.get("/api/report/send", async (req, res) => {
 
         const stats = await db.getDashboardStats(market);
 
-
         const message = `
 📊 HSK BRAHMASTRA
 📅 DAILY REPORT
 📌 Symbol : ${market}
+
 ━━━━━━━━━━━━━━━━━━
 
 ✅ Total Trades : ${stats.closedTrades}
@@ -331,7 +340,7 @@ app.get("/api/report/send", async (req, res) => {
 
     }
 
-    });
+});
 
 // ==========================
 // CLOSED TRADES API
@@ -356,4 +365,3 @@ app.get("/api/trades/closed", authMiddleware, async (req, res) => {
     }
 
 });
-
