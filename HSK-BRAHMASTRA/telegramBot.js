@@ -9,7 +9,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 // START
 // ==========================
 
-bot.command("start", async (ctx) => {
+bot.command("starttrade", async (ctx) => {
 
     try {
 
@@ -42,7 +42,7 @@ bot.command("start", async (ctx) => {
 // STOP
 // ==========================
 
-bot.command("stop", async (ctx) => {
+bot.command("stoptrade", async (ctx) => {
 
     try {
 
@@ -123,8 +123,8 @@ bot.command("help", async (ctx) => {
 
 Available Commands
 
-🟢 /start
-🔴 /stop
+🟢 /starttrade
+🔴 /stoptrade
 📊 /status
 ❓ /help
 
