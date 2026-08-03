@@ -14,6 +14,7 @@ const supabase = require("./config/supabase");
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
 const webhookRoutes = require("./routes/webhook");
+const systemService = require("./services/systemService");
 
 const authMiddleware = require("./middleware/authMiddleware");
 
@@ -131,6 +132,8 @@ app.get("/api/check-ip", async (req, res) => {
             }
         );
 
+        
+
         res.json(response.data);
 
     } catch (err) {
@@ -147,6 +150,123 @@ app.get("/api/check-ip", async (req, res) => {
 
 });
 
+// ==========================
+// AUTO TRADING START
+// ==========================
+
+app.get("/api/auto/start", async (req, res) => {
+
+    try {
+
+        await systemService.setAutoTrading(true);
+
+        console.log("================================");
+        console.log("✅ AUTO TRADING ENABLED");
+        console.log("================================");
+
+        res.json({
+
+            success: true,
+
+            autoTrading: true,
+
+            message: "Auto Trading Enabled"
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            error: err.message
+
+        });
+
+    }
+
+});
+
+
+// ==========================
+// AUTO TRADING STOP
+// ==========================
+
+app.get("/api/auto/stop", async (req, res) => {
+
+    try {
+
+        await systemService.setAutoTrading(false);
+
+        console.log("================================");
+        console.log("⛔ AUTO TRADING DISABLED");
+        console.log("================================");
+
+        res.json({
+
+            success: true,
+
+            autoTrading: false,
+
+            message: "Auto Trading Disabled"
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            error: err.message
+
+        });
+
+    }
+
+});
+
+// ==========================
+// AUTO TRADING STATUS
+// ==========================
+
+app.get("/api/auto/status", async (req, res) => {
+
+    try {
+
+        const settings =
+            await systemService.getSettings();
+
+        res.json({
+
+            success: true,
+
+            autoTrading: settings.auto_trading,
+
+            updatedAt: settings.updated_at
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            error: err.message
+
+        });
+
+    }
+
+});
 // ==============================
 // GET SERVER PUBLIC IP
 // ==============================
