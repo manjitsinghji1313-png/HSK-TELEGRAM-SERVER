@@ -8,8 +8,26 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const API = "https://hsk-telegram-server.onrender.com/api/auto";
 
 const bot = new TelegramBot(BOT_TOKEN, {
-    polling: true
+    polling: false
 });
+
+(async () => {
+
+    try {
+
+        await bot.deleteWebHook();
+
+        await bot.startPolling();
+
+        console.log("✅ Polling Started");
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+})();
 
 console.log("🤖 Telegram Bot Started");
 
