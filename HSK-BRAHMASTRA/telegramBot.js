@@ -1,18 +1,11 @@
 require("dotenv").config();
 
-require("dotenv").config();
-
-const pkg = require("node-telegram-bot-api");
-
-
-
-
-const { TelegramBot } = require("node-telegram-bot-api");
-const systemService = require("./services/systemService");
+const axios = require("axios");
+const TelegramBot = require("node-telegram-bot-api");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
-console.log("BOT TOKEN =", BOT_TOKEN);
+const API = "https://hsk-telegram-server.onrender.com/api/auto";
 
 const bot = new TelegramBot(BOT_TOKEN, {
     polling: true
@@ -21,26 +14,68 @@ const bot = new TelegramBot(BOT_TOKEN, {
 console.log("🤖 Telegram Bot Started");
 
 // ==========================
-// START
+// START TRADE
 // ==========================
 
-bot.onText(/^\/start$/, async (msg) => {
+bot.onText(/^\/starttrade$/, async (msg) => {
 
-    await systemService.setAutoTrading(true);
+    try {
 
-    bot.sendMessage(msg.chat.id, "🟢 AUTO TRADING ENABLED");
+        const { data } = await axios.get(`${API}/start`);
+
+        await bot.sendMessage(
+            msg.chat.id,
+`🟢 AUTO TRADING ENABLED
+
+🤖 Broker : DHAN
+📈 Status : ACTIVE
+
+━━━━━━━━━━━━━━━━━━
+
+${data.message}`
+        );
+
+    } catch (err) {
+
+        await bot.sendMessage(
+            msg.chat.id,
+            `❌ ${err.response?.data?.error || err.message}`
+        );
+
+    }
 
 });
 
 // ==========================
-// STOP
+// STOP TRADE
 // ==========================
 
-bot.onText(/^\/stop$/, async (msg) => {
+bot.onText(/^\/stoptrade$/, async (msg) => {
 
-    await systemService.setAutoTrading(false);
+    try {
 
-    bot.sendMessage(msg.chat.id, "🔴 AUTO TRADING DISABLED");
+        const { data } = await axios.get(`${API}/stop`);
+
+        await bot.sendMessage(
+            msg.chat.id,
+`🔴 AUTO TRADING DISABLED
+
+🤖 Broker : DHAN
+📉 Status : STOPPED
+
+━━━━━━━━━━━━━━━━━━
+
+${data.message}`
+        );
+
+    } catch (err) {
+
+        await bot.sendMessage(
+            msg.chat.id,
+            `❌ ${err.response?.data?.error || err.message}`
+        );
+
+    }
 
 });
 
@@ -50,16 +85,38 @@ bot.onText(/^\/stop$/, async (msg) => {
 
 bot.onText(/^\/status$/, async (msg) => {
 
-    const enabled =
-        await systemService.isAutoTradingEnabled();
+    try {
 
-    bot.sendMessage(
-        msg.chat.id,
-        `🤖 HSK BRAHMASTRA
+        const { data } = await axios.get(`${API}/status`);
 
-Auto Trading : ${enabled ? "🟢 ON" : "🔴 OFF"}`
-    );
+        const status =
+            data.autoTrading ? "🟢 ON" : "🔴 OFF";
+
+        await bot.sendMessage(
+            msg.chat.id,
+`🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+Auto Trading : ${status}
+
+Updated :
+${data.updatedAt}
+
+━━━━━━━━━━━━━━━━━━`
+        );
+
+    } catch (err) {
+
+        await bot.sendMessage(
+            msg.chat.id,
+            `❌ ${err.response?.data?.error || err.message}`
+        );
+
+    }
 
 });
+
+console.log("✅ Commands Loaded");
 
 module.exports = bot;
