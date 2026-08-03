@@ -183,13 +183,6 @@ console.log("================================");
 
                     } catch (err) {
 
-                        console.log("❌ DHAN ORDER FAILED");
-                        console.log(err.message);
-
-                        return;
-
-                    }} catch (err) {
-
     console.log("❌ DHAN ORDER FAILED");
     console.log(err.message);
 
