@@ -36,18 +36,18 @@ router.post("/", (req, res) => {
 
             switch (data.cmd) {
 
-                // =====================================
-                // CE ENTRY / PE ENTRY
-                // =====================================
+// =====================================
+// CE ENTRY / PE ENTRY
+// =====================================
 
-                case "CE_ENTRY":
-                case "PE_ENTRY": {
+case "CE_ENTRY":
+case "PE_ENTRY": {
 
-                // ==========================
-// CREATE ENTRY MESSAGE
-// ==========================
+    // ==========================
+    // CREATE ENTRY MESSAGE
+    // ==========================
 
-message =
+    message =
 `${data.cmd === "CE_ENTRY" ? "🟢" : "🔴"} <b>${data.cmd.replace("_"," ")}</b>
 
 📊 Symbol : ${data.symbol}
@@ -59,20 +59,20 @@ message =
 
 🆔 Trade ID : ${data.tradeKey}
 
-━━━━━━━━━━━━━━━━━━`;    
+━━━━━━━━━━━━━━━━━━`;
 
-                    // ==========================
-                    // AUTO TRADING CHECK
-                    // ==========================
+    // ==========================
+    // AUTO TRADING CHECK
+    // ==========================
 
-                    const autoTrading =
-                        await systemService.isAutoTradingEnabled();
+    const autoTrading =
+        await systemService.isAutoTradingEnabled();
 
-                    if (!autoTrading) {
+    if (!autoTrading) {
 
-    console.log("⛔ AUTO TRADING DISABLED");
+        console.log("⛔ AUTO TRADING DISABLED");
 
-    message +=
+        message +=
 `
 
 🚫 <b>Broker Order Blocked</b>
@@ -86,113 +86,115 @@ message =
 • Not SEBI Registered
 • Trade At Your Own Risk`;
 
-console.log("================================");
-console.log("TELEGRAM MESSAGE");
-console.log(message);
-console.log("================================");
+        break;
 
-    break;
-}
+    }
 
-                    try {
+    try {
 
+        console.log("================================");
+        console.log("🚀 CALLING PLACE ORDER");
+        console.log(data.tradeKey);
+        console.log("================================");
 
-                        console.log("================================");
-                        console.log("🚀 CALLING PLACE ORDER");
-                        console.log(data.tradeKey);
-                        console.log("================================");
-                        // ==========================
-                        // PLACE DHAN ORDER
-                        // ==========================
+        const orderResult = await placeOrder({
 
-                        await placeOrder({
+            tradeKey: data.tradeKey,
 
-    tradeKey: data.tradeKey,
+            transactionType:
+                data.transactionType || "BUY",
 
-    transactionType:
-        data.transactionType || "BUY",
+            productType:
+                data.productType || "INTRADAY",
 
-    productType:
-        data.productType || "INTRADAY",
+            orderType:
+                data.orderType || "MARKET",
 
-    orderType:
-        data.orderType || "MARKET",
+            symbol: data.symbol,
 
-    symbol: data.symbol,
+            strike: Number(data.strike),
 
-    strike: Number(data.strike),
+            optionType:
+                data.optionType ||
+                (data.cmd === "CE_ENTRY" ? "CE" : "PE"),
 
-    optionType:
-        data.optionType ||
-        (data.cmd === "CE_ENTRY" ? "CE" : "PE"),
+            price: Number(data.limitPrice || data.price),
 
-    price: Number(data.limitPrice || data.price),
+            sl: Number(data.sl),
 
-    sl: Number(data.sl),
+            tg1: Number(data.tg1),
 
-    tg1: Number(data.tg1),
+            lots: Number(data.lots || 1)
 
-    lots: Number(data.lots || 1)
+        });
 
-});
+        console.log("================================");
+        console.log("✅ PLACE ORDER RETURNED");
+        console.log(orderResult);
+        console.log("================================");
 
-                        console.log("================================");
-                        console.log("✅ PLACE ORDER RETURNED");
-                        console.log("================================");
+        message +=
+`
 
+✅ <b>Broker : ORDER PLACED</b>
 
-                        console.log("✅ DHAN ORDER SUCCESS");
+🆔 Order ID : ${orderResult.orderId || "N/A"}`;
 
-                        // ==========================
-                        // SAVE TRADE
-                        // ==========================
+        try {
 
-                        try {
+            await tradeService.openTrade(data);
 
-                            await tradeService.openTrade(data);
+            console.log("✅ TRADE SAVED");
 
-                            console.log("✅ TRADE SAVED");
+        } catch (err) {
 
-                        } catch (err) {
+            console.log("❌ TRADE SAVE FAILED");
+            console.log(err.message);
 
-                            console.log("❌ TRADE SAVE FAILED");
-                            console.log(err.message);
+            message +=
+`
 
-                            console.log("⚠ Closing Position...");
+⚠️ <b>Trade Save Failed</b>
 
-                            try {
+Reason :
+${err.message}`;
 
-                                await exitOrder({
+            try {
 
-                                    tradeKey: data.tradeKey
+                await exitOrder({
 
-                                });
+                    tradeKey: data.tradeKey
 
-                                console.log("✅ POSITION CLOSED");
+                });
 
-                            } catch (exitErr) {
+                console.log("✅ POSITION CLOSED");
 
-                                console.log("❌ POSITION CLOSE FAILED");
-                                console.log(exitErr.message);
+            } catch (exitErr) {
 
-                            }
+                console.log("❌ POSITION CLOSE FAILED");
+                console.log(exitErr.message);
 
-                            return;
+            }
 
-                        }
+        }
 
-                    } catch (err) {
+    } catch (err) {
 
-    console.log("❌ DHAN ORDER FAILED");
-    console.log(err.message);
+        console.log("❌ DHAN ORDER FAILED");
+        console.log(err.message);
 
-    message +=
+        message +=
 `
 
 ❌ <b>Broker Order Failed</b>
 
 Reason :
-${err.message}
+${err.message}`;
+
+    }
+
+    message +=
+`
 
 ━━━━━━━━━━━━━━━━━━
 ⚠️ <b>Disclaimer</b>
@@ -202,23 +204,158 @@ ${err.message}
 • Trade At Your Own Risk`;
 
     break;
-
 }
+// =====================================
+// TARGET HIT
+// =====================================
 
-                    message =
-`${data.cmd === "CE_ENTRY" ? "🟢" : "🔴"} <b>${data.cmd.replace("_"," ")}</b>
+case "TG1_HIT": {
+
+    try {
+
+        await exitOrder({
+
+            tradeKey: data.tradeKey
+
+        });
+
+        console.log("✅ TARGET EXIT SUCCESS");
+
+    } catch (err) {
+
+        console.log("❌ TARGET EXIT FAILED");
+        console.log(err.message);
+
+    }
+
+    await tradeService.closeTrade(data);
+
+    message =
+`🎯 <b>TARGET HIT</b>
 
 📊 Symbol : ${data.symbol}
-⏱ Timeframe : ${data.timeframe}
-🎯 Strike : ${data.strike}
-💰 Entry : ${data.price}
-🛑 SL : ${data.sl}
-🎯 TG1 : ${data.tg1}
-
 🆔 Trade ID : ${data.tradeKey}
 
 ━━━━━━━━━━━━━━━━━━
+
+✅ Position Closed
+
+━━━━━━━━━━━━━━━━━━
 ⚠️ <b>Disclaimer</b>
+
+• Educational Purpose Only
+• Not SEBI Registered
+• Trade At Your Own Risk`;
+
+    break;
+}
+
+// =====================================
+// STOP LOSS
+// =====================================
+
+case "SL_HIT": {
+
+    try {
+
+        await exitOrder({
+
+            tradeKey: data.tradeKey
+
+        });
+
+        console.log("✅ STOP LOSS EXIT SUCCESS");
+
+    } catch (err) {
+
+        console.log("❌ STOP LOSS EXIT FAILED");
+        console.log(err.message);
+
+    }
+
+    await tradeService.closeTrade(data);
+
+    message =
+`🛑 <b>STOP LOSS HIT</b>
+
+📊 Symbol : ${data.symbol}
+🆔 Trade ID : ${data.tradeKey}
+
+━━━━━━━━━━━━━━━━━━
+
+❌ Position Closed
+
+━━━━━━━━━━━━━━━━━━
+⚠️ <b>Disclaimer</b>
+
+• Educational Purpose Only
+• Not SEBI Registered
+• Trade At Your Own Risk`;
+
+    break;
+}
+
+// =====================================
+// MANUAL EXIT
+// =====================================
+
+case "EXIT": {
+
+    try {
+
+        await exitOrder({
+
+            tradeKey: data.tradeKey
+
+        });
+
+        console.log("✅ MANUAL EXIT SUCCESS");
+
+    } catch (err) {
+
+        console.log("❌ MANUAL EXIT FAILED");
+        console.log(err.message);
+
+    }
+
+    await tradeService.closeTrade(data);
+
+    message =
+`📤 <b>TRADE EXIT</b>
+
+📊 Symbol : ${data.symbol}
+🆔 Trade ID : ${data.tradeKey}
+
+━━━━━━━━━━━━━━━━━━
+
+📦 Position Closed Successfully
+
+━━━━━━━━━━━━━━━━━━
+⚠️ <b>Disclaimer</b>
+
+• Educational Purpose Only
+• Not SEBI Registered
+• Trade At Your Own Risk`;
+
+    break;
+}
+                // =====================================
+                // UNKNOWN COMMAND
+                // =====================================
+
+                default: {
+
+                    console.log("⚠ Unknown Command :", data.cmd);
+
+                    message =
+`⚠ <b>UNKNOWN COMMAND</b>
+
+📩 Command :
+${data.cmd}
+
+━━━━━━━━━━━━━━━━━━
+⚠️ <b>Disclaimer</b>
+
 • Educational Purpose Only
 • Not SEBI Registered
 • Trade At Your Own Risk`;
@@ -226,119 +363,8 @@ ${err.message}
                     break;
                 }
 
-                // =====================================
-                // TARGET HIT
-                // =====================================
+            } // ================= END SWITCH =================
 
-                case "TG1_HIT": {
-
-                    try {
-
-                        await exitOrder({
-
-                            tradeKey: data.tradeKey
-
-                        });
-
-                        console.log("✅ TARGET EXIT SUCCESS");
-
-                    } catch (err) {
-
-                        console.log("❌ TARGET EXIT FAILED");
-                        console.log(err.message);
-
-                    }
-
-                    await tradeService.closeTrade(data);
-
-                    message =
-`🎯 <b>TARGET HIT</b>
-
-📊 Symbol : ${data.symbol}
-🆔 Trade : ${data.tradeKey}`;
-
-                    break;
-                }
-
-                // =====================================
-                // STOP LOSS
-                // =====================================
-
-                case "SL_HIT": {
-
-                    try {
-
-                        await exitOrder({
-
-                            tradeKey: data.tradeKey
-
-                        });
-
-                        console.log("✅ STOP LOSS EXIT SUCCESS");
-
-                    } catch (err) {
-
-                        console.log("❌ STOP LOSS EXIT FAILED");
-                        console.log(err.message);
-
-                    }
-
-                    await tradeService.closeTrade(data);
-
-                    message =
-`🛑 <b>STOP LOSS HIT</b>
-
-📊 Symbol : ${data.symbol}
-🆔 Trade : ${data.tradeKey}`;
-
-                    break;
-                }
-
-                // =====================================
-                // MANUAL EXIT
-                // =====================================
-
-                case "EXIT": {
-
-                    try {
-
-                        await exitOrder({
-
-                            tradeKey: data.tradeKey
-
-                        });
-
-                        console.log("✅ MANUAL EXIT SUCCESS");
-
-                    } catch (err) {
-
-                        console.log("❌ MANUAL EXIT FAILED");
-                        console.log(err.message);
-
-                    }
-
-                    await tradeService.closeTrade(data);
-
-                    message =
-`📤 <b>TRADE EXIT</b>
-
-📊 Symbol : ${data.symbol}
-🆔 Trade : ${data.tradeKey}`;
-
-                    break;
-                }
-
-                // =====================================
-                // UNKNOWN COMMAND
-                // =====================================
-
-                        default:
-
-                    console.log("⚠ Unknown Command :", data.cmd);
-
-                    break;
-
-            } // <-- switch END
 
             // =====================================
             // SEND TELEGRAM MESSAGE
@@ -350,12 +376,16 @@ ${err.message}
 
                     await telegramService.sendMessage(message);
 
-                    console.log("✅ Telegram Message Sent");
+                    console.log("================================");
+                    console.log("✅ TELEGRAM MESSAGE SENT");
+                    console.log("================================");
 
                 } catch (err) {
 
-                    console.log("❌ Telegram Message Failed");
+                    console.log("================================");
+                    console.log("❌ TELEGRAM MESSAGE FAILED");
                     console.log(err.message);
+                    console.log("================================");
 
                 }
 
@@ -363,10 +393,10 @@ ${err.message}
 
         } catch (err) {
 
-            console.error("=================================");
-            console.error("❌ BACKGROUND PROCESSING ERROR");
-            console.error(err);
-            console.error("=================================");
+            console.log("================================");
+            console.log("❌ BACKGROUND PROCESS FAILED");
+            console.log(err);
+            console.log("================================");
 
         }
 
@@ -374,4 +404,4 @@ ${err.message}
 
 });
 
-module.exports = router;
+module.exports = router;                
