@@ -25,7 +25,6 @@ require("./services/scheduler");
 
 const app = express();
 
-const settings = require("../config/settings");
 const server = http.createServer(app);
 app.use(bot.webhookCallback("/telegram"));
 
