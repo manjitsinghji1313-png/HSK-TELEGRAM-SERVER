@@ -43,7 +43,6 @@ async function setAutoTrading(status) {
 // ==========================
 // GET SETTINGS
 // ==========================
-
 async function getSettings() {
 
     const { data, error } = await supabase
@@ -51,6 +50,11 @@ async function getSettings() {
         .select("*")
         .eq("id", 1)
         .single();
+
+    console.log("================================");
+    console.log("SETTINGS DATA:", data);
+    console.log("SETTINGS ERROR:", error);
+    console.log("================================");
 
     if (error) {
         throw error;
