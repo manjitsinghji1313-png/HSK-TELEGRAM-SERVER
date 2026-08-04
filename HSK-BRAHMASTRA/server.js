@@ -286,14 +286,16 @@ app.get("/api/settings", async (req, res) => {
 
         const settings = await systemService.getSettings();
 
-        res.json(settings);
+        console.log("API SETTINGS:", settings);
+
+        return res.status(200).json(settings);
 
     } catch (err) {
 
-        console.error(err);
+        console.error("API SETTINGS ERROR:", err);
 
-        res.status(500).json({
-            error: "Failed to load settings"
+        return res.status(500).json({
+            error: err.message
         });
 
     }
