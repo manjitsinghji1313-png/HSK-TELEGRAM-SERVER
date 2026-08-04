@@ -277,6 +277,30 @@ app.get("/api/auto/status", async (req, res) => {
 });
 
 // ==========================
+// GET SETTINGS
+// ==========================
+
+app.get("/api/settings", async (req, res) => {
+
+    try {
+
+        const settings = await systemService.getSettings();
+
+        res.json(settings);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: "Failed to load settings"
+        });
+
+    }
+
+});
+
+// ==========================
 // UPDATE SETTINGS
 // ==========================
 
@@ -285,27 +309,25 @@ app.post("/api/settings", async (req, res) => {
     try {
 
         const { autoTrading, paperMode, lots } = req.body;
-
-        await supabase
+        const { error } = await supabase
             .from("system_settings")
             .update({
-
                 auto_trading: autoTrading,
-
                 paper_mode: paperMode,
-
                 lots: lots,
-
                 updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
 
-            })
-            .eq("id", 1);
+if (error) {
+    console.log("❌ SETTINGS UPDATE ERROR");
+    console.log(error);
+    throw error;
+}
 
-        res.json({
-
-            success: true
-
-        });
+res.json({
+    success: true
+});
 
     } catch (err) {
 

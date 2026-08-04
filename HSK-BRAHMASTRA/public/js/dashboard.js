@@ -61,6 +61,9 @@ async function loadSettings() {
         });
 
         const settings = await response.json();
+        autoTrading = settings.auto_trading;
+        paperMode = settings.paper_mode;
+        lots = settings.lots;
 
         document.getElementById("autoTradingStatus").innerText =
             settings.auto_trading ? "🟢 ON" : "🔴 OFF";
@@ -70,6 +73,8 @@ async function loadSettings() {
 
         document.getElementById("lotsStatus").innerText =
             settings.lots;
+
+        console.log("Settings Loaded:", settings);    
 
     } catch (err) {
 
@@ -483,28 +488,31 @@ let lots = 1;
 document.getElementById("autoOnBtn").onclick = () => {
 
     autoTrading = true;
-    loadSettings();
+
+    document.getElementById("autoTradingStatus").innerText = "🟢 ON";
 
 };
-
 document.getElementById("autoOffBtn").onclick = () => {
 
     autoTrading = false;
-    loadSettings();
+
+    document.getElementById("autoTradingStatus").innerText = "🔴 OFF";
 
 };
 
 document.getElementById("paperOnBtn").onclick = () => {
 
     paperMode = true;
-    loadSettings();
+
+    document.getElementById("paperModeStatus").innerText = "📝 PAPER";
 
 };
 
 document.getElementById("paperOffBtn").onclick = () => {
 
     paperMode = false;
-    loadSettings();
+
+    document.getElementById("paperModeStatus").innerText = "💹 LIVE";
 
 };
 
@@ -554,6 +562,7 @@ document.getElementById("saveSettingsBtn").onclick = async () => {
         });
 
         const result = await response.json();
+        console.log("SETTINGS RESPONSE:", result);
 
         if (result.success) {
 
