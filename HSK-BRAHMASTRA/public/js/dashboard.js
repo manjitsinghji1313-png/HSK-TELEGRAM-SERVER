@@ -61,6 +61,8 @@ async function loadSettings() {
         });
 
         const settings = await response.json();
+        
+        alert(JSON.stringify(settings));
         autoTrading = settings.auto_trading;
         paperMode = settings.paper_mode;
         lots = settings.lots;
