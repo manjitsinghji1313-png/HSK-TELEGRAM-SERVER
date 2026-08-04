@@ -329,6 +329,23 @@ res.json({
     success: true
 });
 
+// ==========================
+// DEBUG SETTINGS
+// ==========================
+
+app.get("/debug/settings", async (req, res) => {
+
+    const { data, error } = await supabase
+        .from("system_settings")
+        .select("*");
+
+    res.json({
+        data,
+        error
+    });
+
+});
+
     } catch (err) {
 
         console.error(err);
