@@ -104,10 +104,10 @@ async function closeTrade(data) {
         if (finalStatus === "TARGET HIT") {
 
             const { data: trade, error: fetchError } = await supabase
-                .from("trades")
-                .select("entry, tg1")
-                .eq("trade_key", data.tradeKey)
-                .single();
+            .from("trades")
+            .select("entry, tg1")
+            .eq("trade_key", data.tradeKey)
+            .maybeSingle();
 
             if (!fetchError && trade) {
 
@@ -204,10 +204,10 @@ async function getBrokerOrder(tradeKey) {
     try {
 
         const { data, error } = await supabase
-            .from("broker_orders")
-            .select("*")
-            .eq("trade_key", tradeKey)
-            .single();
+        .from("broker_orders")
+        .select("*")
+        .eq("trade_key", tradeKey)
+        .maybeSingle();
 
         if (error) {
 
