@@ -305,6 +305,9 @@ app.get("/api/settings", async (req, res) => {
 // ==========================
 // UPDATE SETTINGS
 // ==========================
+// ==========================
+// UPDATE SETTINGS
+// ==========================
 
 app.post("/api/settings", async (req, res) => {
 
@@ -312,7 +315,7 @@ app.post("/api/settings", async (req, res) => {
 
         const { autoTrading, paperMode, lots } = req.body;
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from("system_settings")
             .update({
                 auto_trading: autoTrading,
@@ -320,7 +323,11 @@ app.post("/api/settings", async (req, res) => {
                 lots: lots,
                 updated_at: new Date().toISOString()
             })
-            .eq("id", 1);
+            .eq("id", 1)
+            .select();
+
+        console.log("UPDATED SETTINGS:", data);
+        console.log("UPDATE ERROR:", error);
 
         if (error) {
             throw error;
@@ -332,7 +339,7 @@ app.post("/api/settings", async (req, res) => {
 
     } catch (err) {
 
-        console.error(err);
+        console.error("SAVE SETTINGS ERROR:", err);
 
         res.status(500).json({
             success: false,
@@ -343,21 +350,6 @@ app.post("/api/settings", async (req, res) => {
 
 });
 
-const { data, error } = await supabase
-    .from("system_settings")
-    .update({
-        auto_trading: autoTrading,
-        paper_mode: paperMode,
-        lots: lots,
-        updated_at: new Date().toISOString()
-    })
-    .eq("id", 1)
-    .select();
-
-console.log("UPDATED SETTINGS:", data);
-console.log("UPDATE ERROR:", error);
-
-if (error) throw error;
 
 // ==============================
 // GET SERVER PUBLIC IP
