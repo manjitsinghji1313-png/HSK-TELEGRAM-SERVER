@@ -16,6 +16,30 @@ router.get("/hello", (req, res) => {
 
 router.get("/report/today", authMiddleware, async (req, res) => {
 
+    // ==========================
+// DASHBOARD STATS
+// ==========================
+
+router.get("/stats", authMiddleware, async (req, res) => {
+
+    try {
+
+        const stats = await dashboardService.getDashboardStats();
+
+        res.json(stats);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: "Failed to load dashboard stats"
+        });
+
+    }
+
+});
+
     try {
 
         const report = await dashboardService.getTodayReport();
