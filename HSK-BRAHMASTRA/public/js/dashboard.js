@@ -48,8 +48,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 // ==========================
 
 async function loadStats() {
-
-    // ==========================
+// ==========================
 // LOAD SYSTEM SETTINGS
 // ==========================
 
@@ -57,15 +56,17 @@ async function loadSettings() {
 
     try {
 
-        const response = await fetch("/api/auto/status");
+        const response = await fetch("/api/settings", {
+            headers: authHeaders()
+        });
 
         const settings = await response.json();
 
         document.getElementById("autoTradingStatus").innerText =
-            settings.autoTrading ? "🟢 ON" : "🔴 OFF";
+            settings.auto_trading ? "🟢 ON" : "🔴 OFF";
 
         document.getElementById("paperModeStatus").innerText =
-            settings.paperMode ? "📝 PAPER" : "💹 LIVE";
+            settings.paper_mode ? "📝 PAPER" : "💹 LIVE";
 
         document.getElementById("lotsStatus").innerText =
             settings.lots;
@@ -522,6 +523,7 @@ document.getElementById("minusLotBtn").onclick = () => {
     document.getElementById("lotsStatus").innerText = lots;
 
 };
+
 // ==========================
 // SAVE SETTINGS
 // ==========================
@@ -535,8 +537,9 @@ document.getElementById("saveSettingsBtn").onclick = async () => {
             method: "POST",
 
             headers: {
-                "Content-Type": "application/json"
-            },
+                "Content-Type": "application/json",
+                ...authHeaders()
+        },
 
             body: JSON.stringify({
 
