@@ -343,6 +343,22 @@ app.post("/api/settings", async (req, res) => {
 
 });
 
+const { data, error } = await supabase
+    .from("system_settings")
+    .update({
+        auto_trading: autoTrading,
+        paper_mode: paperMode,
+        lots: lots,
+        updated_at: new Date().toISOString()
+    })
+    .eq("id", 1)
+    .select();
+
+console.log("UPDATED SETTINGS:", data);
+console.log("UPDATE ERROR:", error);
+
+if (error) throw error;
+
 // ==============================
 // GET SERVER PUBLIC IP
 // ==============================
