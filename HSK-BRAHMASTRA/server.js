@@ -306,6 +306,18 @@ app.get("/api/settings", async (req, res) => {
 
 app.post("/api/settings", async (req, res) => {
 
+    app.get("/debug/env", (req, res) => {
+
+    res.json({
+
+        url: process.env.SUPABASE_URL,
+
+        keyExists: !!process.env.SUPABASE_SERVICE_KEY
+
+    });
+
+});
+
     try {
 
         const { autoTrading, paperMode, lots } = req.body;
