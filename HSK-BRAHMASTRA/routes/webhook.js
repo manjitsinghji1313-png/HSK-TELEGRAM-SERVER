@@ -1,5 +1,5 @@
 
-const settings = require("../config/settings");
+// const settings = require("../config/settings");
 const express = require("express");
 const router = express.Router();
 
@@ -8,7 +8,7 @@ const telegramService = require("../services/telegramService");
 
 const placeOrder = require("../broker/placeOrder");
 const exitOrder = require("../broker/exitOrder");
-console.log("📦 Current Lots:", settings.lots);
+// console.log("📦 Current Lots:", settings.lots);
 const systemService = require("../services/systemService");
 // ==========================
 // TradingView Webhook
@@ -66,8 +66,18 @@ case "PE_ENTRY": {
     // AUTO TRADING CHECK
     // ==========================
 
+    const settings =
+    await systemService.getSettings();
+
+    console.log("===== DATABASE SETTINGS =====");
+    console.log(settings);
+    console.log("=============================");
+    console.log("Paper Mode =", settings.paper_mode);
+
     const autoTrading =
-        await systemService.isAutoTradingEnabled();
+    settings.auto_trading;
+
+    
 
     if (!autoTrading) {
 
@@ -100,6 +110,39 @@ const quantity = settings.lots * LOT_SIZE;
 
 console.log("📦 Lots :", settings.lots);
 console.log("📊 Quantity :", quantity);
+
+// ==========================
+// PAPER MODE
+// ==========================
+
+if (settings.paper_mode) {
+
+    console.log("================================");
+    console.log("📝 PAPER MODE ENABLED");
+    console.log("================================");
+
+    await tradeService.openTrade({
+    ...data,
+    lots: settings.lots,
+    quantity: quantity,
+    mode: "PAPER",
+    status: "OPEN"
+});
+
+    console.log("✅ PAPER TRADE SAVED");
+message += `
+
+📝 <b>PAPER TRADE</b>
+
+🚫 Broker Order Not Sent
+
+📦 Lots : ${settings.lots}
+📊 Quantity : ${quantity}
+
+📈 Mode : PAPER`;
+
+    break;
+}
 
 
     try {
@@ -155,9 +198,23 @@ console.log("📊 Quantity :", quantity);
 
         try {
 
-            await tradeService.openTrade(data);
+            await tradeService.openTrade({
 
-            console.log("✅ TRADE SAVED");
+    ...data,
+
+    lots: settings.lots,
+
+    quantity: quantity,
+
+    mode: "LIVE",
+
+    status: "OPEN",
+
+    orderId: orderResult.orderId
+
+});
+
+console.log("✅ LIVE TRADE SAVED");
 
         } catch (err) {
 
@@ -224,12 +281,16 @@ ${err.message}`;
 
 case "TG1_HIT": {
 
+    if (settings.paperMode) {
+
+    console.log("📝 PAPER TARGET HIT");
+
+} else {
+
     try {
 
         await exitOrder({
-
             tradeKey: data.tradeKey
-
         });
 
         console.log("✅ TARGET EXIT SUCCESS");
@@ -240,6 +301,8 @@ case "TG1_HIT": {
         console.log(err.message);
 
     }
+
+}
 
     await tradeService.closeTrade(data);
 
@@ -269,12 +332,16 @@ case "TG1_HIT": {
 
 case "SL_HIT": {
 
+    if (settings.paperMode) {
+
+    console.log("📝 PAPER STOP LOSS");
+
+} else {
+
     try {
 
         await exitOrder({
-
             tradeKey: data.tradeKey
-
         });
 
         console.log("✅ STOP LOSS EXIT SUCCESS");
@@ -285,6 +352,8 @@ case "SL_HIT": {
         console.log(err.message);
 
     }
+
+}
 
     await tradeService.closeTrade(data);
 
@@ -314,12 +383,16 @@ case "SL_HIT": {
 
 case "EXIT": {
 
+    if (settings.paperMode) {
+
+    console.log("📝 PAPER MANUAL EXIT");
+
+} else {
+
     try {
 
         await exitOrder({
-
             tradeKey: data.tradeKey
-
         });
 
         console.log("✅ MANUAL EXIT SUCCESS");
@@ -330,6 +403,8 @@ case "EXIT": {
         console.log(err.message);
 
     }
+
+}
 
     await tradeService.closeTrade(data);
 
