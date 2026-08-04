@@ -308,21 +308,10 @@ app.get("/api/settings", async (req, res) => {
 
 app.post("/api/settings", async (req, res) => {
 
-    app.get("/debug/env", (req, res) => {
-
-    res.json({
-
-        url: process.env.SUPABASE_URL,
-
-        keyExists: !!process.env.SUPABASE_SERVICE_KEY
-
-    });
-
-});
-
     try {
 
         const { autoTrading, paperMode, lots } = req.body;
+
         const { error } = await supabase
             .from("system_settings")
             .update({
@@ -330,51 +319,30 @@ app.post("/api/settings", async (req, res) => {
                 paper_mode: paperMode,
                 lots: lots,
                 updated_at: new Date().toISOString()
-        })
-        .eq("id", 1);
+            })
+            .eq("id", 1);
 
-if (error) {
-    console.log("❌ SETTINGS UPDATE ERROR");
-    console.log(error);
-    throw error;
-}
+        if (error) {
+            throw error;
+        }
 
-res.json({
-    success: true
-});
-
-// ==========================
-// DEBUG SETTINGS
-// ==========================
-
-app.get("/debug/settings", async (req, res) => {
-
-    const { data, error } = await supabase
-        .from("system_settings")
-        .select("*");
-
-    res.json({
-        data,
-        error
-    });
-
-});
+        res.json({
+            success: true
+        });
 
     } catch (err) {
 
         console.error(err);
 
         res.status(500).json({
-
             success: false,
-
             error: err.message
-
         });
 
     }
 
 });
+
 // ==============================
 // GET SERVER PUBLIC IP
 // ==============================
