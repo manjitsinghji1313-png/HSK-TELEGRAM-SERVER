@@ -4,9 +4,16 @@ let allActiveTrades = [];
 let allClosedTrades = [];
 
 let currentMarket = "ALL";
-
 let currentClosedMarket = "ALL";
 let currentClosedDate = "TODAY";
+
+// ==========================
+// SYSTEM SETTINGS
+// ==========================
+
+let autoTrading = false;
+let paperMode = true;
+let lots = 1;
 
 function authHeaders() {
 
@@ -15,11 +22,12 @@ function authHeaders() {
     };
 
 }
+
 // ==========================
 // USER EMAIL
 // ==========================
-const userEmail = document.getElementById("userEmail");
 
+const userEmail = document.getElementById("userEmail");
 const email = localStorage.getItem("userEmail");
 
 if (email) {
@@ -35,19 +43,14 @@ if (email) {
 // ==========================
 // LOGOUT
 // ==========================
+
 document.getElementById("logoutBtn").addEventListener("click", () => {
 
     localStorage.removeItem("userEmail");
-
     window.location.href = "/login.html";
 
 });
 
-// ==========================
-// LOAD DASHBOARD STATS
-// ==========================
-
-async function loadStats() {
 // ==========================
 // LOAD SYSTEM SETTINGS
 // ==========================
@@ -61,22 +64,21 @@ async function loadSettings() {
         });
 
         const settings = await response.json();
-        
-        alert(JSON.stringify(settings));
+
         autoTrading = settings.auto_trading;
         paperMode = settings.paper_mode;
         lots = settings.lots;
 
         document.getElementById("autoTradingStatus").innerText =
-            settings.auto_trading ? "🟢 ON" : "🔴 OFF";
+            autoTrading ? "🟢 ON" : "🔴 OFF";
 
         document.getElementById("paperModeStatus").innerText =
-            settings.paper_mode ? "📝 PAPER" : "💹 LIVE";
+            paperMode ? "📝 PAPER" : "💹 LIVE";
 
         document.getElementById("lotsStatus").innerText =
-            settings.lots;
+            lots;
 
-        console.log("Settings Loaded:", settings);    
+        console.log("Settings Loaded:", settings);
 
     } catch (err) {
 
@@ -88,37 +90,38 @@ async function loadSettings() {
 
 loadSettings();
 
+// ==========================
+// LOAD DASHBOARD STATS
+// ==========================
+
+async function loadStats() {
+
     try {
 
-    const response = await fetch("/api/stats", {
+        const response = await fetch("/api/stats", {
             headers: authHeaders()
-});
+        });
 
-if (response.status === 401) {
+        if (response.status === 401) {
 
-    localStorage.clear();
+            localStorage.clear();
 
-    alert("Your account has been logged in from another device.");
+            alert("Your account has been logged in from another device.");
 
-    window.location.href = "/login.html";
+            window.location.href = "/login.html";
 
-    return;
-}
+            return;
 
-    const stats = await response.json();
+        }
+
+        const stats = await response.json();
 
         document.getElementById("membersCount").innerText = stats.members;
-
         document.getElementById("signalsCount").innerText = stats.closedTrades;
-
         document.getElementById("activeTradesCount").innerText = stats.activeTrades;
-
         document.getElementById("targetHitsCount").innerText = stats.targetHits;
-
         document.getElementById("stopLossCount").innerText = stats.stopLosses;
-
         document.getElementById("winRateCount").innerText = stats.winRate + "%";
-
         document.getElementById("pnlCount").innerText = "₹" + stats.pnl;
 
     } catch (err) {
@@ -128,6 +131,7 @@ if (response.status === 401) {
     }
 
 }
+
 loadStats();
 
 function renderTrades() {
@@ -479,13 +483,7 @@ window.addEventListener("click", (event) => {
     }
 });
 
-// ==========================
-// SYSTEM SETTINGS
-// ==========================
 
-let autoTrading = false;
-let paperMode = true;
-let lots = 1;
 
 document.getElementById("autoOnBtn").onclick = () => {
 
