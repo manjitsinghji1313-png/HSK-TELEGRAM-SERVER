@@ -248,11 +248,62 @@ app.get("/api/auto/status", async (req, res) => {
 
         res.json({
 
-            success: true,
+    success: true,
 
-            autoTrading: settings.auto_trading,
+    autoTrading: settings.auto_trading,
 
-            updatedAt: settings.updated_at
+    paperMode: settings.paper_mode,
+
+    lots: settings.lots,
+
+    updatedAt: settings.updated_at
+
+});
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+
+            success: false,
+
+            error: err.message
+
+        });
+
+    }
+
+});
+
+// ==========================
+// UPDATE SETTINGS
+// ==========================
+
+app.post("/api/settings", async (req, res) => {
+
+    try {
+
+        const { autoTrading, paperMode, lots } = req.body;
+
+        await supabase
+            .from("system_settings")
+            .update({
+
+                auto_trading: autoTrading,
+
+                paper_mode: paperMode,
+
+                lots: lots,
+
+                updated_at: new Date().toISOString()
+
+            })
+            .eq("id", 1);
+
+        res.json({
+
+            success: true
 
         });
 

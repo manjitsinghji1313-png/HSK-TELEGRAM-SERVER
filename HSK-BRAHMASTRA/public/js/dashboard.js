@@ -49,6 +49,37 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 
 async function loadStats() {
 
+    // ==========================
+// LOAD SYSTEM SETTINGS
+// ==========================
+
+async function loadSettings() {
+
+    try {
+
+        const response = await fetch("/api/auto/status");
+
+        const settings = await response.json();
+
+        document.getElementById("autoTradingStatus").innerText =
+            settings.autoTrading ? "🟢 ON" : "🔴 OFF";
+
+        document.getElementById("paperModeStatus").innerText =
+            settings.paperMode ? "📝 PAPER" : "💹 LIVE";
+
+        document.getElementById("lotsStatus").innerText =
+            settings.lots;
+
+    } catch (err) {
+
+        console.error("Settings Error:", err);
+
+    }
+
+}
+
+loadSettings();
+
     try {
 
     const response = await fetch("/api/stats", {
@@ -385,6 +416,8 @@ setInterval(() => {
 
     loadStats();
 
+    loadSettings();
+
     loadActiveTrades();
 
     loadClosedTrades();
@@ -437,3 +470,106 @@ window.addEventListener("click", (event) => {
         modal.style.display = "none";
     }
 });
+
+// ==========================
+// SYSTEM SETTINGS
+// ==========================
+
+let autoTrading = false;
+let paperMode = true;
+let lots = 1;
+
+document.getElementById("autoOnBtn").onclick = () => {
+
+    autoTrading = true;
+    loadSettings();
+
+};
+
+document.getElementById("autoOffBtn").onclick = () => {
+
+    autoTrading = false;
+    loadSettings();
+
+};
+
+document.getElementById("paperOnBtn").onclick = () => {
+
+    paperMode = true;
+    loadSettings();
+
+};
+
+document.getElementById("paperOffBtn").onclick = () => {
+
+    paperMode = false;
+    loadSettings();
+
+};
+
+document.getElementById("plusLotBtn").onclick = () => {
+
+    lots++;
+
+    document.getElementById("lotsStatus").innerText = lots;
+
+};
+
+document.getElementById("minusLotBtn").onclick = () => {
+
+    if (lots > 1) lots--;
+
+    document.getElementById("lotsStatus").innerText = lots;
+
+};
+// ==========================
+// SAVE SETTINGS
+// ==========================
+
+document.getElementById("saveSettingsBtn").onclick = async () => {
+
+    try {
+
+        const response = await fetch("/api/settings", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                autoTrading,
+
+                paperMode,
+
+                lots
+
+            })
+
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            alert("✅ Settings Saved");
+
+            loadSettings();
+
+        } else {
+
+            alert("❌ Failed");
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("❌ Error Saving Settings");
+
+    }
+
+};

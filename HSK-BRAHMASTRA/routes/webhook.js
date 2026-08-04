@@ -280,8 +280,10 @@ ${err.message}`;
 // =====================================
 
 case "TG1_HIT": {
+    const settings =
+    await systemService.getSettings();
 
-    if (settings.paperMode) {
+    if (settings.paper_mode) {
 
     console.log("📝 PAPER TARGET HIT");
 
@@ -331,8 +333,10 @@ case "TG1_HIT": {
 // =====================================
 
 case "SL_HIT": {
+    const settings =
+    await systemService.getSettings();
 
-    if (settings.paperMode) {
+    if (settings.paper_mode) {
 
     console.log("📝 PAPER STOP LOSS");
 
@@ -382,8 +386,10 @@ case "SL_HIT": {
 // =====================================
 
 case "EXIT": {
+    const settings =
+    await systemService.getSettings();
 
-    if (settings.paperMode) {
+    if (settings.paper_mode) {
 
     console.log("📝 PAPER MANUAL EXIT");
 
