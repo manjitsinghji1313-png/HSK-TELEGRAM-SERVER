@@ -1,3 +1,5 @@
+
+const settings = require("../config/settings");
 const express = require("express");
 const router = express.Router();
 
@@ -6,9 +8,8 @@ const telegramService = require("../services/telegramService");
 
 const placeOrder = require("../broker/placeOrder");
 const exitOrder = require("../broker/exitOrder");
-
+console.log("📦 Current Lots:", settings.lots);
 const systemService = require("../services/systemService");
-
 // ==========================
 // TradingView Webhook
 // ==========================
@@ -89,6 +90,17 @@ case "PE_ENTRY": {
         break;
 
     }
+    // ==========================
+// LOTS & QUANTITY
+// ==========================
+
+const LOT_SIZE = 65;
+
+const quantity = settings.lots * LOT_SIZE;
+
+console.log("📦 Lots :", settings.lots);
+console.log("📊 Quantity :", quantity);
+
 
     try {
 
@@ -108,7 +120,7 @@ case "PE_ENTRY": {
                 data.productType || "INTRADAY",
 
             orderType:
-                data.orderType || "MARKET",
+                data.orderType || "LIMIT",
 
             symbol: data.symbol,
 
@@ -124,7 +136,8 @@ case "PE_ENTRY": {
 
             tg1: Number(data.tg1),
 
-            lots: Number(data.lots || 1)
+            lots: settings.lots,
+            quantity: quantity
 
         });
 
