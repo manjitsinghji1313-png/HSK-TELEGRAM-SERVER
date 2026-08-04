@@ -67,7 +67,8 @@ async function loadSettings() {
 
         autoTrading = settings.auto_trading;
         paperMode = settings.paper_mode;
-        lots = settings.lots;
+        lots = Number(settings.lots);
+        console.log("LOTS =", lots, typeof lots);
 
         document.getElementById("autoTradingStatus").innerText =
             autoTrading ? "🟢 ON" : "🔴 OFF";
@@ -516,22 +517,25 @@ document.getElementById("paperOffBtn").onclick = () => {
 
 };
 
+
 document.getElementById("plusLotBtn").onclick = () => {
 
-    lots++;
+    lots = Number(lots) + 1;
 
     document.getElementById("lotsStatus").innerText = lots;
 
 };
-
 document.getElementById("minusLotBtn").onclick = () => {
 
-    if (lots > 1) lots--;
+    lots = Number(lots);
+
+    if (lots > 1) {
+        lots = lots - 1;
+    }
 
     document.getElementById("lotsStatus").innerText = lots;
 
 };
-
 // ==========================
 // SAVE SETTINGS
 // ==========================
