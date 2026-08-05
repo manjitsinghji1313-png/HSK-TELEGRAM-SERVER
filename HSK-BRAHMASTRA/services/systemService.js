@@ -39,20 +39,29 @@ async function setAutoTrading(status) {
 
     return true;
 }
-const { data, error } = await supabase
-    .from("system_settings")
-    .select("*");
 
-console.log("================================");
-console.log("ALL SETTINGS DATA:", data);
-console.log("ALL SETTINGS ERROR:", error);
-console.log("================================");
+// ==========================
+// GET SETTINGS (TEMP TEST)
+// ==========================
 
-if (error) {
-    throw error;
+async function getSettings() {
+
+    const { data, error } = await supabase
+        .from("system_settings")
+        .select("*");
+
+    console.log("================================");
+    console.log("ALL SETTINGS DATA:", data);
+    console.log("ALL SETTINGS ERROR:", error);
+    console.log("================================");
+
+    if (error) {
+        throw error;
+    }
+
+    return data[0];
 }
 
-return data[0];
 module.exports = {
 
     isAutoTradingEnabled,
