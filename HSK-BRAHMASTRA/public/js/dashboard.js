@@ -63,7 +63,9 @@ async function loadSettings() {
             headers: authHeaders()
         });
 
-        const settings = await response.json();
+        const result = await response.json();
+
+        const settings = result.settings;
 
         autoTrading = settings.auto_trading;
         paperMode = settings.paper_mode;
@@ -555,9 +557,9 @@ document.getElementById("saveSettingsBtn").onclick = async () => {
 
             body: JSON.stringify({
 
-                autoTrading,
+                auto_trading: autoTrading,
 
-                paperMode,
+                paper_mode: paperMode,
 
                 lots
 
