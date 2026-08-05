@@ -104,9 +104,7 @@ case "PE_ENTRY": {
 // LOTS & QUANTITY
 // ==========================
 
-const LOT_SIZE = 65;
 
-const quantity = settings.lots * LOT_SIZE;
 
 console.log("📦 Lots :", settings.lots);
 console.log("📊 Quantity :", quantity);
@@ -124,7 +122,6 @@ if (settings.paper_mode) {
     await tradeService.openTrade({
     ...data,
     lots: settings.lots,
-    quantity: quantity,
     mode: "PAPER",
     status: "OPEN"
 });
@@ -137,7 +134,6 @@ message += `
 🚫 Broker Order Not Sent
 
 📦 Lots : ${settings.lots}
-📊 Quantity : ${quantity}
 
 📈 Mode : PAPER`;
 

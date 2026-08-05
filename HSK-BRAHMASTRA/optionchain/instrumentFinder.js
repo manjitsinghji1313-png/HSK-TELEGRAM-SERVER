@@ -4,6 +4,21 @@ const csv = require("csv-parser");
 async function findInstrument(symbol, strike, optionType) {
 
     return new Promise((resolve, reject) => {
+        const symbolMap = {
+
+    NIFTY: "NIFTY",
+
+    BANKNIFTY: "BANKNIFTY",
+
+    SENSEX: "SENSEX",
+
+    CRUDEOIL: "CRUDEOIL",
+
+    CRUDEOILM: "CRUDEOILM"
+
+};
+
+const searchSymbol = symbolMap[symbol] || symbol;
 
         const options = [];
 
@@ -11,12 +26,12 @@ async function findInstrument(symbol, strike, optionType) {
             .pipe(csv())
             .on("data", (row) => {
 
-                if (
-                    row.SEM_TRADING_SYMBOL &&
-                    row.SEM_TRADING_SYMBOL.startsWith(symbol + "-") &&
-                    Number(row.SEM_STRIKE_PRICE) === Number(strike) &&
-                    row.SEM_OPTION_TYPE === optionType
-                ) {
+if (
+    row.SEM_TRADING_SYMBOL &&
+    row.SEM_TRADING_SYMBOL.startsWith(searchSymbol + "-") &&
+    Number(row.SEM_STRIKE_PRICE) === Number(strike) &&
+    row.SEM_OPTION_TYPE === optionType
+) {
 
                     console.log("================================");
                     console.log("MATCH FOUND");
@@ -49,10 +64,12 @@ async function findInstrument(symbol, strike, optionType) {
 
                         lotSize: Number(row.SEM_LOT_UNITS),
 
-                        exchange:
-                            row.SEM_EXM_EXCH_ID === "BSE"
-                                ? "BSE_FNO"
-                                : "NSE_FNO"
+                    exchange:
+                        row.SEM_EXM_EXCH_ID === "MCX"
+                        ? "MCX"
+                        : row.SEM_EXM_EXCH_ID === "BSE"
+                        ? "BSE_FNO"
+                        : "NSE_FNO"
 
                     });
 

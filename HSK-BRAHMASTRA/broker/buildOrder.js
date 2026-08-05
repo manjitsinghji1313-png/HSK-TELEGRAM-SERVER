@@ -57,7 +57,13 @@ async function buildOrder({
     console.log(JSON.stringify(order, null, 2));
     console.log("================================");
 
-    return order;
+    return {
+
+    ...order,
+
+    lotSize: option.lotSize
+
+};
 
 }
 
