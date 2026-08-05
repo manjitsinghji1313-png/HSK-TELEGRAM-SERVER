@@ -1,10 +1,11 @@
 const cron = require("node-cron");
 const db = require("../database/db");
 const telegramService = require("./telegramService");
+const supabase = require("../config/supabase");
 
-// Every day at 3:20 PM IST
+// Every day at 3:01 PM IST
 cron.schedule(
-    "20 15 * * 1-5",
+    "10 15 * * 1-5",
     async () => {
         try {
 
@@ -52,3 +53,47 @@ cron.schedule(
 );
 
 console.log("✅ Daily Report Scheduler Started");
+
+// ======================================
+// DAILY RESET - 11:55 PM IST
+// ======================================
+
+cron.schedule(
+    "55 23 * * 1-5",
+    async () => {
+
+        try {
+
+            const { error } = await supabase
+            .from("trades")
+            .delete()
+            .gt("id", 0);
+
+            if (error) throw error;
+
+            await telegramService.sendMessage(
+`🧹 HSK BRAHMASTRA
+
+✅ Daily Reset Completed
+
+📅 New Trading Day Ready
+
+━━━━━━━━━━━━━━━━━━
+
+All Trades Cleared
+Dashboard Reset Successfully`
+            );
+
+            console.log("✅ Daily Reset Completed");
+
+        } catch (err) {
+
+            console.error("❌ Daily Reset Error:", err);
+
+        }
+
+    },
+    {
+        timezone: "Asia/Kolkata"
+    }
+);
