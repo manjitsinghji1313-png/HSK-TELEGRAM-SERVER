@@ -5,7 +5,7 @@ async function downloadInstrumentFile() {
 
     try {
 
-        console.log("Downloading Dhan Instrument List...");
+        console.log("📥 Downloading Dhan Instrument List...");
 
         const response = await axios.get(
             "https://images.dhan.co/api-data/api-scrip-master.csv",
@@ -18,20 +18,34 @@ async function downloadInstrumentFile() {
 
         response.data.pipe(writer);
 
-        writer.on("finish", () => {
+        return new Promise((resolve, reject) => {
 
-            console.log("✅ Download Complete");
+            writer.on("finish", () => {
+
+                console.log("✅ Instrument File Updated");
+
+                resolve(true);
+
+            });
+
+            writer.on("error", (err) => {
+
+                reject(err);
+
+            });
 
         });
 
-        writer.on("error", console.error);
-
     } catch (err) {
 
-        console.log(err.message);
+        console.log("❌ Instrument Download Failed:", err.message);
+
+        throw err;
 
     }
 
 }
 
-downloadInstrumentFile();
+module.exports = {
+    downloadInstrumentFile
+};

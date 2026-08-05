@@ -20,7 +20,7 @@ const systemService = require("./services/systemService");
 const authMiddleware = require("./middleware/authMiddleware");
 
 const db = require("./database/db");
-
+const { downloadInstrumentFile } = require("./optionchain/instrumentDownloader");
 require("./services/scheduler");
 
 const app = express();
@@ -386,6 +386,28 @@ server.listen(PORT, async () => {
     console.log(`🌐 http://localhost:${PORT}`);
     console.log(`❤️ Health : http://localhost:${PORT}/api/health`);
 
+    // ==========================
+    // DOWNLOAD LATEST INSTRUMENT FILE
+    // ==========================
+
+    try {
+
+        console.log("📥 Updating Instrument File...");
+
+        await downloadInstrumentFile();
+
+        console.log("✅ Instrument File Ready");
+
+    } catch (err) {
+
+        console.log("❌ Instrument Download Failed:", err.message);
+
+    }
+
+    // ==========================
+    // SUPABASE CONNECTION
+    // ==========================
+
     try {
 
         const { error } = await supabase
@@ -430,6 +452,7 @@ server.listen(PORT, async () => {
     console.log("====================================");
 
 });
+
 // ==========================
 // ACTIVE TRADES API
 // ==========================
@@ -453,30 +476,6 @@ app.get("/api/trades/active", authMiddleware, async (req, res) => {
     }
 
 });
-// ==========================
-// TODAY REPORT
-// ==========================
-
-app.get("/api/report/today", async (req, res) => {
-
-    try {
-
-        const report = await db.getClosedTrades();
-
-        res.json(report);
-
-    } catch (err) {
-
-        console.error(err);
-
-        res.status(500).json({
-            error: "Failed"
-        });
-
-    }
-
-});
-
 // ==========================
 // SEND DAILY REPORT NOW
 // ==========================
