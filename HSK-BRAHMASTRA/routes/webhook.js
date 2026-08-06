@@ -2,7 +2,8 @@
 // const settings = require("../config/settings");
 const express = require("express");
 const router = express.Router();
-
+const { getLotSize } =
+require("../utils/marketLots");
 const { findInstrument } = require("../optionchain/instrumentFinder");
 const {
     extractStrikeFromSymbol,
@@ -146,12 +147,20 @@ if (!instrument) {
 
     throw new Error("Instrument not found");
 }
+const market =
+    extractMarket(data.symbol);
+
+const lotSize =
+    getLotSize(market);
+
 const quantity =
-    instrument.lotSize * settings.lots;
+    lotSize * settings.lots;
 
 console.log("📦 Instrument :", instrument.tradingSymbol);
 console.log("🆔 Security ID :", instrument.securityId);
-console.log("📦 Lot Size :", instrument.lotSize);
+console.log("📦 Market :", market);
+console.log("📦 Exchange Lot :", lotSize);
+console.log("📦 User Lots :", settings.lots);
 console.log("📊 Quantity :", quantity);
 
 // ==========================
@@ -165,10 +174,19 @@ if (settings.paper_mode) {
     console.log("================================");
 
     await tradeService.openTrade({
+
     ...data,
+
     lots: settings.lots,
+
+    lotSize,
+
+    quantity,
+
     mode: "PAPER",
+
     status: "OPEN"
+
 });
 
     console.log("✅ PAPER TRADE SAVED");
@@ -249,7 +267,9 @@ message += `
 
     lots: settings.lots,
 
-    quantity: quantity,
+    lotSize,
+
+    quantity,
 
     mode: "LIVE",
 

@@ -1,31 +1,92 @@
 const { findInstrument } = require("../optionchain/instrumentFinder");
+const {
+    extractMarket
+} = require("../utils/extractStrike");
+
+const {
+    getLotSize
+} = require("../utils/marketLots");
+
 const config = require("./config");
 
 async function buildOrder({
+
     transactionType = "BUY",
+
     productType = "INTRADAY",
+
     orderType = "LIMIT",
+
     symbol,
+
     strike,
+
     optionType,
+
     price,
+
     lots = 1
+
 }) {
 
+    // ==========================
+    // GET MARKET
+    // ==========================
+
+    const market = extractMarket(symbol);
+
+    console.log("================================");
+    console.log("MARKET :", market);
+    console.log("SYMBOL :", symbol);
+    console.log("STRIKE :", strike);
+    console.log("OPTION :", optionType);
+    console.log("================================");
+
+    // ==========================
+    // FIND INSTRUMENT
+    // ==========================
+
     const option = await findInstrument(
-        symbol,
-        strike,
+
+        market,
+
+        Number(strike),
+
         optionType
+
     );
+
+    if (!option) {
+
+        throw new Error("Instrument Not Found");
+
+    }
 
     console.log("================================");
     console.log("OPTION FOUND");
     console.log(option);
     console.log("================================");
 
-    if (!option) {
-        throw new Error("Instrument Not Found");
-    }
+    // ==========================
+    // EXCHANGE LOT SIZE
+    // ==========================
+
+    const exchangeLot =
+        getLotSize(market);
+
+    const quantity =
+        exchangeLot * lots;
+
+    console.log("================================");
+    console.log("LOT DETAILS");
+    console.log("Exchange Lot :", exchangeLot);
+    console.log("User Lots    :", lots);
+    console.log("Quantity     :", quantity);
+    console.log("================================");
+
+    // ==========================
+    // BUILD ORDER
+    // ==========================
 
     const order = {
 
@@ -43,13 +104,18 @@ async function buildOrder({
 
         securityId: option.securityId,
 
-        quantity: option.lotSize * lots
+        quantity
 
     };
 
-    // LIMIT order me hi price bhejna
+    // ==========================
+    // LIMIT PRICE
+    // ==========================
+
     if (orderType === "LIMIT") {
+
         order.price = Number(price);
+
     }
 
     console.log("================================");
@@ -59,11 +125,25 @@ async function buildOrder({
 
     return {
 
-    ...order,
+        ...order,
 
-    lotSize: option.lotSize
+        tradingSymbol: option.tradingSymbol,
 
-};
+        securityId: option.securityId,
+
+        exchange: option.exchange,
+
+        strike: option.strike,
+
+        optionType: option.optionType,
+
+        expiry: option.expiry,
+
+        lotSize: exchangeLot,
+
+        quantity
+
+    };
 
 }
 
