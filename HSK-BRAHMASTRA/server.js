@@ -3,7 +3,7 @@ require("dotenv").config();
 const bot = require("./telegramBot");
 
 
-const express = require("express");
+const expresconst { loadInstruments } = require("./optionchain/instrumentLoader"); = require("express");
 const axios = require("axios");
 const http = require("http");
 const path = require("path");
@@ -397,6 +397,12 @@ server.listen(PORT, async () => {
         await downloadInstrumentFile();
 
         console.log("✅ Instrument File Ready");
+
+        console.log("📦 Loading Instruments into Memory...");
+
+        await loadInstruments();
+
+        console.log("✅ Instruments Loaded into Memory");
 
     } catch (err) {
 

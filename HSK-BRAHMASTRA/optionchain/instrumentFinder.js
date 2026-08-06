@@ -1,118 +1,99 @@
-const fs = require("fs");
-const csv = require("csv-parser");
+const { getInstruments } = require("./instrumentLoader");
+const rows = getInstruments();
 
+console.log(`📦 Memory Instruments : ${rows.length}`);
 async function findInstrument(symbol, strike, optionType) {
 
-    return new Promise((resolve, reject) => {
-        const symbolMap = {
+    const symbolMap = {
+        NIFTY: "NIFTY",
+        BANKNIFTY: "BANKNIFTY",
+        SENSEX: "SENSEX",
+        CRUDEOIL: "CRUDEOIL",
+        CRUDEOILM: "CRUDEOILM"
+    };
 
-    NIFTY: "NIFTY",
+    const searchSymbol = symbolMap[symbol] || symbol;
 
-    BANKNIFTY: "BANKNIFTY",
+    const rows = getInstruments();
 
-    SENSEX: "SENSEX",
+    const options = [];
 
-    CRUDEOIL: "CRUDEOIL",
+    for (const row of rows) {
 
-    CRUDEOILM: "CRUDEOILM"
+        if (
+            row.SEM_TRADING_SYMBOL &&
+            row.SEM_TRADING_SYMBOL.startsWith(searchSymbol + "-") &&
+            Number(row.SEM_STRIKE_PRICE) === Number(strike) &&
+            row.SEM_OPTION_TYPE === optionType
+        ) {
 
-};
+            options.push({
 
-const searchSymbol = symbolMap[symbol] || symbol;
+                securityId: row.SEM_SMST_SECURITY_ID,
 
-        const options = [];
+                tradingSymbol: row.SEM_TRADING_SYMBOL,
 
-        fs.createReadStream("./optionchain/instruments.csv")
-            .pipe(csv())
-            .on("data", (row) => {
+                strike: Number(row.SEM_STRIKE_PRICE),
 
-if (
-    row.SEM_TRADING_SYMBOL &&
-    row.SEM_TRADING_SYMBOL.startsWith(searchSymbol + "-") &&
-    Number(row.SEM_STRIKE_PRICE) === Number(strike) &&
-    row.SEM_OPTION_TYPE === optionType
-) {
+                optionType: row.SEM_OPTION_TYPE,
 
-                    console.log("================================");
-                    console.log("MATCH FOUND");
-                    console.log("================================");
+                expiry: new Date(row.SEM_EXPIRY_DATE),
 
-                    console.log("Trading Symbol :", row.SEM_TRADING_SYMBOL);
-                    console.log("Security ID    :", row.SEM_SMST_SECURITY_ID);
-                    console.log("Exchange ID    :", row.SEM_EXM_EXCH_ID);
-                    console.log("Strike Price   :", row.SEM_STRIKE_PRICE);
-                    console.log("Option Type    :", row.SEM_OPTION_TYPE);
-                    console.log("Expiry Date    :", row.SEM_EXPIRY_DATE);
-                    console.log("Expiry Flag    :", row.SEM_EXPIRY_FLAG);
-                    console.log("Lot Size       :", row.SEM_LOT_UNITS);
+                expiryFlag: row.SEM_EXPIRY_FLAG,
 
-                    console.log("================================");
+                lotSize: Number(row.SEM_LOT_UNITS),
 
-                    options.push({
-
-                        securityId: row.SEM_SMST_SECURITY_ID,
-
-                        tradingSymbol: row.SEM_TRADING_SYMBOL,
-
-                        strike: Number(row.SEM_STRIKE_PRICE),
-
-                        optionType: row.SEM_OPTION_TYPE,
-
-                        expiry: new Date(row.SEM_EXPIRY_DATE),
-
-                        expiryFlag: row.SEM_EXPIRY_FLAG,
-
-                        lotSize: Number(row.SEM_LOT_UNITS),
-
-                    exchange:
-                        row.SEM_EXM_EXCH_ID === "MCX"
+                exchange:
+                    row.SEM_EXM_EXCH_ID === "MCX"
                         ? "MCX"
                         : row.SEM_EXM_EXCH_ID === "BSE"
                         ? "BSE_FNO"
                         : "NSE_FNO"
 
-                    });
+            });
 
-                }
+        }
 
-            })
+    }
 
-            .on("end", () => {
+    if (options.length === 0) {
 
-                if (options.length === 0) {
+        console.log("================================");
+        console.log("❌ INSTRUMENT NOT FOUND");
+        console.log("Symbol :", searchSymbol);
+        console.log("Strike :", strike);
+        console.log("Option :", optionType);
+        console.log("================================");
 
-                    console.log("❌ NO MATCH FOUND");
-                    return resolve(null);
+        return null;
 
-                }
+    }
 
-                // Weekly First
-                let weekly = options.filter(x => x.expiryFlag === "W");
+    const now = new Date();
 
-                if (weekly.length > 0) {
+    const valid = options.filter(x => x.expiry >= now);
 
-                    weekly.sort((a, b) => a.expiry - b.expiry);
+    if (valid.length > 0) {
 
-                    console.log("✅ USING WEEKLY CONTRACT");
-                    console.log(weekly[0]);
+        valid.sort((a, b) => a.expiry - b.expiry);
 
-                    return resolve(weekly[0]);
+        console.log("================================");
+        console.log("✅ USING CONTRACT");
+        console.log(valid[0]);
+        console.log("================================");
 
-                }
+        return valid[0];
 
-                // Monthly
-                options.sort((a, b) => a.expiry - b.expiry);
+    }
 
-                console.log("✅ USING MONTHLY CONTRACT");
-                console.log(options[0]);
+    options.sort((a, b) => a.expiry - b.expiry);
 
-                resolve(options[0]);
+    console.log("================================");
+    console.log("⚠ USING FALLBACK");
+    console.log(options[0]);
+    console.log("================================");
 
-            })
-
-            .on("error", reject);
-
-    });
+    return options[0];
 
 }
 
