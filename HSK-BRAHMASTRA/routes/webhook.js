@@ -4,7 +4,10 @@ const express = require("express");
 const router = express.Router();
 
 const { findInstrument } = require("../optionchain/instrumentFinder");
-const { extractStrikeFromSymbol } = require("../utils/extractStrike");
+const {
+    extractStrikeFromSymbol,
+    extractMarket
+} = require("../utils/extractStrike");
 
 const tradeService = require("../services/tradeService");
 const telegramService = require("../services/telegramService");
@@ -131,9 +134,10 @@ console.log("🎯 Final Strike :", data.strike);
 // ==========================
 // FIND INSTRUMENT
 // ==========================
+const market = extractMarket(data.symbol);
 
 const instrument = await findInstrument(
-    data.symbol,
+    market,
     Number(data.strike),
     data.cmd === "CE_ENTRY" ? "CE" : "PE"
 );
