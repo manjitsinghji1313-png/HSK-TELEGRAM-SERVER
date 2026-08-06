@@ -271,55 +271,40 @@ ${err.message}`;
 
     break;
 }
-// =====================================
-// TARGET HIT
-// =====================================
-
 case "TG1_HIT": {
-    const settings =
-    await systemService.getSettings();
 
-    if (settings.paper_mode) {
+    const settings = await systemService.getSettings();
 
-    console.log("📝 PAPER TARGET HIT");
+    if (!settings) {
 
-} else {
+        console.log("❌ System Settings Not Found");
 
-    try {
-
-        await exitOrder({
-            tradeKey: data.tradeKey
-        });
-
-        console.log("✅ TARGET EXIT SUCCESS");
-
-    } catch (err) {
-
-        console.log("❌ TARGET EXIT FAILED");
-        console.log(err.message);
+        break;
 
     }
 
-}
+    if (settings.paper_mode) {
 
-    await tradeService.closeTrade(data);
+        console.log("📝 PAPER TARGET HIT");
 
-    message =
-`🎯 <b>TARGET HIT</b>
+    } else {
 
-📊 Symbol : ${data.symbol}
-🆔 Trade ID : ${data.tradeKey}
+        try {
 
-━━━━━━━━━━━━━━━━━━
+            await exitOrder({
+                tradeKey: data.tradeKey
+            });
 
-✅ Position Closed
+            console.log("✅ TARGET EXIT SUCCESS");
 
-━━━━━━━━━━━━━━━━━━
-⚠️ <b>Disclaimer</b>
+        } catch (err) {
 
-• Educational Purpose Only
-• Not SEBI Registered
-• Trade At Your Own Risk`;
+            console.log("❌ TARGET EXIT FAILED");
+            console.log(err.message);
+
+        }
+
+    }
 
     break;
 }
