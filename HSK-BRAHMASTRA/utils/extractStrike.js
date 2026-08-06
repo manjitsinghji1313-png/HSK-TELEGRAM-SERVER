@@ -2,22 +2,87 @@ function extractStrikeFromSymbol(symbol) {
 
     if (!symbol) return null;
 
-    // MCX OPTIONS
+    // ==========================
+    // CRUDEOIL / CRUDEOILM
+    // Example:
+    // CRUDEOILM260817C7200
+    // CRUDEOIL260810P6000
+    // ==========================
+
     if (
-        symbol.startsWith("CRUDE") ||
-        symbol.startsWith("NATURALGAS")
+        symbol.startsWith("CRUDEOILM") ||
+        symbol.startsWith("CRUDEOIL")
     ) {
 
         const match = symbol.match(/[CP](\d+)$/);
 
         return match ? Number(match[1]) : null;
+
     }
 
-    // NSE / BSE OPTIONS
-    const match = symbol.match(/(\d+)(CE|PE)$/);
+    // ==========================
+    // NATURAL GAS
+    // Example:
+    // NATURALGAS260817C210
+    // ==========================
 
-    return match ? Number(match[1]) : null;
+    if (symbol.startsWith("NATURALGAS")) {
+
+        const match = symbol.match(/[CP](\d+)$/);
+
+        return match ? Number(match[1]) : null;
+
+    }
+
+    // ==========================
+    // NIFTY
+    // Example:
+    // NIFTY26081325000CE
+    // ==========================
+
+    if (symbol.startsWith("NIFTY")) {
+
+        const match = symbol.match(/^NIFTY\d{6}(\d+)(CE|PE)$/);
+
+        return match ? Number(match[1]) : null;
+
+    }
+
+    // ==========================
+    // BANKNIFTY
+    // Example:
+    // BANKNIFTY26081356000CE
+    // ==========================
+
+    if (symbol.startsWith("BANKNIFTY")) {
+
+        const match = symbol.match(/^BANKNIFTY\d{6}(\d+)(CE|PE)$/);
+
+        return match ? Number(match[1]) : null;
+
+    }
+
+    // ==========================
+    // SENSEX
+    // Example:
+    // SENSEX26081384000CE
+    // ==========================
+
+    if (symbol.startsWith("SENSEX")) {
+
+        const match = symbol.match(/^SENSEX\d{6}(\d+)(CE|PE)$/);
+
+        return match ? Number(match[1]) : null;
+
+    }
+
+    return null;
+
 }
+
+// ==========================
+// MARKET NAME
+// ==========================
 
 function extractMarket(symbol) {
 
