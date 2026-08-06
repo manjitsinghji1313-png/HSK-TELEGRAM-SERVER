@@ -147,8 +147,6 @@ if (!instrument) {
 
     throw new Error("Instrument not found");
 }
-const market =
-    extractMarket(data.symbol);
 
 const lotSize =
     getLotSize(market);
