@@ -3,12 +3,15 @@
 const express = require("express");
 const router = express.Router();
 
+const { findInstrument } = require("../optionchain/instrumentFinder");
+const { extractStrikeFromSymbol } = require("../utils/extractStrike");
+
 const tradeService = require("../services/tradeService");
 const telegramService = require("../services/telegramService");
 
 const placeOrder = require("../broker/placeOrder");
 const exitOrder = require("../broker/exitOrder");
-// console.log("📦 Current Lots:", settings.lots);
+
 const systemService = require("../services/systemService");
 // ==========================
 // TradingView Webhook
@@ -74,10 +77,31 @@ case "PE_ENTRY": {
     console.log("=============================");
     console.log("Paper Mode =", settings.paper_mode);
 
-    const autoTrading =
-    settings.auto_trading;
+    const autoTrading = settings.auto_trading;
 
-    
+// ==========================
+// FIX STRIKE FROM PREMIUM SYMBOL
+// ==========================
+
+if (!data.strike || Number(data.strike) <= 0) {
+
+    const extractedStrike = extractStrikeFromSymbol(data.symbol);
+
+    if (extractedStrike) {
+
+        data.strike = extractedStrike;
+
+        console.log("✅ Strike Extracted :", data.strike);
+
+    } else {
+
+        console.log("❌ Unable to Extract Strike :", data.symbol);
+
+    }
+
+}
+
+console.log("🎯 Final Strike :", data.strike);
 
     if (!autoTrading) {
 
@@ -101,12 +125,29 @@ case "PE_ENTRY": {
 
     }
     // ==========================
+// ==========================
 // LOTS & QUANTITY
 // ==========================
+// ==========================
+// FIND INSTRUMENT
+// ==========================
 
+const instrument = await findInstrument(
+    data.symbol,
+    Number(data.strike),
+    data.cmd === "CE_ENTRY" ? "CE" : "PE"
+);
 
+if (!instrument) {
 
-console.log("📦 Lots :", settings.lots);
+    throw new Error("Instrument not found");
+}
+const quantity =
+    instrument.lotSize * settings.lots;
+
+console.log("📦 Instrument :", instrument.tradingSymbol);
+console.log("🆔 Security ID :", instrument.securityId);
+console.log("📦 Lot Size :", instrument.lotSize);
 console.log("📊 Quantity :", quantity);
 
 // ==========================
@@ -161,9 +202,13 @@ message += `
             orderType:
                 data.orderType || "LIMIT",
 
-            symbol: data.symbol,
+            symbol: instrument.tradingSymbol,
 
-            strike: Number(data.strike),
+            strike: instrument.strike,
+
+            securityId: instrument.securityId,
+
+            exchange: instrument.exchange,
 
             optionType:
                 data.optionType ||
