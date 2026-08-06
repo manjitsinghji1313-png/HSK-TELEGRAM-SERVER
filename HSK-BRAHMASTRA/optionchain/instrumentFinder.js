@@ -44,12 +44,13 @@ async function findInstrument(symbol, strike, optionType) {
                 lotSize: Number(row.SEM_LOT_UNITS),
 
                 exchange:
-                    row.SEM_EXM_EXCH_ID === "MCX"
+                    row.SEM_TRADING_SYMBOL.startsWith("CRUDEOIL") ||
+                    row.SEM_TRADING_SYMBOL.startsWith("CRUDEOILM") ||
+                    row.SEM_TRADING_SYMBOL.startsWith("NATURALGAS")
                         ? "MCX"
-                        : row.SEM_EXM_EXCH_ID === "BSE"
+                        : row.SEM_TRADING_SYMBOL.startsWith("SENSEX")
                         ? "BSE_FNO"
                         : "NSE_FNO"
-
             });
 
         }
