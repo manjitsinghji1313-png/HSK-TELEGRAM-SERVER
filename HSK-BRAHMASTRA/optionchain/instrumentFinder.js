@@ -1,7 +1,6 @@
-const { getInstruments } = require("./instrumentLoader");
-const rows = getInstruments();
+    const { getInstruments } = require("./instrumentLoader");
+    
 
-console.log(`📦 Memory Instruments : ${rows.length}`);
 async function findInstrument(symbol, strike, optionType) {
 
     const symbolMap = {
@@ -13,8 +12,9 @@ async function findInstrument(symbol, strike, optionType) {
     };
 
     const searchSymbol = symbolMap[symbol] || symbol;
-
     const rows = getInstruments();
+
+    console.log(`📦 Loaded in Memory : ${rows.length}`);
 
     const options = [];
 
