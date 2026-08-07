@@ -254,7 +254,7 @@ message += `
                 data.productType || "INTRADAY",
 
             orderType:
-                data.orderType || "LIMIT",
+                data.orderType || "MARKET",
 
             symbol: instrument.tradingSymbol,
 
@@ -266,7 +266,7 @@ message += `
 
             optionType: optionType,
 
-            price: Number(data.limitPrice || data.price),
+            price: 0,
 
             sl: Number(data.sl),
 
