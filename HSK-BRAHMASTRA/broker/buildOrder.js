@@ -79,7 +79,6 @@ async function buildOrder({
     // ==========================
     // BUILD ORDER
     // ==========================
-
     const order = {
 
         dhanClientId: config.CLIENT_ID,
@@ -98,23 +97,31 @@ async function buildOrder({
 
         securityId: option.securityId,
 
-        quantity
+        quantity,
 
-    };
+        disclosedQuantity: 0,
 
-    // ==========================
-    // LIMIT ORDER
-    // ==========================
+        triggerPrice: 0,
 
-    if (orderType === "LIMIT") {
+        afterMarketOrder: false,
+
+        amoTime: ""
+
+};
+
+if (orderType === "LIMIT") {
 
         order.price = Number(price);
 
-    }
+}
 
     console.log("================================");
     console.log("FINAL ORDER OBJECT");
     console.log(JSON.stringify(order, null, 2));
+    console.log("================================");
+
+    console.log("ORDER KEYS");
+    console.log(Object.keys(order));
     console.log("================================");
 
     return order;
