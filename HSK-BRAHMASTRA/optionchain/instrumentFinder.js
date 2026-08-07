@@ -81,6 +81,12 @@ async function findInstrument(symbol, strike, optionType) {
         console.log("================================");
         console.log("✅ USING CONTRACT");
         console.log(valid[0]);
+
+        console.log("================================");
+        console.log("RAW CSV ROW");
+        console.log(
+            rows.find(r => r.SEM_SMST_SECURITY_ID == valid[0].securityId)
+        );
         console.log("================================");
 
         return valid[0];
