@@ -7,7 +7,8 @@ require("../utils/marketLots");
 const { findInstrument } = require("../optionchain/instrumentFinder");
 const {
     extractStrikeFromSymbol,
-    extractMarket
+    extractMarket,
+    extractOptionType
 } = require("../utils/extractStrike");
 
 const tradeService = require("../services/tradeService");
