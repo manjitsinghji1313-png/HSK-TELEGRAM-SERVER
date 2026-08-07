@@ -59,14 +59,6 @@ async function buildOrder({
 
         quantity: Number(quantity),
 
-        disclosedQuantity: 0,
-
-        triggerPrice: 0,
-
-        afterMarketOrder: false,
-
-        amoTime: "",
-
         price: Number(price)
 
     };
