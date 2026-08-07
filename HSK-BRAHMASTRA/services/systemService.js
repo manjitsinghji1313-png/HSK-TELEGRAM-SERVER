@@ -47,21 +47,25 @@ async function getSettings() {
 
     const { data, error } = await supabase
         .from("system_settings")
-        .select("*")
-        .eq("id", 1)
-        .single();
+        .select("*");
 
     console.log("================================");
-    console.log("SETTINGS DATA:", data);
-    console.log("SETTINGS ERROR:", error);
+    console.log("ALL SETTINGS:", data);
+    console.log("ERROR:", error);
     console.log("================================");
 
     if (error) {
         throw error;
     }
 
-    return data;
+    if (!data || data.length === 0) {
+        throw new Error("No settings found");
+    }
+
+    return data[0];
+
 }
+
 
 module.exports = {
 
