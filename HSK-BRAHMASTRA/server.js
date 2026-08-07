@@ -288,7 +288,10 @@ app.get("/api/settings", async (req, res) => {
 
         console.log("API SETTINGS:", settings);
 
-        return res.status(200).json(settings);
+        return res.status(200).json({
+            success: true,
+            settings
+        });
 
     } catch (err) {
 
