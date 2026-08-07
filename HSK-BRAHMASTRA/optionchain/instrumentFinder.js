@@ -47,7 +47,7 @@ async function findInstrument(symbol, strike, optionType) {
                     row.SEM_TRADING_SYMBOL.startsWith("CRUDEOIL") ||
                     row.SEM_TRADING_SYMBOL.startsWith("CRUDEOILM") ||
                     row.SEM_TRADING_SYMBOL.startsWith("NATURALGAS")
-                        ? "MCX"
+                        ? "MCX_COMM"
                         : row.SEM_TRADING_SYMBOL.startsWith("SENSEX")
                         ? "BSE_FNO"
                         : "NSE_FNO"
