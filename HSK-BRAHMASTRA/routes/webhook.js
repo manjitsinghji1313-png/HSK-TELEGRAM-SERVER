@@ -133,21 +133,50 @@ if (!autoTrading) {
 // LOTS & QUANTITY
 // ==========================
 // ==========================
+// ==========================
 // FIND INSTRUMENT
 // ==========================
+
 const market = extractMarket(data.symbol);
+
+// Detect Option Type from Command / Symbol
+let optionType;
+
+if (data.cmd === "CE_ENTRY") {
+
+    optionType = "CE";
+
+} else if (data.cmd === "PE_ENTRY") {
+
+    optionType = "PE";
+
+} else if (data.cmd === "BUY") {
+
+    optionType = extractOptionType(data.symbol);
+
+    if (!optionType) {
+
+        throw new Error(`Unable to detect option type from symbol: ${data.symbol}`);
+
+    }
+
+}
+
+console.log("📦 Market :", market);
+console.log("🎯 Strike :", data.strike);
+console.log("📈 Option :", optionType);
 
 const instrument = await findInstrument(
     market,
     Number(data.strike),
-    data.cmd === "BUY"
-    ? (data.symbol.includes("P") ? "PE" : "CE")
-    : (data.cmd === "CE_ENTRY" ? "CE" : "PE")
+    optionType
 );
 
 if (!instrument) {
 
     throw new Error("Instrument not found");
+
+
 }
 
 const lotSize =
@@ -235,13 +264,7 @@ message += `
 
             exchange: instrument.exchange,
 
-            optionType:
-                data.optionType ||
-                (
-                    data.cmd === "BUY"
-                    ? (data.symbol.includes("P") ? "PE" : "CE")
-                    : (data.cmd === "CE_ENTRY" ? "CE" : "PE")
-                ),
+            optionType: optionType,
 
             price: Number(data.limitPrice || data.price),
 
