@@ -83,29 +83,26 @@ case "PE_ENTRY": {
 
     const autoTrading = settings.auto_trading;
 
+    // ==========================
+// ALWAYS EXTRACT STRIKE
 // ==========================
-// FIX STRIKE FROM PREMIUM SYMBOL
-// ==========================
-
-if (!data.strike || Number(data.strike) <= 0) {
 
     const extractedStrike = extractStrikeFromSymbol(data.symbol);
 
-    if (extractedStrike) {
+if (extractedStrike) {
 
-        data.strike = extractedStrike;
+    data.strike = extractedStrike;
 
-        console.log("✅ Strike Extracted :", data.strike);
+    console.log("✅ Strike Extracted :", data.strike);
 
-    } else {
+} else {
 
-        console.log("❌ Unable to Extract Strike :", data.symbol);
-
-    }
+    console.log("❌ Unable to Extract Strike :", data.symbol);
 
 }
 
-console.log("🎯 Final Strike :", data.strike);
+    console.log("🎯 Final Strike :", data.strike);
+
 
     if (!autoTrading) {
 
