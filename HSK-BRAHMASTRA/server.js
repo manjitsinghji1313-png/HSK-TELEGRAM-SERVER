@@ -316,14 +316,18 @@ app.post("/api/settings", async (req, res) => {
 
     try {
 
-        const { autoTrading, paperMode, lots } = req.body;
+        const {
+            auto_trading,
+            paper_mode,
+            lots
+        } = req.body;
 
         const { data, error } = await supabase
             .from("system_settings")
             .update({
-                auto_trading: autoTrading,
-                paper_mode: paperMode,
-                lots: lots,
+                auto_trading,
+                paper_mode,
+                lots,
                 updated_at: new Date().toISOString()
             })
             .eq("id", 1)
