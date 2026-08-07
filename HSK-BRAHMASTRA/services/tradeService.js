@@ -229,6 +229,40 @@ async function getBrokerOrder(tradeKey) {
 
 }
 
+// ==========================
+// RESET TRADES
+// ==========================
+
+async function resetTrades() {
+
+    try {
+
+        const { error } = await supabase
+            .from("trades")
+            .delete()
+            .gt("id", 0);
+
+        if (error) {
+
+            console.error("❌ Reset Trades Error:", error);
+            return false;
+
+        }
+
+        console.log("🧹 All Trades Reset Successfully");
+
+        return true;
+
+    } catch (err) {
+
+        console.error("❌ resetTrades()", err);
+
+        return false;
+
+    }
+
+}
+
 module.exports = {
 
     openTrade,
@@ -237,6 +271,8 @@ module.exports = {
 
     saveBrokerOrder,
 
-    getBrokerOrder
+    getBrokerOrder,
+
+    resetTrades
 
 };

@@ -5,6 +5,7 @@ const systemService = require("./services/systemService");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+const tradeService = require("./services/tradeService");
 // ==========================
 // START
 // ==========================
@@ -111,6 +112,50 @@ ${settings.updated_at}
 });
 
 // ==========================
+// RESET
+// ==========================
+
+bot.command("reset", async (ctx) => {
+
+    try {
+
+        const success = await tradeService.resetTrades();
+
+        if (!success) {
+        throw new Error("Trade Reset Failed");
+    }
+
+        await ctx.reply(
+`🧹 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Manual Reset Completed
+
+📦 Active Trades : 0
+📁 Closed Trades : 0
+📊 Dashboard Reset
+
+🚀 Ready For New Session`
+        );
+
+        console.log("✅ Manual Reset Completed");
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.reply(
+`❌ RESET FAILED
+
+${err.message}`
+        );
+
+    }
+
+});
+
+// ==========================
 // HELP
 // ==========================
 
@@ -125,6 +170,7 @@ Available Commands
 
 🟢 /starttrade
 🔴 /stoptrade
+🧹 /reset
 📊 /status
 ❓ /help
 
