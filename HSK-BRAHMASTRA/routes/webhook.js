@@ -48,6 +48,7 @@ router.post("/", (req, res) => {
 // CE ENTRY / PE ENTRY
 // =====================================
 
+case "BUY":
 case "CE_ENTRY":
 case "PE_ENTRY": {
 
@@ -68,63 +69,65 @@ case "PE_ENTRY": {
 🆔 Trade ID : ${data.tradeKey}
 
 ━━━━━━━━━━━━━━━━━━`;
+// ==========================
+// AUTO TRADING CHECK
+// ==========================
 
-    // ==========================
-    // AUTO TRADING CHECK
-    // ==========================
+const settings = await systemService.getSettings();
 
-    const settings =
-    await systemService.getSettings();
+console.log("===== DATABASE SETTINGS =====");
+console.log(settings);
+console.log("=============================");
+console.log("Paper Mode =", settings.paper_mode);
 
-    console.log("===== DATABASE SETTINGS =====");
-    console.log(settings);
-    console.log("=============================");
-    console.log("Paper Mode =", settings.paper_mode);
+const autoTrading = settings.auto_trading;
 
-    const autoTrading = settings.auto_trading;
-
-    // ==========================
+// ==========================
 // ALWAYS EXTRACT STRIKE
 // ==========================
 
-    const extractedStrike = extractStrikeFromSymbol(data.symbol);
+const extractedStrike = extractStrikeFromSymbol(data.symbol);
 
-if (extractedStrike) {
+if (extractedStrike > 0) {
 
     data.strike = extractedStrike;
-
     console.log("✅ Strike Extracted :", data.strike);
 
 } else {
 
     console.log("❌ Unable to Extract Strike :", data.symbol);
 
+    // Fallback to TradingView strike if available
+    data.strike = Number(data.strike) || 0;
+
 }
 
-    console.log("🎯 Final Strike :", data.strike);
+console.log("🎯 Final Strike :", data.strike);
 
+// ==========================
+// AUTO TRADING OFF
+// ==========================
 
-    if (!autoTrading) {
+if (!autoTrading) {
 
-        console.log("⛔ AUTO TRADING DISABLED");
+    console.log("⛔ AUTO TRADING DISABLED");
 
-        message +=
-`
+    message += `
 
-🚫 <b>Broker Order Blocked</b>
+🚫 Broker Order Blocked
 
 ⚙ Auto Trading : OFF
 
 ━━━━━━━━━━━━━━━━━━
-⚠️ <b>Disclaimer</b>
+⚠️ Disclaimer
 
 • Educational Purpose Only
 • Not SEBI Registered
 • Trade At Your Own Risk`;
 
-        break;
+    break;
 
-    }
+}
     // ==========================
 // ==========================
 // LOTS & QUANTITY
@@ -137,7 +140,9 @@ const market = extractMarket(data.symbol);
 const instrument = await findInstrument(
     market,
     Number(data.strike),
-    data.cmd === "CE_ENTRY" ? "CE" : "PE"
+    data.cmd === "BUY"
+    ? (data.symbol.includes("P") ? "PE" : "CE")
+    : (data.cmd === "CE_ENTRY" ? "CE" : "PE")
 );
 
 if (!instrument) {
@@ -229,7 +234,11 @@ message += `
 
             optionType:
                 data.optionType ||
-                (data.cmd === "CE_ENTRY" ? "CE" : "PE"),
+                (
+                    data.cmd === "BUY"
+                    ? (data.symbol.includes("P") ? "PE" : "CE")
+                    : (data.cmd === "CE_ENTRY" ? "CE" : "PE")
+                ),
 
             price: Number(data.limitPrice || data.price),
 

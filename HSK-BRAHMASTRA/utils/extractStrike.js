@@ -2,82 +2,76 @@ function extractStrikeFromSymbol(symbol) {
 
     if (!symbol) return null;
 
+    // Generic helper
+    function getStrike(regex1, regex2) {
+        let match = symbol.match(regex1);
+        if (!match && regex2) {
+            match = symbol.match(regex2);
+        }
+        return match ? Number(match[1]) : null;
+    }
+
     // ==========================
     // CRUDEOIL / CRUDEOILM
-    // Example:
+    // Supports:
     // CRUDEOILM260817C7200
-    // CRUDEOIL260810P6000
+    // CRUDEOILM2608177200CE
     // ==========================
+    if (symbol.startsWith("CRUDEOILM")) {
+        return getStrike(
+            /^CRUDEOILM\d{6}(\d+)(CE|PE)$/,
+            /^CRUDEOILM\d{6}[CP](\d+)$/
+        );
+    }
 
-    if (
-        symbol.startsWith("CRUDEOILM") ||
-        symbol.startsWith("CRUDEOIL")
-    ) {
-
-        const match = symbol.match(/[CP](\d+)$/);
-
-        return match ? Number(match[1]) : null;
-
+    if (symbol.startsWith("CRUDEOIL")) {
+        return getStrike(
+            /^CRUDEOIL\d{6}(\d+)(CE|PE)$/,
+            /^CRUDEOIL\d{6}[CP](\d+)$/
+        );
     }
 
     // ==========================
     // NATURAL GAS
-    // Example:
-    // NATURALGAS260817C210
     // ==========================
-
     if (symbol.startsWith("NATURALGAS")) {
-
-        const match = symbol.match(/[CP](\d+)$/);
-
-        return match ? Number(match[1]) : null;
-
+        return getStrike(
+            /^NATURALGAS\d{6}(\d+)(CE|PE)$/,
+            /^NATURALGAS\d{6}[CP](\d+)$/
+        );
     }
 
     // ==========================
     // NIFTY
-    // Example:
-    // NIFTY26081325000CE
     // ==========================
-
     if (symbol.startsWith("NIFTY")) {
-
-        const match = symbol.match(/^NIFTY\d{6}(\d+)(CE|PE)$/);
-
-        return match ? Number(match[1]) : null;
-
+        return getStrike(
+            /^NIFTY\d{6}(\d+)(CE|PE)$/,
+            /^NIFTY\d{6}[CP](\d+)$/
+        );
     }
 
     // ==========================
     // BANKNIFTY
-    // Example:
-    // BANKNIFTY26081356000CE
     // ==========================
-
     if (symbol.startsWith("BANKNIFTY")) {
-
-        const match = symbol.match(/^BANKNIFTY\d{6}(\d+)(CE|PE)$/);
-
-        return match ? Number(match[1]) : null;
-
+        return getStrike(
+            /^BANKNIFTY\d{6}(\d+)(CE|PE)$/,
+            /^BANKNIFTY\d{6}[CP](\d+)$/
+        );
     }
 
     // ==========================
     // SENSEX
-    // Example:
-    // SENSEX26081384000CE
     // ==========================
-
     if (symbol.startsWith("SENSEX")) {
-
-        const match = symbol.match(/^SENSEX\d{6}(\d+)(CE|PE)$/);
-
-        return match ? Number(match[1]) : null;
-
+        return getStrike(
+            /^SENSEX\d{6}(\d+)(CE|PE)$/,
+            /^SENSEX\d{6}[CP](\d+)$/
+        );
     }
 
     return null;
-
 }
 
 // ==========================
