@@ -1,12 +1,6 @@
 const { findInstrument } = require("../optionchain/instrumentFinder");
-const {
-    extractMarket
-} = require("../utils/extractStrike");
-
-const {
-    getLotSize
-} = require("../utils/marketLots");
-
+const { extractMarket } = require("../utils/extractStrike");
+const { getLotSize } = require("../utils/marketLots");
 const config = require("./config");
 
 async function buildOrder({
@@ -68,14 +62,12 @@ async function buildOrder({
     console.log("================================");
 
     // ==========================
-    // EXCHANGE LOT SIZE
+    // LOT SIZE
     // ==========================
 
-    const exchangeLot =
-        getLotSize(market);
+    const exchangeLot = getLotSize(market);
 
-    const quantity =
-        exchangeLot * lots;
+    const quantity = exchangeLot * lots;
 
     console.log("================================");
     console.log("LOT DETAILS");
@@ -91,6 +83,8 @@ async function buildOrder({
     const order = {
 
         dhanClientId: config.CLIENT_ID,
+
+        correlationId: "HSK_" + Date.now(),
 
         transactionType,
 
@@ -109,7 +103,7 @@ async function buildOrder({
     };
 
     // ==========================
-    // LIMIT PRICE
+    // LIMIT ORDER
     // ==========================
 
     if (orderType === "LIMIT") {
