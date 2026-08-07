@@ -34,6 +34,10 @@ async function placeOrder(orderData) {
         console.log(JSON.stringify(order, null, 2));
         console.log("================================");
 
+        console.log("################################");
+        console.log("FINAL ORDER PAYLOAD");
+        console.log(JSON.stringify(order, null, 2));
+        console.log("################################");
 
         const response = await dhan.post("/orders", order);
 
