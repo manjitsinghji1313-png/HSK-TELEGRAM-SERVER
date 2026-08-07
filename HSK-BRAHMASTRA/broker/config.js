@@ -1,4 +1,6 @@
+require("dotenv").config();
+
 module.exports = {
-    CLIENT_ID: "1104867831",
-    ACCESS_TOKEN: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzg2MTYxOTY0LCJpYXQiOjE3ODYwNzU1NjQsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTA0ODY3ODMxIn0.7Y72sjZ-hWirfgZmnkBTPSMTH9Is9SyJQQEwqj5hSTV7cPVNrn596P1Rf1ZBnpvmWEzixe0zmlltjaOSTjOWbg"
+  CLIENT_ID: process.env.DHAN_CLIENT_ID,
+  ACCESS_TOKEN: process.env.DHAN_ACCESS_TOKEN,
 };
