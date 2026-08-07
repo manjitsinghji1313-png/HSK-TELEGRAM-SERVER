@@ -1,6 +1,3 @@
-const { findInstrument } = require("../optionchain/instrumentFinder");
-const { extractMarket } = require("../utils/extractStrike");
-const { getLotSize } = require("../utils/marketLots");
 const config = require("./config");
 
 async function buildOrder({
@@ -11,76 +8,24 @@ async function buildOrder({
 
     orderType = "LIMIT",
 
-    symbol,
+    securityId,
 
-    strike,
+    exchange,
 
-    optionType,
+    quantity,
 
-    price,
-
-    lots = 1
+    price
 
 }) {
 
-    // ==========================
-    // GET MARKET
-    // ==========================
-
-    const market = extractMarket(symbol);
-
     console.log("================================");
-    console.log("MARKET :", market);
-    console.log("SYMBOL :", symbol);
-    console.log("STRIKE :", strike);
-    console.log("OPTION :", optionType);
+    console.log("BUILD ORDER");
+    console.log("Security :", securityId);
+    console.log("Exchange :", exchange);
+    console.log("Quantity :", quantity);
+    console.log("Price    :", price);
     console.log("================================");
 
-    // ==========================
-    // FIND INSTRUMENT
-    // ==========================
-
-    const option = await findInstrument(
-
-        market,
-
-        Number(strike),
-
-        optionType
-
-    );
-
-    if (!option) {
-
-        throw new Error("Instrument Not Found");
-
-    }
-
-    console.log("================================");
-    console.log("OPTION FOUND");
-    console.log("SECOND LOOKUP");
-    console.log(option);
-    
-    console.log("================================");
-
-    // ==========================
-    // LOT SIZE
-    // ==========================
-
-    const exchangeLot = getLotSize(market);
-
-    const quantity = exchangeLot * lots;
-
-    console.log("================================");
-    console.log("LOT DETAILS");
-    console.log("Exchange Lot :", exchangeLot);
-    console.log("User Lots    :", lots);
-    console.log("Quantity     :", quantity);
-    console.log("================================");
-
-    // ==========================
-    // BUILD ORDER
-    // ==========================
     const order = {
 
         dhanClientId: config.CLIENT_ID,
@@ -89,7 +34,7 @@ async function buildOrder({
 
         transactionType,
 
-        exchangeSegment: option.exchange,
+        exchangeSegment: exchange,
 
         productType,
 
@@ -97,9 +42,9 @@ async function buildOrder({
 
         validity: "DAY",
 
-        securityId: option.securityId,
+        securityId: String(securityId),
 
-        quantity,
+        quantity: Number(quantity),
 
         disclosedQuantity: 0,
 
@@ -107,23 +52,15 @@ async function buildOrder({
 
         afterMarketOrder: false,
 
-        amoTime: ""
+        amoTime: "",
 
-};
+        price: Number(price)
 
-if (orderType === "LIMIT") {
-
-        order.price = Number(price);
-
-}
+    };
 
     console.log("================================");
-    console.log("FINAL ORDER OBJECT");
+    console.log("FINAL ORDER");
     console.log(JSON.stringify(order, null, 2));
-    console.log("================================");
-
-    console.log("ORDER KEYS");
-    console.log(Object.keys(order));
     console.log("================================");
 
     return order;
