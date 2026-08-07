@@ -123,27 +123,7 @@ async function buildOrder({
     console.log(JSON.stringify(order, null, 2));
     console.log("================================");
 
-    return {
-
-        ...order,
-
-        tradingSymbol: option.tradingSymbol,
-
-        securityId: option.securityId,
-
-        exchange: option.exchange,
-
-        strike: option.strike,
-
-        optionType: option.optionType,
-
-        expiry: option.expiry,
-
-        lotSize: exchangeLot,
-
-        quantity
-
-    };
+    return order;
 
 }
 
