@@ -110,7 +110,7 @@ router.post("/settings", async (req, res) => {
         } = req.body;
 
         const { error } = await supabase
-            .from("system_settings")
+            .from("settings")
             .update({
                 auto_trading,
                 paper_mode,

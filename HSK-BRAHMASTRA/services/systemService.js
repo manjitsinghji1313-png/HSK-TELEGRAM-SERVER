@@ -7,7 +7,7 @@ const supabase = require("../config/supabase");
 async function isAutoTradingEnabled() {
 
     const { data, error } = await supabase
-        .from("system_settings")
+        .from("settings")
         .select("auto_trading")
         .eq("id", 1)
         .single();
@@ -26,7 +26,7 @@ async function isAutoTradingEnabled() {
 async function setAutoTrading(status) {
 
     const { error } = await supabase
-        .from("system_settings")
+        .from("settings")
         .update({
             auto_trading: status,
             updated_at: new Date().toISOString()
@@ -46,7 +46,7 @@ async function setAutoTrading(status) {
 async function getSettings() {
 
     const { data, error } = await supabase
-        .from("system_settings")
+        .from("settings")
         .select("*");
 
     console.log("================================");
