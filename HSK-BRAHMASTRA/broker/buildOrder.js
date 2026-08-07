@@ -58,7 +58,9 @@ async function buildOrder({
 
     console.log("================================");
     console.log("OPTION FOUND");
+    console.log("SECOND LOOKUP");
     console.log(option);
+    
     console.log("================================");
 
     // ==========================

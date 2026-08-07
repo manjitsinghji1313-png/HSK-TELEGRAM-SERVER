@@ -158,6 +158,9 @@ const quantity =
 
 console.log("📦 Instrument :", instrument.tradingSymbol);
 console.log("🆔 Security ID :", instrument.securityId);
+console.log("📦 Exchange :", instrument.exchange);
+console.log("📦 Expiry :", instrument.expiry);
+console.log("📦 Option :", instrument.optionType);
 console.log("📦 Market :", market);
 console.log("📦 Exchange Lot :", lotSize);
 console.log("📦 User Lots :", settings.lots);
