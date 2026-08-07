@@ -26,6 +26,19 @@ async function buildOrder({
     console.log("Price    :", price);
     console.log("================================");
 
+    console.log("================================");
+    console.log("ORDER INPUT");
+    console.log({
+        transactionType,
+        productType,
+        orderType,
+        securityId,
+        exchange,
+        quantity,
+        price
+    });
+    console.log("================================");
+
     const order = {
 
         dhanClientId: config.CLIENT_ID,
