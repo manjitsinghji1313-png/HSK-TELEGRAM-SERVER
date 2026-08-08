@@ -19,8 +19,9 @@ async function isAutoTradingEnabled() {
     return data.auto_trading;
 }
 
+
 // ==========================
-// ENABLE / DISABLE
+// ENABLE / DISABLE AUTO TRADING
 // ==========================
 
 async function setAutoTrading(status) {
@@ -39,6 +40,30 @@ async function setAutoTrading(status) {
 
     return true;
 }
+
+
+// ==========================
+// ENABLE / DISABLE PAPER MODE
+// ==========================
+
+async function setPaperMode(status) {
+
+    const { error } = await supabase
+        .from("settings")
+        .update({
+            paper_mode: status,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
+
+    if (error) {
+        throw error;
+    }
+
+    return true;
+}
+
+
 // ==========================
 // GET SETTINGS
 // ==========================
@@ -63,16 +88,14 @@ async function getSettings() {
     }
 
     return data[0];
-
 }
 
 
 module.exports = {
 
     isAutoTradingEnabled,
-
     setAutoTrading,
-
+    setPaperMode,
     getSettings
 
 };

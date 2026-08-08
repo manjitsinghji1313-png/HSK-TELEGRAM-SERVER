@@ -73,6 +73,73 @@ bot.command("stoptrade", async (ctx) => {
 });
 
 // ==========================
+// PAPER MODE
+// ==========================
+
+bot.command("paper", async (ctx) => {
+
+    try {
+
+        await systemService.setPaperMode(true);
+
+        await ctx.reply(
+`📝 PAPER MODE ENABLED
+
+🤖 Broker : DHAN
+📊 Mode   : PAPER
+
+━━━━━━━━━━━━━━━━━━
+
+✅ No Real Broker Orders
+📝 Paper Trading Active`
+        );
+
+        console.log("📝 Paper Mode Enabled");
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.reply(`❌ ${err.message}`);
+
+    }
+
+});
+// ==========================
+// LIVE MODE
+// ==========================
+
+bot.command("live", async (ctx) => {
+
+    try {
+
+        await systemService.setPaperMode(false);
+
+        await ctx.reply(
+`🔴 LIVE MODE ENABLED
+
+🤖 Broker : DHAN
+⚠️ Mode   : LIVE
+
+━━━━━━━━━━━━━━━━━━
+
+🚨 REAL BROKER ORDERS ENABLED
+⚠️ Trade Carefully`
+        );
+
+        console.log("🔴 Live Mode Enabled");
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.reply(`❌ ${err.message}`);
+
+    }
+
+});
+
+// ==========================
 // STATUS
 // ==========================
 
@@ -85,7 +152,10 @@ bot.command("status", async (ctx) => {
 
         const status =
             settings.auto_trading ? "🟢 ON" : "🔴 OFF";
-
+        const mode =
+            settings.paper_mode
+                ? "📝 PAPER"
+                : "🔴 LIVE";
         await ctx.reply(
 `🤖 HSK BRAHMASTRA
 
@@ -170,6 +240,8 @@ Available Commands
 
 🟢 /starttrade
 🔴 /stoptrade
+📝 /paper
+🚨 /live
 🧹 /reset
 📊 /status
 ❓ /help
