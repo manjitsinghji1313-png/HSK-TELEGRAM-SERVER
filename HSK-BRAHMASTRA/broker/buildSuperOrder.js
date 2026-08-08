@@ -1,62 +1,74 @@
-const { findInstrument } = require("../optionchain/instrumentFinder");
 const config = require("./config");
 
 async function buildSuperOrder({
-    tradeKey,
+
     transactionType = "BUY",
+
     productType = "INTRADAY",
-    orderType = "LIMIT",
-    symbol,
-    strike,
-    optionType,
+
+    orderType = "MARKET",
+
+    securityId,
+
+    exchange,
+
+    quantity,
+
     price,
-    sl,
-    tg1,
-    lots = 1
+
+    targetPrice,
+
+    stopLossPrice,
+
+    trailingJump = 0
+
 }) {
 
-    const option = await findInstrument(
-        symbol,
-        strike,
-        optionType
-    );
-
     console.log("================================");
-    console.log("SUPER ORDER OPTION");
-    console.log(option);
+    console.log("BUILD SUPER ORDER");
+    console.log("Security       :", securityId);
+    console.log("Exchange       :", exchange);
+    console.log("Quantity       :", quantity);
+    console.log("Entry Price    :", price);
+    console.log("Target Price   :", targetPrice);
+    console.log("Stop Loss      :", stopLossPrice);
+    console.log("Trailing Jump  :", trailingJump);
     console.log("================================");
 
-    if (!option) {
-        throw new Error("Instrument Not Found");
-    }
-
-    return {
+    const order = {
 
         dhanClientId: config.CLIENT_ID,
 
-        correlationId: tradeKey,
+        correlationId: "HSKSO_" + Date.now(),
 
         transactionType,
 
-        exchangeSegment: option.exchange,
+        exchangeSegment: exchange,
 
         productType,
 
         orderType,
 
-        securityId: option.securityId,
+        securityId: String(securityId),
 
-        quantity: option.lotSize * lots,
+        quantity: Number(quantity),
 
         price: Number(price),
 
-        targetPrice: Number(tg1),
+        targetPrice: Number(targetPrice),
 
-        stopLossPrice: Number(sl),
+        stopLossPrice: Number(stopLossPrice),
 
-        trailingJump: 0
+        trailingJump: Number(trailingJump)
 
     };
+
+    console.log("================================");
+    console.log("FINAL SUPER ORDER");
+    console.log(JSON.stringify(order, null, 2));
+    console.log("================================");
+
+    return order;
 
 }
 

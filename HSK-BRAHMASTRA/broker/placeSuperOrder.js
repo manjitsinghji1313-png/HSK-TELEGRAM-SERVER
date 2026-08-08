@@ -1,24 +1,34 @@
 const dhan = require("./dhanApi");
 const buildSuperOrder = require("./buildSuperOrder");
 const tradeService = require("../services/tradeService");
-const axios = require("axios");
 
 async function placeSuperOrder(orderData) {
 
     try {
 
+        // ==========================
+        // BUILD SUPER ORDER
+        // ==========================
+
         const order = await buildSuperOrder(orderData);
 
         console.log("================================");
-        console.log("SUPER ORDER PAYLOAD");
+        console.log("🚀 PLACE SUPER ORDER");
+        console.log("================================");
+
+        console.log("FINAL SUPER ORDER PAYLOAD");
         console.log(JSON.stringify(order, null, 2));
-        console.log("================================");
 
-        const { data } = await axios.get("https://api.ipify.org?format=json");
+        // ==========================
+        // DHAN REQUEST
+        // ==========================
 
         console.log("================================");
-        console.log("CURRENT SERVER IP");
-        console.log(data.ip);
+        console.log("🚀 DHAN SUPER ORDER REQUEST");
+        console.log("URL :", dhan.defaults.baseURL + "/super/orders");
+        console.log("METHOD : POST");
+        console.log("BODY :");
+        console.log(JSON.stringify(order, null, 2));
         console.log("================================");
 
         const response = await dhan.post(
@@ -26,19 +36,41 @@ async function placeSuperOrder(orderData) {
             order
         );
 
+        // ==========================
+        // DHAN RESPONSE
+        // ==========================
+
         console.log("================================");
-        console.log("SUPER ORDER SUCCESS");
-        console.log(response.data);
+        console.log("✅ DHAN SUPER ORDER RESPONSE");
+        console.log("STATUS :", response.status);
+        console.log(JSON.stringify(response.data, null, 2));
         console.log("================================");
 
         const orderId =
-            response.data.orderId ||
-            response.data.data?.orderId ||
+            response.data?.orderId ||
+            response.data?.data?.orderId ||
+            null;
+
+        const orderStatus =
+            response.data?.orderStatus ||
+            response.data?.data?.orderStatus ||
             null;
 
         if (!orderId) {
-            throw new Error("Broker Order ID not received");
+            throw new Error(
+                "Super Order ID not received from Dhan"
+            );
         }
+
+        console.log("================================");
+        console.log("✅ SUPER ORDER PLACED");
+        console.log("Order ID :", orderId);
+        console.log("Status   :", orderStatus);
+        console.log("================================");
+
+        // ==========================
+        // SAVE BROKER ORDER
+        // ==========================
 
         await tradeService.saveBrokerOrder({
 
@@ -54,13 +86,17 @@ async function placeSuperOrder(orderData) {
 
             productType: order.productType,
 
-            status: "OPEN"
+            status: orderStatus || "OPEN"
 
         });
+
+        console.log("✅ Super Order Saved");
 
         return {
 
             orderId,
+
+            orderStatus,
 
             brokerResponse: response.data
 
@@ -69,19 +105,33 @@ async function placeSuperOrder(orderData) {
     } catch (err) {
 
         console.log("================================");
-        console.log("SUPER ORDER FAILED");
+        console.log("❌ DHAN SUPER ORDER FAILED");
+        console.log("================================");
 
         if (err.response) {
 
-            console.log(JSON.stringify(err.response.data, null, 2));
+            console.log("STATUS :", err.response.status);
+
+            console.log("DHAN RESPONSE :");
+
+            console.log(
+                JSON.stringify(
+                    err.response.data,
+                    null,
+                    2
+                )
+            );
+
+            console.log("================================");
 
         } else {
 
-            console.log(err.message);
+            console.log(
+                "ERROR :",
+                err.message
+            );
 
         }
-
-        console.log("================================");
 
         throw err;
 

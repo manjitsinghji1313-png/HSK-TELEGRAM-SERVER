@@ -13,7 +13,7 @@ const {
 
 const tradeService = require("../services/tradeService");
 const telegramService = require("../services/telegramService");
-
+const placeSuperOrder = require("../broker/placeSuperOrder");
 const placeOrder = require("../broker/placeOrder");
 const exitOrder = require("../broker/exitOrder");
 
@@ -240,55 +240,64 @@ message += `
     try {
 
         console.log("================================");
-        console.log("🚀 CALLING PLACE ORDER");
-        console.log(data.tradeKey);
-        console.log("================================");
+console.log("🚀 CALLING DHAN SUPER ORDER");
+console.log("Trade Key :", data.tradeKey);
+console.log("================================");
 
-        const orderResult = await placeOrder({
+const entryPrice = Number(
+    data.limitPrice || data.price || 0
+);
 
-            tradeKey: data.tradeKey,
+const targetPrice = Number(data.tg1);
 
-            transactionType:
-                data.transactionType || "BUY",
+const stopLossPrice = Number(data.sl);
 
-            productType:
-                data.productType || "INTRADAY",
+if (!targetPrice || !stopLossPrice) {
+    throw new Error(
+        "Target or Stop Loss missing for Super Order"
+    );
+}
 
-            orderType:
-                data.orderType || "MARKET",
+console.log("📌 ENTRY PRICE :", entryPrice);
+console.log("🎯 TARGET      :", targetPrice);
+console.log("🛑 STOP LOSS   :", stopLossPrice);
 
-            symbol: instrument.tradingSymbol,
+const result = await placeSuperOrder({
 
-            strike: instrument.strike,
+    tradeKey: data.tradeKey,
 
-            securityId: instrument.securityId,
+    transactionType: "BUY",
 
-            exchange: instrument.exchange,
+    productType: "INTRADAY",
 
-            optionType: optionType,
+    orderType: "MARKET",
 
-            price: 0,
+    securityId: instrument.securityId,
 
-            sl: Number(data.sl),
+    exchange: instrument.exchange,
 
-            tg1: Number(data.tg1),
+    quantity,
 
-            lots: settings.lots,
-            quantity: quantity
+    price: entryPrice,
 
-        });
+    targetPrice,
 
-        console.log("================================");
-        console.log("✅ PLACE ORDER RETURNED");
-        console.log(orderResult);
-        console.log("================================");
+    stopLossPrice,
 
-        message +=
-`
+    trailingJump: 0
 
-✅ <b>Broker : ORDER PLACED</b>
+});
 
-🆔 Order ID : ${orderResult.orderId || "N/A"}`;
+console.log("================================");
+console.log("✅ SUPER ORDER RETURNED");
+console.log(result);
+console.log("================================");
+
+
+
+message +=
+    "\n\n✅ <b>Broker : SUPER ORDER PLACED</b>" +
+    "\n\n🆔 Order ID : " + (result.orderId || "N/A");
 
         try {
 
@@ -306,7 +315,7 @@ message += `
 
     status: "OPEN",
 
-    orderId: orderResult.orderId
+    orderId: result.orderId
 
 });
 
