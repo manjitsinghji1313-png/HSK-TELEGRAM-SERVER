@@ -150,14 +150,14 @@ bot.command("status", async (ctx) => {
         const settings =
             await systemService.getSettings();
 
-        const updatedIST = new Intl.DateTimeFormat(
+        const currentIST = new Intl.DateTimeFormat(
                 "en-IN",
-                {
-                    timeZone: "Asia/Kolkata",
-                    dateStyle: "medium",
-                    timeStyle: "medium"
-                }
-            ).format(new Date(settings.updated_at));
+            {
+                timeZone: "Asia/Kolkata",
+                dateStyle: "medium",
+                timeStyle: "medium"
+            }
+        ).format(new Date());
 
         const status =
             settings.auto_trading ? "🟢 ON" : "🔴 OFF";
@@ -176,7 +176,7 @@ Auto Trading : ${status}
 Mode         : ${mode}
 
 Updated :
-${updatedIST}
+${currentIST}
 
 ━━━━━━━━━━━━━━━━━━`
         );
