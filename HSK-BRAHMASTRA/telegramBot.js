@@ -164,6 +164,7 @@ bot.command("status", async (ctx) => {
 🤖 Broker : DHAN
 
 Auto Trading : ${status}
+Mode         : ${mode}
 
 Updated :
 ${settings.updated_at}
