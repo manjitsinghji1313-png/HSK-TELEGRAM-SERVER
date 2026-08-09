@@ -1,6 +1,11 @@
 require("dotenv").config();
 
-const { Telegraf } = require("telegraf");
+const { Telegraf, Markup } = require("telegraf");
+const {
+    getOrderMode,
+    setOrderMode
+} = require("./routes/orderMode");
+
 const systemService = require("./services/systemService");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -240,6 +245,152 @@ Dhan Entry Buffer Updated`
 
 });
 // ==========================
+// ORDER MODE
+// ==========================
+
+bot.command("ordermode", async (ctx) => {
+
+    try {
+
+        const currentMode =
+            getOrderMode();
+
+        await ctx.reply(
+            `🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+📌 ORDER MODE
+
+Current Mode : ${currentMode}
+
+Select Order Type:
+
+━━━━━━━━━━━━━━━━━━`,
+            Markup.inlineKeyboard([
+                [
+                    Markup.button.callback(
+                        "🟢 LIMIT",
+                        "ORDER_MODE_LIMIT"
+                    ),
+                    Markup.button.callback(
+                        "🔵 MARKET",
+                        "ORDER_MODE_MARKET"
+                    )
+                ]
+            ])
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.reply(
+            `❌ ORDER MODE FAILED\n\n${err.message}`
+        );
+
+    }
+
+});
+// ==========================
+// ORDER MODE BUTTON HANDLER
+// ==========================
+
+bot.action("ORDER_MODE_LIMIT", async (ctx) => {
+
+    try {
+
+        const mode =
+            setOrderMode("LIMIT");
+
+        await ctx.answerCbQuery(
+            "LIMIT MODE SELECTED"
+        );
+
+        await ctx.editMessageText(
+            `🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+📌 ORDER MODE
+
+Current Mode : 🟢 ${mode}
+
+━━━━━━━━━━━━━━━━━━
+
+⏱️ LIMIT ORDER
+3 Minute Pending Check
+→ PENDING = CANCEL
+
+━━━━━━━━━━━━━━━━━━
+
+✅ LIMIT MODE ACTIVE`
+        );
+
+        console.log(
+            "🟢 Telegram Order Mode : LIMIT"
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.answerCbQuery(
+            "❌ Failed"
+        );
+
+    }
+
+});
+
+
+bot.action("ORDER_MODE_MARKET", async (ctx) => {
+
+    try {
+
+        const mode =
+            setOrderMode("MARKET");
+
+        await ctx.answerCbQuery(
+            "MARKET MODE SELECTED"
+        );
+
+        await ctx.editMessageText(
+            `🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+📌 ORDER MODE
+
+Current Mode : 🔵 ${mode}
+
+━━━━━━━━━━━━━━━━━━
+
+⚡ MARKET ORDER
+No 3 Minute Pending Cancel
+
+━━━━━━━━━━━━━━━━━━
+
+✅ MARKET MODE ACTIVE`
+        );
+
+        console.log(
+            "🔵 Telegram Order Mode : MARKET"
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.answerCbQuery(
+            "❌ Failed"
+        );
+
+    }
+
+});
+
+// ==========================
 // STATUS
 // ==========================
 
@@ -354,6 +505,7 @@ Available Commands
 🚨 /live
 🧹 /reset
 📊 /status
+⚙️ /ordermode
 
 📈 CE LIMIT BUFFER
 💰 /buffer

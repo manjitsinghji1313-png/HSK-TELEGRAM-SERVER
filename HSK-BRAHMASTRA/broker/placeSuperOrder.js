@@ -94,104 +94,119 @@ async function placeSuperOrder(orderData) {
 
         console.log("✅ Super Order Saved");
 // ==========================
-// 2 MINUTE PENDING CHECK
+// 3 MINUTE PENDING CHECK - LIMIT ONLY
 // ==========================
 
-setTimeout(async () => {
+if (order.orderType === "LIMIT") {
 
-    try {
+    setTimeout(async () => {
 
-        console.log("================================");
-        console.log("⏱️ 2 MINUTES COMPLETED");
-        console.log("Order ID :", orderId);
-        console.log("================================");
+        try {
 
-        // ==========================
-        // CHECK LATEST STATUS
-        // ==========================
+            console.log("================================");
+            console.log("⏱️ 3 MINUTES COMPLETED");
+            console.log("Order ID :", orderId);
+            console.log("Order Type :", order.orderType);
+            console.log("================================");
 
-        const latestOrder =
-            await getSuperOrderStatus(orderId);
+            // ==========================
+            // CHECK LATEST STATUS
+            // ==========================
 
-        if (!latestOrder) {
+            const latestOrder =
+                await getSuperOrderStatus(orderId);
 
-            console.log("⚠️ SUPER ORDER NOT FOUND");
+            if (!latestOrder) {
 
-            return;
+                console.log("⚠️ SUPER ORDER NOT FOUND");
+
+                return;
+            }
+
+            const status =
+                latestOrder.orderStatus;
+
+            console.log(
+                "📊 CURRENT ORDER STATUS :",
+                status
+            );
+
+            // ==========================
+            // CANCEL ONLY IF PENDING
+            // ==========================
+
+            if (status === "PENDING") {
+
+                console.log("❌ ORDER STILL PENDING");
+                console.log("🚫 CANCELLING SUPER ORDER");
+
+                await cancelSuperOrder(orderId);
+
+                console.log(
+                    "✅ PENDING SUPER ORDER CANCELLED"
+                );
+
+            } else {
+
+                console.log(
+                    "✅ ORDER NOT PENDING - NO CANCEL"
+                );
+
+            }
+
+        } catch (err) {
+
+            console.log("================================");
+            console.log("❌ 3 MINUTE CHECK FAILED");
+            console.log("================================");
+
+            if (err.response) {
+
+                console.log(
+                    "STATUS :",
+                    err.response.status
+                );
+
+                console.log(
+                    "DHAN RESPONSE :",
+                    JSON.stringify(
+                        err.response.data,
+                        null,
+                        2
+                    )
+                );
+
+            } else {
+
+                console.log(
+                    "ERROR :",
+                    err.message
+                );
+
+            }
+
+            console.log("================================");
+
         }
 
-        const status =
-            latestOrder.orderStatus;
+    }, 3 * 60 * 1000);
 
-        console.log("📊 CURRENT ORDER STATUS :", status);
+}
 
-        // ==========================
-        // CANCEL ONLY IF PENDING
-        // ==========================
 
-        if (status === "PENDING") {
+// ==========================
+// RETURN RESULT
+// ==========================
 
-            console.log("❌ ORDER STILL PENDING");
-            console.log("🚫 CANCELLING SUPER ORDER");
+return {
 
-            await cancelSuperOrder(orderId);
+    orderId,
 
-            console.log("✅ PENDING SUPER ORDER CANCELLED");
+    orderStatus,
 
-        } else {
+    brokerResponse: response.data
 
-            console.log(
-                "✅ ORDER NOT PENDING - NO CANCEL"
-            );
-
-        }
-
-    } catch (err) {
-
-        console.log("================================");
-        console.log("❌ 2 MINUTE CHECK FAILED");
-        console.log("================================");
-
-        if (err.response) {
-
-            console.log(
-                "STATUS :",
-                err.response.status
-            );
-
-            console.log(
-                "DHAN RESPONSE :",
-                JSON.stringify(
-                    err.response.data,
-                    null,
-                    2
-                )
-            );
-
-        } else {
-
-            console.log(
-                "ERROR :",
-                err.message
-            );
-
-        }
-
-        console.log("================================");
-
-    }
-
-}, 3 * 60 * 1000);
-
-        return {
-
-            orderId,
-
-            orderStatus,
-
-            brokerResponse: response.data
-
-        };
+};
 
     } catch (err) {
 

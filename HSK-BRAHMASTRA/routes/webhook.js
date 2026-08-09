@@ -10,7 +10,7 @@ const {
     extractMarket,
     extractOptionType
 } = require("../utils/extractStrike");
-
+const { getOrderMode } = require("./orderMode");
 const tradeService = require("../services/tradeService");
 const telegramService = require("../services/telegramService");
 const placeSuperOrder = require("../broker/placeSuperOrder");
@@ -296,7 +296,7 @@ const result = await placeSuperOrder({
 
     productType: "INTRADAY",
 
-    orderType: "LIMIT",
+    orderType: getOrderMode(),
 
     securityId: instrument.securityId,
 
