@@ -6,7 +6,7 @@ async function buildSuperOrder({
 
     productType = "INTRADAY",
 
-    orderType = "LIMIT",
+    orderType = "MARKET",
 
     securityId,
 

@@ -270,7 +270,7 @@ const result = await placeSuperOrder({
 
     productType: "INTRADAY",
 
-    orderType: "LIMIT",
+    orderType: "MARKET",
 
     securityId: instrument.securityId,
 
