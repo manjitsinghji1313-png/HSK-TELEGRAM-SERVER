@@ -140,6 +140,106 @@ bot.command("live", async (ctx) => {
 });
 
 // ==========================
+// ENTRY BUFFER
+// ==========================
+
+bot.command("buffer", async (ctx) => {
+
+    try {
+
+        const args = ctx.message.text.trim().split(/\s+/);
+
+        // /buffer -> show current buffer
+        if (args.length === 1) {
+
+            const settings =
+                await systemService.getSettings();
+
+            const buffer =
+                Number(settings.entry_buffer || 0);
+
+            await ctx.reply(
+`📊 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+📈 CE LIMIT BUFFER
+
+💰 Current Buffer : ₹${buffer}
+
+━━━━━━━━━━━━━━━━━━
+
+Commands:
+
+/buffer 0 → OFF
+/buffer 1 → ₹1
+/buffer 2 → ₹2
+
+━━━━━━━━━━━━━━━━━━`
+            );
+
+            return;
+        }
+
+        const buffer = Number(args[1]);
+
+        // Only 0, 1, 2 allowed
+        if (![0, 1, 2].includes(buffer)) {
+
+            await ctx.reply(
+`❌ INVALID BUFFER
+
+Only these values are allowed:
+
+0 = OFF
+1 = ₹1
+2 = ₹2`
+            );
+
+            return;
+        }
+
+        await systemService.setEntryBuffer(buffer);
+
+        const status =
+            buffer === 0
+                ? "🔴 OFF"
+                : `🟢 ₹${buffer}`;
+
+        await ctx.reply(
+`✅ BUFFER UPDATED
+
+━━━━━━━━━━━━━━━━━━
+
+📈 CE LIMIT BUFFER
+💰 Buffer : ${status}
+
+━━━━━━━━━━━━━━━━━━
+
+🎯 Only CE LIMIT Entry
+🛑 SL / TG unchanged
+
+━━━━━━━━━━━━━━━━━━
+
+Dhan Entry Buffer Updated`
+        );
+
+        console.log(
+            `✅ CE Entry Buffer Set: ₹${buffer}`
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.reply(
+            `❌ BUFFER UPDATE FAILED\n\n${err.message}`
+        );
+
+    }
+
+});
+// ==========================
 // STATUS
 // ==========================
 
@@ -254,6 +354,13 @@ Available Commands
 🚨 /live
 🧹 /reset
 📊 /status
+
+📈 CE LIMIT BUFFER
+💰 /buffer
+💰 /buffer 0
+💰 /buffer 1
+💰 /buffer 2
+
 ❓ /help
 
 ━━━━━━━━━━━━━━━━━━
@@ -262,9 +369,6 @@ HSK BRAHMASTRA`
     );
 
 });
-
-
-
 
 module.exports = bot;
 

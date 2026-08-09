@@ -62,7 +62,52 @@ async function setPaperMode(status) {
 
     return true;
 }
+// ==========================
+// SET CE ENTRY BUFFER
+// ==========================
 
+async function setEntryBuffer(buffer) {
+
+    const value = Number(buffer);
+
+    if (![0, 1, 2].includes(value)) {
+        throw new Error("Buffer must be 0, 1 or 2");
+    }
+
+    const { error } = await supabase
+        .from("settings")
+        .update({
+            entry_buffer: value,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
+
+    if (error) {
+        throw error;
+    }
+
+    return true;
+}
+
+
+// ==========================
+// GET CE ENTRY BUFFER
+// ==========================
+
+async function getEntryBuffer() {
+
+    const { data, error } = await supabase
+        .from("settings")
+        .select("entry_buffer")
+        .eq("id", 1)
+        .single();
+
+    if (error) {
+        throw error;
+    }
+
+    return Number(data.entry_buffer || 0);
+}
 
 // ==========================
 // GET SETTINGS
@@ -90,12 +135,15 @@ async function getSettings() {
     return data[0];
 }
 
-
 module.exports = {
 
     isAutoTradingEnabled,
     setAutoTrading,
     setPaperMode,
+
+    setEntryBuffer,
+    getEntryBuffer,
+
     getSettings
 
 };
