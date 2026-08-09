@@ -258,9 +258,35 @@ if (!targetPrice || !stopLossPrice) {
     );
 }
 
-console.log("📌 ENTRY PRICE :", entryPrice);
-console.log("🎯 TARGET      :", targetPrice);
-console.log("🛑 STOP LOSS   :", stopLossPrice);
+
+// =====================================
+// CE LIMIT ENTRY BUFFER ONLY
+// =====================================
+
+const isCEEntry =
+    data.cmd === "CE_ENTRY" ||
+    (data.cmd === "BUY" && optionType === "CE");
+
+const entryBuffer = isCEEntry
+    ? await systemService.getEntryBuffer()
+    : 0;
+
+const limitPrice = entryPrice + entryBuffer;
+
+// =====================================
+// LOG
+// =====================================
+
+console.log("📌 TV ENTRY PRICE :", entryPrice);
+console.log("📈 OPTION TYPE    :", optionType);
+console.log("💰 CE BUFFER      :", entryBuffer);
+console.log("📈 LIMIT PRICE    :", limitPrice);
+console.log("🎯 TARGET         :", targetPrice);
+console.log("🛑 STOP LOSS      :", stopLossPrice);
+
+// =====================================
+// SUPER ORDER
+// =====================================
 
 const result = await placeSuperOrder({
 
@@ -278,7 +304,8 @@ const result = await placeSuperOrder({
 
     quantity,
 
-    price: entryPrice,
+    // BUFFERED LIMIT PRICE
+    price: limitPrice,
 
     targetPrice,
 
@@ -288,36 +315,39 @@ const result = await placeSuperOrder({
 
 });
 
+
 console.log("================================");
 console.log("✅ SUPER ORDER RETURNED");
 console.log(result);
 console.log("================================");
 
 
-
 message +=
-    "\n\n✅ <b>Broker : SUPER ORDER PLACED</b>" +
+    "\n\n✅ Broker : SUPER ORDER PLACED" +
     "\n\n🆔 Order ID : " + (result.orderId || "N/A");
 
-        try {
 
-            await tradeService.openTrade({
+try {
 
-    ...data,
+    await tradeService.openTrade({
 
-    lots: settings.lots,
+        ...data,
 
-    lotSize,
+        lots: settings.lots,
 
-    quantity,
+        lotSize,
 
-    mode: "LIVE",
+        quantity,
 
-    status: "OPEN",
+        mode: "LIVE",
 
-    orderId: result.orderId
+        status: "OPEN",
 
-});
+        orderId: result.orderId
+
+    });
+
+
 
 console.log("✅ LIVE TRADE SAVED");
 
