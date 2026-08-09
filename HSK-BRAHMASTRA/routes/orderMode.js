@@ -1,157 +1,38 @@
-// ==========================
+// =====================================
 // ORDER MODE
-// ==========================
+// =====================================
 
-bot.command("ordermode", async (ctx) => {
+const systemService =
+    require("../services/systemService");
 
-    try {
+// =====================================
+// GET CURRENT ORDER MODE
+// =====================================
 
-        const currentMode =
-            await systemService.getOrderMode();
+async function getOrderMode() {
 
-        await ctx.reply(
-            `🤖 HSK BRAHMASTRA
+    return await systemService.getOrderMode();
 
-━━━━━━━━━━━━━━━━━━
+}
 
-📌 ORDER MODE
+// =====================================
+// SET ORDER MODE
+// =====================================
 
-Current Mode : ${
-                currentMode === "MARKET"
-                    ? "🔵 MARKET"
-                    : "🟢 LIMIT"
-            }
+async function setOrderMode(mode) {
 
-Select Order Type:
+    return await systemService.setOrderMode(mode);
 
-━━━━━━━━━━━━━━━━━━`,
-            Markup.inlineKeyboard([
-                [
-                    Markup.button.callback(
-                        "🟢 LIMIT",
-                        "ORDER_MODE_LIMIT"
-                    ),
-                    Markup.button.callback(
-                        "🔵 MARKET",
-                        "ORDER_MODE_MARKET"
-                    )
-                ]
-            ])
-        );
+}
 
-    } catch (err) {
+// =====================================
+// EXPORT
+// =====================================
 
-        console.error(err);
+module.exports = {
 
-        await ctx.reply(
-            `❌ ORDER MODE FAILED\n\n${err.message}`
-        );
+    getOrderMode,
 
-    }
+    setOrderMode
 
-});
-
-
-// ==========================
-// LIMIT BUTTON
-// ==========================
-
-bot.action("ORDER_MODE_LIMIT", async (ctx) => {
-
-    try {
-
-        const mode =
-            await systemService.setOrderMode("LIMIT");
-
-        await ctx.answerCbQuery(
-            "LIMIT MODE SELECTED"
-        );
-
-        await ctx.editMessageText(
-            `🤖 HSK BRAHMASTRA
-
-━━━━━━━━━━━━━━━━━━
-
-📌 ORDER MODE
-
-Current Mode : 🟢 ${mode}
-
-━━━━━━━━━━━━━━━━━━
-
-⏱️ LIMIT ORDER
-
-3 Minute Pending Check
-→ PENDING = CANCEL
-
-━━━━━━━━━━━━━━━━━━
-
-✅ LIMIT MODE ACTIVE`
-        );
-
-        console.log(
-            "🟢 Telegram Order Mode : LIMIT"
-        );
-
-    } catch (err) {
-
-        console.error(err);
-
-        await ctx.answerCbQuery(
-            "❌ Failed"
-        );
-
-    }
-
-});
-
-
-// ==========================
-// MARKET BUTTON
-// ==========================
-
-bot.action("ORDER_MODE_MARKET", async (ctx) => {
-
-    try {
-
-        const mode =
-            await systemService.setOrderMode("MARKET");
-
-        await ctx.answerCbQuery(
-            "MARKET MODE SELECTED"
-        );
-
-        await ctx.editMessageText(
-            `🤖 HSK BRAHMASTRA
-
-━━━━━━━━━━━━━━━━━━
-
-📌 ORDER MODE
-
-Current Mode : 🔵 ${mode}
-
-━━━━━━━━━━━━━━━━━━
-
-⚡ MARKET ORDER
-
-No 3 Minute Pending Cancel
-
-━━━━━━━━━━━━━━━━━━
-
-✅ MARKET MODE ACTIVE`
-        );
-
-        console.log(
-            "🔵 Telegram Order Mode : MARKET"
-        );
-
-    } catch (err) {
-
-        console.error(err);
-
-        await ctx.answerCbQuery(
-            "❌ Failed"
-        );
-
-    }
-
-});
+};
