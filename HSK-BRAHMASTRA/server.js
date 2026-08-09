@@ -26,7 +26,6 @@ require("./services/scheduler");
 const app = express();
 
 const server = http.createServer(app);
-app.use(bot.webhookCallback("/telegram"));
 
 // ==============================
 // MIDDLEWARE
@@ -37,6 +36,12 @@ app.use(cors());
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+
+// ==============================
+// TELEGRAM WEBHOOK
+// ==============================
+
+app.use(bot.webhookCallback("/telegram"));
 
 app.use(express.static(path.join(__dirname, "public")));
 

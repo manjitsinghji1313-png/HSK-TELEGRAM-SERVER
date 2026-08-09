@@ -520,5 +520,19 @@ HSK BRAHMASTRA`
 
 });
 
+// ==========================
+// TELEGRAM GLOBAL ERROR HANDLER
+// ==========================
+
+bot.catch((err, ctx) => {
+
+    console.error("================================");
+    console.error("❌ TELEGRAM BOT ERROR");
+    console.error("Update Type :", ctx.updateType);
+    console.error("Error :", err);
+    console.error("================================");
+
+});
+
 module.exports = bot;
 
