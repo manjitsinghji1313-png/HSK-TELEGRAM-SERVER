@@ -141,19 +141,39 @@ async function setOrderMode(mode) {
         );
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("settings")
         .update({
             order_mode: value,
             updated_at: new Date().toISOString()
         })
-        .eq("id", 1);
+        .eq("id", 1)
+        .select("id, order_mode, updated_at")
+        .single();
 
     if (error) {
+        console.error(
+            "❌ SET ORDER MODE ERROR:",
+            error
+        );
+
         throw error;
     }
 
-    return value;
+    if (!data) {
+        throw new Error(
+            "Settings row was not updated"
+        );
+    }
+
+    console.log("================================");
+    console.log("✅ ORDER MODE UPDATED");
+    console.log("ID         :", data.id);
+    console.log("ORDER MODE :", data.order_mode);
+    console.log("UPDATED AT :", data.updated_at);
+    console.log("================================");
+
+    return data.order_mode;
 }
 // ==========================
 // GET SETTINGS
