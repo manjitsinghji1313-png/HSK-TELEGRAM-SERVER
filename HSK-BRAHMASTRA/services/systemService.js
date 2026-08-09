@@ -110,6 +110,52 @@ async function getEntryBuffer() {
 }
 
 // ==========================
+// GET ORDER MODE
+// ==========================
+
+async function getOrderMode() {
+
+    const { data, error } = await supabase
+        .from("settings")
+        .select("order_mode")
+        .eq("id", 1)
+        .single();
+
+    if (error) {
+        throw error;
+    }
+
+    return data.order_mode || "LIMIT";
+}
+// ==========================
+// SET ORDER MODE
+// ==========================
+
+async function setOrderMode(mode) {
+
+    const value = String(mode).toUpperCase();
+
+    if (!["LIMIT", "MARKET"].includes(value)) {
+        throw new Error(
+            "Order mode must be LIMIT or MARKET"
+        );
+    }
+
+    const { error } = await supabase
+        .from("settings")
+        .update({
+            order_mode: value,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
+
+    if (error) {
+        throw error;
+    }
+
+    return value;
+}
+// ==========================
 // GET SETTINGS
 // ==========================
 
@@ -144,6 +190,8 @@ module.exports = {
     setEntryBuffer,
     getEntryBuffer,
 
-    getSettings
+    getOrderMode,
+    setOrderMode,
 
+    getSettings
 };

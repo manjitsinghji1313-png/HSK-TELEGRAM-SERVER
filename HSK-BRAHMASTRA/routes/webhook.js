@@ -296,7 +296,7 @@ const result = await placeSuperOrder({
 
     productType: "INTRADAY",
 
-    orderType: getOrderMode(),
+    orderType: await getOrderMode(),
 
     securityId: instrument.securityId,
 
