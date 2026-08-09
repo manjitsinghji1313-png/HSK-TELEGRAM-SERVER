@@ -2,7 +2,6 @@ require("dotenv").config();
 
 const { Telegraf, Markup } = require("telegraf");
 const {
-    getOrderMode,
     setOrderMode
 } = require("./routes/orderMode");
 
@@ -252,8 +251,7 @@ bot.command("ordermode", async (ctx) => {
 
     try {
 
-        const currentMode =
-            getOrderMode();
+        const currentMode = await systemService.getOrderMode();
 
         await ctx.reply(
             `🤖 HSK BRAHMASTRA
@@ -301,7 +299,7 @@ bot.action("ORDER_MODE_LIMIT", async (ctx) => {
     try {
 
         const mode =
-            setOrderMode("LIMIT");
+            await setOrderMode("LIMIT");
 
         await ctx.answerCbQuery(
             "LIMIT MODE SELECTED"
@@ -349,7 +347,7 @@ bot.action("ORDER_MODE_MARKET", async (ctx) => {
     try {
 
         const mode =
-            setOrderMode("MARKET");
+            await setOrderMode("MARKET");
 
         await ctx.answerCbQuery(
             "MARKET MODE SELECTED"
