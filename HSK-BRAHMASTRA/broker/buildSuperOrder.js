@@ -53,7 +53,10 @@ async function buildSuperOrder({
 
         quantity: Number(quantity),
 
-        price: Number(price),
+        price:
+            orderType === "MARKET"
+                ? 0
+                : Number(price),
 
         targetPrice: Number(targetPrice),
 
