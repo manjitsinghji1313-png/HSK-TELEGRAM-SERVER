@@ -175,6 +175,38 @@ async function setOrderMode(mode) {
 
     return data.order_mode;
 }
+
+// ==========================
+// SET LOTS
+// ==========================
+
+async function setLots(lots) {
+
+    const value = Number(lots);
+
+    if (!Number.isInteger(value) || value < 1 || value > 30) {
+        throw new Error("Lots must be between 1 and 30");
+    }
+
+    const { error } = await supabase
+        .from("system_settings")
+        .update({
+            lots: value,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
+
+    if (error) {
+        throw error;
+    }
+
+    console.log("================================");
+    console.log("✅ LOTS UPDATED");
+    console.log("LOTS :", value);
+    console.log("================================");
+
+    return true;
+}
 // ==========================
 // GET SETTINGS
 // ==========================
@@ -213,5 +245,8 @@ module.exports = {
     getOrderMode,
     setOrderMode,
 
+    setLots,
+
     getSettings
+
 };

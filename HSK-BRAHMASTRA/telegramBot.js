@@ -243,6 +243,105 @@ Dhan Entry Buffer Updated`
     }
 
 });
+
+// ==========================
+// LOTS
+// ==========================
+
+bot.command("lots", async (ctx) => {
+
+    try {
+
+        const args =
+            ctx.message.text.trim().split(/\s+/);
+
+        // /lots → show current lots
+        if (args.length === 1) {
+
+            const settings =
+                await systemService.getSettings();
+
+            const lots =
+                Number(settings.lots || 1);
+
+            await ctx.reply(
+`🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+📦 ORDER LOTS
+
+Current Lots : ${lots}
+
+━━━━━━━━━━━━━━━━━━
+
+Commands:
+
+/lots 1
+/lots 2
+/lots 3
+...
+/lots 30
+
+━━━━━━━━━━━━━━━━━━`
+            );
+
+            return;
+        }
+
+        const lots = Number(args[1]);
+
+        // Only 1 to 30
+        if (!Number.isInteger(lots) || lots < 1 || lots > 30) {
+
+            await ctx.reply(
+`❌ INVALID LOTS
+
+Allowed : 1 to 30
+
+Example:
+
+/lots 3`
+            );
+
+            return;
+        }
+
+        // Update database
+        await systemService.setLots(lots);
+
+        await ctx.reply(
+`✅ LOTS UPDATED
+
+━━━━━━━━━━━━━━━━━━
+
+📦 User Lots : ${lots}
+
+━━━━━━━━━━━━━━━━━━
+
+🎯 Next Dhan Order
+📊 Quantity = Exchange Lot × ${lots}
+
+━━━━━━━━━━━━━━━━━━
+
+Database Updated Successfully`
+        );
+
+        console.log(
+            `✅ User Lots Set: ${lots}`
+        );
+
+    } catch (err) {
+
+        console.error(err);
+
+        await ctx.reply(
+            `❌ LOTS UPDATE FAILED\n\n${err.message}`
+        );
+
+    }
+
+});
 // ==========================
 // ORDER MODE
 // ==========================
