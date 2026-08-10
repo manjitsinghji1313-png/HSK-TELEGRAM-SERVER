@@ -7,7 +7,7 @@ const supabase = require("../config/supabase");
 async function isAutoTradingEnabled() {
 
     const { data, error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .select("auto_trading")
         .eq("id", 1)
         .single();
@@ -27,7 +27,7 @@ async function isAutoTradingEnabled() {
 async function setAutoTrading(status) {
 
     const { error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .update({
             auto_trading: status,
             updated_at: new Date().toISOString()
@@ -49,7 +49,7 @@ async function setAutoTrading(status) {
 async function setPaperMode(status) {
 
     const { error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .update({
             paper_mode: status,
             updated_at: new Date().toISOString()
@@ -75,7 +75,7 @@ async function setEntryBuffer(buffer) {
     }
 
     const { error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .update({
             entry_buffer: value,
             updated_at: new Date().toISOString()
@@ -97,7 +97,7 @@ async function setEntryBuffer(buffer) {
 async function getEntryBuffer() {
 
     const { data, error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .select("entry_buffer")
         .eq("id", 1)
         .single();
@@ -116,7 +116,7 @@ async function getEntryBuffer() {
 async function getOrderMode() {
 
     const { data, error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .select("order_mode")
         .eq("id", 1)
         .single();
@@ -142,7 +142,7 @@ async function setOrderMode(mode) {
     }
 
     const { data, error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .update({
             order_mode: value,
             updated_at: new Date().toISOString()
@@ -182,7 +182,7 @@ async function setOrderMode(mode) {
 async function getSettings() {
 
     const { data, error } = await supabase
-        .from("settings")
+        .from("system_settings")
         .select("*");
 
     console.log("================================");
