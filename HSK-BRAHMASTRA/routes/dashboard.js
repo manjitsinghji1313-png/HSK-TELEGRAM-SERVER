@@ -109,26 +109,38 @@ router.post("/settings", async (req, res) => {
             lots
         } = req.body;
 
-        const { error } = await supabase
-            .from("settings")
+        const { data, error } = await supabase
+            .from("system_settings")
             .update({
-                auto_trading,
-                paper_mode,
-                lots,
+                auto_trading: Boolean(auto_trading),
+                paper_mode: Boolean(paper_mode),
+                lots: Number(lots),
                 updated_at: new Date().toISOString()
             })
-            .eq("id", 1);
+            .eq("id", 1)
+            .select()
+            .single();
 
-        if (error) throw error;
+        if (error) {
+            throw error;
+        }
+
+        console.log("================================");
+        console.log("✅ SYSTEM SETTINGS UPDATED");
+        console.log("Auto Trading :", data.auto_trading);
+        console.log("Paper Mode   :", data.paper_mode);
+        console.log("Lots         :", data.lots);
+        console.log("================================");
 
         res.json({
             success: true,
-            message: "Settings Updated"
+            message: "Settings Updated",
+            settings: data
         });
 
     } catch (err) {
 
-        console.error(err);
+        console.error("❌ SAVE SETTINGS ERROR:", err);
 
         res.status(500).json({
             success: false,
@@ -138,5 +150,4 @@ router.post("/settings", async (req, res) => {
     }
 
 });
-
 module.exports = router;
