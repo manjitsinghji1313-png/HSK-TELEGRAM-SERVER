@@ -367,6 +367,192 @@ Please wait for approval.`
 });
 
 // ==========================
+// MEMBER APPROVE
+// ==========================
+
+bot.command("approve", async (ctx) => {
+
+    try {
+
+        const args =
+            ctx.message.text.trim().split(/\s+/);
+
+        // /approve <telegram_id>
+        if (args.length !== 2) {
+
+            await ctx.reply(
+                "❌ Usage:\n\n/approve TELEGRAM_ID"
+            );
+
+            return;
+        }
+
+        const targetTelegramId =
+            String(args[1]);
+
+        const adminTelegramId =
+            String(ctx.from.id);
+
+        // ==========================
+        // CHECK ADMIN
+        // ==========================
+
+        const { data: admin, error: adminError } =
+            await supabase
+                .from("members")
+                .select("id, name, role, status")
+                .eq("telegram_id", adminTelegramId)
+                .eq("role", "ADMIN")
+                .eq("status", "ACTIVE")
+                .maybeSingle();
+
+        if (adminError) {
+            throw adminError;
+        }
+
+        if (!admin) {
+
+            await ctx.reply(
+                "❌ ACCESS DENIED\n\nOnly ACTIVE ADMIN can approve members."
+            );
+
+            return;
+        }
+
+        // ==========================
+        // FIND PENDING MEMBER
+        // ==========================
+
+        const { data: member, error: memberError } =
+            await supabase
+                .from("members")
+                .select("id, name, role, status, telegram_id, lots")
+                .eq("telegram_id", targetTelegramId)
+                .eq("role", "MEMBER")
+                .eq("status", "PENDING")
+                .maybeSingle();
+
+        if (memberError) {
+            throw memberError;
+        }
+
+        if (!member) {
+
+            await ctx.reply(
+                `❌ MEMBER NOT FOUND
+
+Telegram ID:
+${targetTelegramId}
+
+Only PENDING MEMBER can be approved.`
+            );
+
+            return;
+        }
+
+        // ==========================
+        // APPROVE MEMBER
+        // ==========================
+
+        const { error: updateError } =
+            await supabase
+                .from("members")
+                .update({
+                    status: "ACTIVE"
+                })
+                .eq("id", member.id);
+
+        if (updateError) {
+            throw updateError;
+        }
+
+        // ==========================
+        // ADMIN CONFIRMATION
+        // ==========================
+
+        await ctx.reply(
+`🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+✅ MEMBER APPROVED
+
+👤 Member : ${member.name}
+
+🆔 Telegram ID :
+${targetTelegramId}
+
+📊 Status : ACTIVE
+
+📦 Lots : ${member.lots || 1}
+
+━━━━━━━━━━━━━━━━━━
+
+Approved by ADMIN:
+${admin.name}`
+        );
+
+        // ==========================
+        // MEMBER NOTIFICATION
+        // ==========================
+
+        try {
+
+            await ctx.telegram.sendMessage(
+                targetTelegramId,
+`🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+🎉 REGISTRATION APPROVED
+
+👤 Member : ${member.name}
+
+📊 Status : 🟢 ACTIVE
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Your HSK BRAHMASTRA membership
+has been approved.
+
+Next step:
+🔐 Connect your Dhan account.
+
+Please wait for the Dhan connection option.`
+            );
+
+        } catch (notifyError) {
+
+            console.error(
+                "⚠️ MEMBER NOTIFICATION FAILED:",
+                notifyError.message
+            );
+
+        }
+
+        console.log(
+            "✅ MEMBER APPROVED:",
+            targetTelegramId,
+            "BY ADMIN:",
+            adminTelegramId
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER APPROVE ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ APPROVAL FAILED\n\n${err.message}`
+        );
+
+    }
+
+});
+
+// ==========================
 // LOTS
 // ==========================
 
