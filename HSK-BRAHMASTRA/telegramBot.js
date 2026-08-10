@@ -6,7 +6,7 @@ const {
 } = require("./routes/orderMode");
 
 const systemService = require("./services/systemService");
-
+const supabase = require("./config/supabase");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const tradeService = require("./services/tradeService");
@@ -238,6 +238,128 @@ Dhan Entry Buffer Updated`
 
         await ctx.reply(
             `❌ BUFFER UPDATE FAILED\n\n${err.message}`
+        );
+
+    }
+
+});
+
+// ==========================
+// MEMBER JOIN
+// ==========================
+
+bot.command("join", async (ctx) => {
+
+    try {
+
+        const telegramId =
+            String(ctx.from.id);
+
+        const name =
+            ctx.from.first_name ||
+            ctx.from.username ||
+            "Member";
+
+        // ==========================
+        // CHECK EXISTING MEMBER
+        // ==========================
+
+        const { data: existing, error: checkError } =
+            await supabase
+                .from("members")
+                .select("id, name, status")
+                .eq("telegram_id", telegramId)
+                .maybeSingle();
+
+        if (checkError) {
+            throw checkError;
+        }
+
+        if (existing) {
+
+            await ctx.reply(
+`🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+👤 Member : ${existing.name}
+
+🆔 Telegram ID : ${telegramId}
+
+📊 Status : ${existing.status}
+
+━━━━━━━━━━━━━━━━━━
+
+You are already registered.`
+            );
+
+            return;
+        }
+
+        // ==========================
+        // CREATE MEMBER
+        // ==========================
+
+        const { error } =
+            await supabase
+                .from("members")
+                .insert({
+
+                    telegram_id: telegramId,
+
+                    name,
+
+                    role: "MEMBER",
+
+                    status: "PENDING",
+
+                    lots: 1,
+
+                    dhan_connected: false
+
+                });
+
+        if (error) {
+            throw error;
+        }
+
+        await ctx.reply(
+`🤖 HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+
+✅ REGISTRATION RECEIVED
+
+👤 Member : ${name}
+
+🆔 Telegram ID :
+${telegramId}
+
+⏳ Status : PENDING
+
+━━━━━━━━━━━━━━━━━━
+
+Your request has been sent
+for ADMIN approval.
+
+Please wait for approval.`
+        );
+
+        console.log(
+            "✅ New Member Registration:",
+            telegramId,
+            name
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER JOIN ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ REGISTRATION FAILED\n\n${err.message}`
         );
 
     }
