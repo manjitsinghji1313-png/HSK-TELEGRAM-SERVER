@@ -140,9 +140,14 @@ if (!autoTrading) {
 
 const market = extractMarket(data.symbol);
 
-// Detect Option Type from Command / Symbol
-let optionType;
+// ==========================
+// DETECT OPTION TYPE + STRIKE
+// ==========================
 
+let optionType;
+let strike = Number(data.strike);
+
+// CE / PE detect
 if (data.cmd === "CE_ENTRY") {
 
     optionType = "CE";
@@ -153,30 +158,58 @@ if (data.cmd === "CE_ENTRY") {
 
 } else if (data.cmd === "BUY") {
 
-    optionType = extractOptionType(data.symbol);
+    // First try tradeKey
+    const tradeKeyMatch = String(data.tradeKey || "")
+        .match(/(?:^|_)(\d+(?:\.\d+)?)(CE|PE)$/i);
 
-    if (!optionType) {
+    if (tradeKeyMatch) {
 
-        throw new Error(`Unable to detect option type from symbol: ${data.symbol}`);
+        strike = Number(tradeKeyMatch[1]);
+        optionType = tradeKeyMatch[2].toUpperCase();
+
+    } else {
+
+        // Fallback to symbol
+        optionType = extractOptionType(data.symbol);
 
     }
 
 }
 
+if (!optionType) {
+
+    throw new Error(
+        `Unable to detect option type from tradeKey/symbol: ${data.tradeKey || data.symbol}`
+    );
+
+}
+
+if (!strike || strike <= 0) {
+
+    throw new Error(
+        `Unable to detect strike from tradeKey/data: ${data.tradeKey}`
+    );
+
+}
+
 console.log("📦 Market :", market);
-console.log("🎯 Strike :", data.strike);
+console.log("🎯 Strike :", strike);
 console.log("📈 Option :", optionType);
+
+
+// ==========================
+// FIND INSTRUMENT
+// ==========================
 
 const instrument = await findInstrument(
     market,
-    Number(data.strike),
+    strike,
     optionType
 );
 
 if (!instrument) {
 
     throw new Error("Instrument not found");
-
 
 }
 
