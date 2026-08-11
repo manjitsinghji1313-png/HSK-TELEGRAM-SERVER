@@ -2,8 +2,7 @@
 // const settings = require("../config/settings");
 const express = require("express");
 const router = express.Router();
-const { getLotSize } =
-require("../utils/marketLots");
+
 const { findInstrument } = require("../optionchain/instrumentFinder");
 const {
     extractStrikeFromSymbol,
@@ -201,12 +200,13 @@ console.log("📈 Option :", optionType);
 // FIND INSTRUMENT
 // ==========================
 
-const instrument = await findInstrument(
-    market,
-    strike,
-    optionType
-);
-
+const instrument =
+    await findInstrument(
+        data.symbol,
+        strike,
+        optionType,
+        data.expiry
+    );
 if (!instrument) {
 
     throw new Error("Instrument not found");
@@ -214,10 +214,10 @@ if (!instrument) {
 }
 
 const lotSize =
-    getLotSize(market);
+    Number(instrument.lotSize);
 
 const quantity =
-    lotSize * settings.lots;
+    lotSize * Number(settings.lots);
 
 console.log("📦 Instrument :", instrument.tradingSymbol);
 console.log("🆔 Security ID :", instrument.securityId);
