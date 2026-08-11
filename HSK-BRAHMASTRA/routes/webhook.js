@@ -195,21 +195,86 @@ console.log("📦 Market :", market);
 console.log("🎯 Strike :", strike);
 console.log("📈 Option :", optionType);
 
-
 // ==========================
 // FIND INSTRUMENT
 // ==========================
 
+// =====================================
+// EXTRACT EXPIRY FROM TRADINGVIEW SYMBOL
+// Example:
+// CRUDEOILM260817P7900
+// NIFTY260818C24400
+// =====================================
+
+let requestedExpiry =
+    data.expiry || null;
+
+if (
+    !requestedExpiry &&
+    data.symbol
+) {
+
+    const compactMatch =
+        data.symbol.match(
+            /^(NIFTY|BANKNIFTY|CRUDEOILM|CRUDEOIL|SENSEX)(\d{6})[CP](\d+)$/
+        );
+
+    if (compactMatch) {
+
+        const expiryCode =
+            compactMatch[2];
+
+        const yy =
+            expiryCode.substring(0, 2);
+
+        const mm =
+            expiryCode.substring(2, 4);
+
+        const dd =
+            expiryCode.substring(4, 6);
+
+        requestedExpiry =
+            `20${yy}-${mm}-${dd}`;
+
+        console.log(
+            "📅 EXPIRY EXTRACTED FROM TV SYMBOL :",
+            requestedExpiry
+        );
+
+    }
+
+}
+
+// =====================================
+// LOG
+// =====================================
+
+console.log("================================");
+console.log("🔎 FIND INSTRUMENT REQUEST");
+console.log("Market          :", market);
+console.log("TV Symbol       :", data.symbol);
+console.log("Strike          :", strike);
+console.log("Option          :", optionType);
+console.log("Requested Expiry:", requestedExpiry);
+console.log("================================");
+
+// =====================================
+// FIND EXACT CONTRACT
+// =====================================
+
 const instrument =
     await findInstrument(
-        data.symbol,
+        market,
         strike,
         optionType,
-        data.expiry
+        requestedExpiry
     );
+
 if (!instrument) {
 
-    throw new Error("Instrument not found");
+    throw new Error(
+        "Instrument not found"
+    );
 
 }
 
@@ -228,7 +293,6 @@ console.log("📦 Market :", market);
 console.log("📦 Exchange Lot :", lotSize);
 console.log("📦 User Lots :", settings.lots);
 console.log("📊 Quantity :", quantity);
-
 // ==========================
 // PAPER MODE
 // ==========================
