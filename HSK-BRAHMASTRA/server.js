@@ -399,28 +399,25 @@ server.listen(PORT, async () => {
     console.log(`❤️ Health : http://localhost:${PORT}/api/health`);
 
     // ==========================
-    // DOWNLOAD LATEST INSTRUMENT FILE
-    // ==========================
+// DOWNLOAD + LOAD LATEST INSTRUMENT FILE
+// ==========================
 
-    try {
+try {
 
-        console.log("📥 Updating Instrument File...");
+    console.log("📥 Updating Dhan Instrument Master...");
 
-        await downloadInstrumentFile();
+    await loadInstruments();
 
-        console.log("✅ Instrument File Ready");
+    console.log("✅ Dhan Instrument Master Ready");
 
-        console.log("📦 Loading Instruments into Memory...");
+} catch (err) {
 
-        await loadInstruments();
+    console.log(
+        "❌ Instrument Master Failed:",
+        err.message
+    );
 
-        console.log("✅ Instruments Loaded into Memory");
-
-    } catch (err) {
-
-        console.log("❌ Instrument Download Failed:", err.message);
-
-    }
+}
 
     // ==========================
     // SUPABASE CONNECTION
