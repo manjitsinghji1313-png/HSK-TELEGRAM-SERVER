@@ -1,0 +1,4 @@
+module.exports = {
+    CLIENT_ID: "1104867831",
+    ACCESS_TOKEN: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJkaGFuIiwicGFydG5lcklkIjoiIiwiZXhwIjoxNzg2NDU5MjA1LCJpYXQiOjE3ODYzNzI4MDUsInRva2VuQ29uc3VtZXJUeXBlIjoiU0VMRiIsIndlYmhvb2tVcmwiOiIiLCJkaGFuQ2xpZW50SWQiOiIxMTA0ODY3ODMxIn0.Up4Wujv8Ou6lgZSgLAtaXj_Je_CmXnKvmHak_qLtdReIfgquviL1y5kj4fL-I-_ZT0A8wyCmjtfjX4AAzA9nyw"
+};
