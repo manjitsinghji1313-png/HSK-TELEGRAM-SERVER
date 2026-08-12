@@ -697,6 +697,7 @@ Select Order Type:
     }
 
 });
+
 // ==========================
 // ORDER MODE BUTTON HANDLER
 // ==========================
