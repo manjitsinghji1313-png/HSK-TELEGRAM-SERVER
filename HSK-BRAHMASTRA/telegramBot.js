@@ -553,77 +553,95 @@ Please wait for the Dhan connection option.`
 });
 
 // ==========================
-// LOTS
+// MARKET-WISE LOTS
 // ==========================
 
-bot.command("lots", async (ctx) => {
+const marketLotCommands = {
+    n: "NIFTY",
+    bn: "BANKNIFTY",
+    s: "SENSEX",
+    c: "CRUDEOIL",
+    cm: "CRUDEOIL_MINI",
+    ng: "NATURALGAS",
+    ngm: "NATURALGAS_MINI"
+};
 
-    try {
+for (const [command, market] of Object.entries(marketLotCommands)) {
 
-        const args =
-            ctx.message.text.trim().split(/\s+/);
+    bot.command(command, async (ctx) => {
 
-        // /lots → show current lots
-        if (args.length === 1) {
+        try {
 
-            const settings =
-                await systemService.getSettings();
+            const args =
+                ctx.message.text.trim().split(/\s+/);
 
-            const lots =
-                Number(settings.lots || 1);
+            // /n → show current NIFTY lots
+            if (args.length === 1) {
 
-            await ctx.reply(
+                const marketLots =
+                    await systemService.getMarketLots();
+
+                const lots =
+                    Number(marketLots[market] || 1);
+
+                await ctx.reply(
 `🤖 HSK BRAHMASTRA
 
 ━━━━━━━━━━━━━━━━━━
 
-📦 ORDER LOTS
+📊 ${market}
 
-Current Lots : ${lots}
+📦 Current Lots : ${lots}
 
 ━━━━━━━━━━━━━━━━━━
 
-Commands:
-
-/lots 1
-/lots 2
-/lots 3
-...
-/lots 30
+Command:
+ /${command} 1
+ /${command} 2
+ /${command} 3
+ ...
+ /${command} 30
 
 ━━━━━━━━━━━━━━━━━━`
-            );
+                );
 
-            return;
-        }
+                return;
+            }
 
-        const lots = Number(args[1]);
+            const lots = Number(args[1]);
 
-        // Only 1 to 30
-        if (!Number.isInteger(lots) || lots < 1 || lots > 30) {
+            if (
+                !Number.isInteger(lots) ||
+                lots < 1 ||
+                lots > 30
+            ) {
 
-            await ctx.reply(
+                await ctx.reply(
 `❌ INVALID LOTS
+
+📊 Market : ${market}
 
 Allowed : 1 to 30
 
 Example:
+/${command} 2`
+                );
 
-/lots 3`
+                return;
+            }
+
+            await systemService.setMarketLots(
+                market,
+                lots
             );
 
-            return;
-        }
-
-        // Update database
-        await systemService.setLots(lots);
-
-        await ctx.reply(
+            await ctx.reply(
 `✅ LOTS UPDATED
 
 ━━━━━━━━━━━━━━━━━━
 
-📦 User Lots : ${lots}
+📊 Market : ${market}
+📦 Lots   : ${lots}
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -633,23 +651,27 @@ Example:
 ━━━━━━━━━━━━━━━━━━
 
 Database Updated Successfully`
-        );
+            );
 
-        console.log(
-            `✅ User Lots Set: ${lots}`
-        );
+            console.log(
+                `✅ ${market} Lots Set: ${lots}`
+            );
 
-    } catch (err) {
+        } catch (err) {
 
-        console.error(err);
+            console.error(
+                `❌ ${market} LOTS ERROR:`,
+                err
+            );
 
-        await ctx.reply(
-            `❌ LOTS UPDATE FAILED\n\n${err.message}`
-        );
+            await ctx.reply(
+                `❌ LOTS UPDATE FAILED\n\n${err.message}`
+            );
+        }
 
-    }
+    });
 
-});
+}
 // ==========================
 // ORDER MODE
 // ==========================
@@ -891,19 +913,23 @@ ${err.message}`
     }
 
 });
-
 // ==========================
 // HELP
 // ==========================
 
 bot.command("help", async (ctx) => {
 
-    await ctx.reply(
+    try {
+
+        const marketLots =
+            await systemService.getMarketLots();
+
+        await ctx.reply(
 `🤖 HSK BRAHMASTRA BOT
 
 ━━━━━━━━━━━━━━━━━━
 
-Available Commands
+📌 TRADING CONTROL
 
 🟢 /starttrade
 🔴 /stoptrade
@@ -913,21 +939,61 @@ Available Commands
 📊 /status
 ⚙️ /ordermode
 
+━━━━━━━━━━━━━━━━━━
+
 📈 CE LIMIT BUFFER
+
 💰 /buffer
 💰 /buffer 0
 💰 /buffer 1
 💰 /buffer 2
+
+━━━━━━━━━━━━━━━━━━
+
+📦 MARKET-WISE LOTS
+
+/n  ${marketLots.NIFTY || 1}  → NIFTY
+/bn ${marketLots.BANKNIFTY || 1}  → BANKNIFTY
+/s  ${marketLots.SENSEX || 1}  → SENSEX
+/c  ${marketLots.CRUDEOIL || 1}  → CRUDEOIL
+/cm ${marketLots.CRUDEOIL_MINI || 1}  → CRUDE MINI
+/ng ${marketLots.NATURALGAS || 1}  → NATURAL GAS
+/ngm ${marketLots.NATURALGAS_MINI || 1}  → NG MINI
+
+━━━━━━━━━━━━━━━━━━
+
+📝 LOT COMMAND EXAMPLES
+
+/n 2
+/bn 3
+/s 4
+/c 2
+/cm 1
+/ng 2
+/ngm 1
+
+━━━━━━━━━━━━━━━━━━
 
 ❓ /help
 
 ━━━━━━━━━━━━━━━━━━
 
 HSK BRAHMASTRA`
-    );
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ HELP ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ HELP FAILED\n\n${err.message}`
+        );
+    }
 
 });
-
 // ==========================
 // TELEGRAM GLOBAL ERROR HANDLER
 // ==========================
