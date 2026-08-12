@@ -73,6 +73,18 @@ app.get("/api/health", (req, res) => {
     });
 
 });
+
+// =====================================
+// RENDER KEEP ALIVE STATUS
+// =====================================
+
+app.get("/status", (req, res) => {
+    res.status(200).json({
+        status: "ONLINE",
+        project: "HSK BRAHMAS​​TRA",
+        time: new Date().toISOString()
+    });
+});
 // ==============================
 // TEST API
 // ==============================
