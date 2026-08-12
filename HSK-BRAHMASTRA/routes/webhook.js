@@ -281,8 +281,18 @@ if (!instrument) {
 const lotSize =
     Number(instrument.lotSize);
 
+// ==========================
+// MARKET-WISE USER LOTS
+// ==========================
+
+const marketLots =
+    await systemService.getMarketLots();
+
+const userLots =
+    Number(marketLots[market] || 1);
+
 const quantity =
-    lotSize * Number(settings.lots);
+    lotSize * userLots;
 
 console.log("📦 Instrument :", instrument.tradingSymbol);
 console.log("🆔 Security ID :", instrument.securityId);
@@ -291,8 +301,9 @@ console.log("📦 Expiry :", instrument.expiry);
 console.log("📦 Option :", instrument.optionType);
 console.log("📦 Market :", market);
 console.log("📦 Exchange Lot :", lotSize);
-console.log("📦 User Lots :", settings.lots);
+console.log("📦 User Lots :", userLots);
 console.log("📊 Quantity :", quantity);
+
 // ==========================
 // PAPER MODE
 // ==========================
@@ -307,7 +318,7 @@ if (settings.paper_mode) {
 
     ...data,
 
-    lots: settings.lots,
+    lots: userLots,
 
     lotSize,
 
@@ -326,7 +337,7 @@ message += `
 
 🚫 Broker Order Not Sent
 
-📦 Lots : ${settings.lots}
+📦 Lots : ${userLots}
 
 📈 Mode : PAPER`;
 
@@ -430,7 +441,7 @@ try {
 
         ...data,
 
-        lots: settings.lots,
+        lots: userLots,
 
         lotSize,
 
