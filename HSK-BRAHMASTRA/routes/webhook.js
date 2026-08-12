@@ -177,18 +177,28 @@ if (data.cmd === "CE_ENTRY") {
 
 if (!optionType) {
 
-    throw new Error(
-        `Unable to detect option type from tradeKey/symbol: ${data.tradeKey || data.symbol}`
-    );
+    console.log("================================");
+    console.log("⚠️ INVALID OPTION SIGNAL - SKIPPED");
+    console.log("Symbol    :", data.symbol);
+    console.log("Trade Key :", data.tradeKey);
+    console.log("Command   :", data.cmd);
+    console.log("Reason    : Option type CE/PE not detected");
+    console.log("================================");
 
+    break;
 }
 
 if (!strike || strike <= 0) {
 
-    throw new Error(
-        `Unable to detect strike from tradeKey/data: ${data.tradeKey}`
-    );
+    console.log("================================");
+    console.log("⚠️ INVALID STRIKE - SIGNAL SKIPPED");
+    console.log("Symbol    :", data.symbol);
+    console.log("Trade Key :", data.tradeKey);
+    console.log("Strike    :", strike);
+    console.log("Reason    : Valid strike not detected");
+    console.log("================================");
 
+    break;
 }
 
 console.log("📦 Market :", market);

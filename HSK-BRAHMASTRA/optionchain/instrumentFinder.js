@@ -12,12 +12,13 @@ async function findInstrument(
     // =====================================
 
     const symbolMap = {
-        NIFTY: "NIFTY",
-        BANKNIFTY: "BANKNIFTY",
-        SENSEX: "SENSEX",
-        CRUDEOIL: "CRUDEOIL",
-        CRUDEOILM: "CRUDEOILM"
-    };
+    NIFTY: "NIFTY",
+    BANKNIFTY: "BANKNIFTY",
+    SENSEX: "SENSEX",
+    CRUDEOIL: "CRUDEOIL",
+    CRUDEOILM: "CRUDEOILM",
+    CRUDEOIL_MINI: "CRUDEOILM"
+};
 
     const searchSymbol =
         symbolMap[symbol] || symbol;
