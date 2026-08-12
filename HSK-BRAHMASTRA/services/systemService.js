@@ -175,12 +175,31 @@ async function setOrderMode(mode) {
 
     return data.order_mode;
 }
+// ==========================
+// GET MARKET-WISE LOTS
+// ==========================
+
+async function getMarketLots() {
+
+    const { data, error } = await supabase
+        .from("system_settings")
+        .select("market_lots")
+        .eq("id", 1)
+        .single();
+
+    if (error) {
+        throw error;
+    }
+
+    return data.market_lots || {};
+}
+
 
 // ==========================
-// SET LOTS
+// SET MARKET-WISE LOTS
 // ==========================
 
-async function setLots(lots) {
+async function setMarketLots(market, lots) {
 
     const value = Number(lots);
 
@@ -188,21 +207,52 @@ async function setLots(lots) {
         throw new Error("Lots must be between 1 and 30");
     }
 
-    const { error } = await supabase
+    const marketKey = String(market).toUpperCase();
+
+    const allowedMarkets = [
+        "NIFTY",
+        "BANKNIFTY",
+        "SENSEX",
+        "CRUDEOIL",
+        "CRUDEOIL_MINI",
+        "NATURALGAS",
+        "NATURALGAS_MINI"
+    ];
+
+    if (!allowedMarkets.includes(marketKey)) {
+        throw new Error("Invalid market");
+    }
+
+    const { data, error } = await supabase
         .from("system_settings")
-        .update({
-            lots: value,
-            updated_at: new Date().toISOString()
-        })
-        .eq("id", 1);
+        .select("market_lots")
+        .eq("id", 1)
+        .single();
 
     if (error) {
         throw error;
     }
 
+    const currentLots = data.market_lots || {};
+
+    currentLots[marketKey] = value;
+
+    const { error: updateError } = await supabase
+        .from("system_settings")
+        .update({
+            market_lots: currentLots,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
+
+    if (updateError) {
+        throw updateError;
+    }
+
     console.log("================================");
-    console.log("✅ LOTS UPDATED");
-    console.log("LOTS :", value);
+    console.log("✅ MARKET LOTS UPDATED");
+    console.log("MARKET :", marketKey);
+    console.log("LOTS   :", value);
     console.log("================================");
 
     return true;
@@ -234,7 +284,7 @@ async function getSettings() {
 }
 
 module.exports = {
-
+    
     isAutoTradingEnabled,
     setAutoTrading,
     setPaperMode,
@@ -246,6 +296,9 @@ module.exports = {
     setOrderMode,
 
     setLots,
+
+    getMarketLots,
+    setMarketLots,
 
     getSettings
 
