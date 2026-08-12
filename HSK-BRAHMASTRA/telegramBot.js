@@ -913,6 +913,50 @@ ${err.message}`
     }
 
 });
+
+// ==========================
+// SHOW ALL MARKET LOTS
+// ==========================
+
+bot.command("lots", async (ctx) => {
+
+    try {
+
+        const marketLots =
+            await systemService.getMarketLots();
+
+        await ctx.reply(
+`📦 HSK BRAHMASTRA — CURRENT LOTS
+
+━━━━━━━━━━━━━━━━━━
+
+📊 NIFTY       : ${marketLots.NIFTY || 1}
+📊 BANKNIFTY   : ${marketLots.BANKNIFTY || 1}
+📊 SENSEX      : ${marketLots.SENSEX || 1}
+
+🛢️ CRUDEOIL    : ${marketLots.CRUDEOIL || 1}
+🛢️ CRUDE MINI  : ${marketLots.CRUDEOIL_MINI || 1}
+
+🔥 NATURAL GAS : ${marketLots.NATURALGAS || 1}
+
+━━━━━━━━━━━━━━━━━━
+
+🟢 LOT SETTINGS ACTIVE`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ SHOW LOTS ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ LOTS CHECK FAILED\n\n${err.message}`
+        );
+    }
+
+});
 // ==========================
 // HELP
 // ==========================
@@ -970,7 +1014,8 @@ bot.command("help", async (ctx) => {
 /c 2
 /cm 1
 /ng 2
-/ngm 1
+
+
 
 ━━━━━━━━━━━━━━━━━━
 
