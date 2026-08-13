@@ -17,7 +17,8 @@ async function findInstrument(
     SENSEX: "SENSEX",
     CRUDEOIL: "CRUDEOIL",
     CRUDEOILM: "CRUDEOILM",
-    CRUDEOIL_MINI: "CRUDEOILM"
+    CRUDEOIL_MINI: "CRUDEOILM",
+    NATURALGAS: "NATURALGAS"
 };
 
     const searchSymbol =
