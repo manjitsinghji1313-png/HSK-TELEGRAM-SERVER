@@ -18,7 +18,9 @@ async function findInstrument(
     CRUDEOIL: "CRUDEOIL",
     CRUDEOILM: "CRUDEOILM",
     CRUDEOIL_MINI: "CRUDEOILM",
-    NATURALGAS: "NATURALGAS"
+    NATURALGAS: "NATURALGAS",
+    NATURALGAS_MINI: "NATGASMINT"
+
 };
 
     const searchSymbol =
@@ -102,7 +104,11 @@ async function findInstrument(
                     ) ||
                     row.SEM_TRADING_SYMBOL.startsWith(
                         "NATURALGAS-"
+                    ) ||
+                    row.SEM_TRADING_SYMBOL.startsWith(
+                        "NATGASMINT-"
                     )
+
                         ? "MCX_COMM"
 
                         : row.SEM_TRADING_SYMBOL.startsWith(
