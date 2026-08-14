@@ -162,22 +162,40 @@ bot.command("buffer", async (ctx) => {
             const buffer =
                 Number(settings.entry_buffer || 0);
 
+            const displayBuffer =
+                buffer === 0
+                    ? "🔴 OFF"
+                    : buffer > 0
+                        ? `🟢 +₹${buffer}`
+                        : `🔴 -₹${Math.abs(buffer)}`;
+
             await ctx.reply(
-`📊 HSK BRAHMASTRA
+`📊 HSK BRAHM||||BRAHMASTRA
 
 ━━━━━━━━━━━━━━━━━━
 
 📈 CE LIMIT BUFFER
 
-💰 Current Buffer : ₹${buffer}
+💰 Current Buffer : ${displayBuffer}
 
 ━━━━━━━━━━━━━━━━━━
 
-Commands:
+Positive Buffer:
 
 /buffer 0 → OFF
-/buffer 1 → ₹1
-/buffer 2 → ₹2
+/buffer 1 → +₹1
+/buffer 2 → +₹2
+/buffer 3 → +₹3
+/buffer 4 → +₹4
+/buffer 5 → +₹5
+
+Negative Buffer:
+
+/buffer -1 → -₹1
+/buffer -2 → -₹2
+/buffer -3 → -₹3
+/buffer -4 → -₹4
+/buffer -5 → -₹5
 
 ━━━━━━━━━━━━━━━━━━`
             );
@@ -187,17 +205,29 @@ Commands:
 
         const buffer = Number(args[1]);
 
-        // Only 0, 1, 2 allowed
-        if (![0, 1, 2].includes(buffer)) {
+        // Allow only whole-number buffer from -5 to +5
+        if (
+            !Number.isInteger(buffer) ||
+            buffer < -5 ||
+            buffer > 5
+        ) {
 
             await ctx.reply(
 `❌ INVALID BUFFER
 
-Only these values are allowed:
+Allowed range:
 
-0 = OFF
-1 = ₹1
-2 = ₹2`
+-5 = -₹5
+-4 = -₹4
+-3 = -₹3
+-2 = -₹2
+-1 = -₹1
+ 0 = OFF
+ 1 = +₹1
+ 2 = +₹2
+ 3 = +₹3
+ 4 = +₹4
+ 5 = +₹5`
             );
 
             return;
@@ -208,7 +238,9 @@ Only these values are allowed:
         const status =
             buffer === 0
                 ? "🔴 OFF"
-                : `🟢 ₹${buffer}`;
+                : buffer > 0
+                    ? `🟢 +₹${buffer}`
+                    : `🔴 -₹${Math.abs(buffer)}`;
 
         await ctx.reply(
 `✅ BUFFER UPDATED
