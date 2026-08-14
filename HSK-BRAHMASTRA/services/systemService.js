@@ -70,8 +70,13 @@ async function setEntryBuffer(buffer) {
 
     const value = Number(buffer);
 
-    if (![0, 1, 2].includes(value)) {
-        throw new Error("Buffer must be 0, 1 or 2");
+    // Allow buffer from -5 to +5
+    if (
+        !Number.isInteger(value) ||
+        value < -5 ||
+        value > 5
+    ) {
+        throw new Error("Buffer must be between -5 and +5");
     }
 
     const { error } = await supabase
@@ -88,7 +93,6 @@ async function setEntryBuffer(buffer) {
 
     return true;
 }
-
 
 // ==========================
 // GET CE ENTRY BUFFER
