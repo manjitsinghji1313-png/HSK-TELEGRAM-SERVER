@@ -613,7 +613,7 @@ Command:
             if (
                 !Number.isInteger(lots) ||
                 lots < 1 ||
-                lots > 30
+                lots > 50
             ) {
 
                 await ctx.reply(
@@ -938,6 +938,7 @@ bot.command("lots", async (ctx) => {
 🛢️ CRUDE MINI  : ${marketLots.CRUDEOIL_MINI || 1}
 
 🔥 NATURAL GAS : ${marketLots.NATURALGAS || 1}
+🔥 NG MINI     : ${marketLots.NATGASMINI || 1}
 
 ━━━━━━━━━━━━━━━━━━
 
