@@ -991,6 +991,284 @@ bot.command("lots", async (ctx) => {
 
 });
 // ==========================
+// MANUAL NORMAL LIMIT ORDER
+// ==========================
+
+bot.command("order", async (ctx) => {
+
+    try {
+
+        const args =
+            ctx.message.text.trim().split(/\s+/);
+
+        // =====================================
+        // USAGE
+        // /order NIFTY 23300 CE 1 120
+        // =====================================
+
+        if (args.length !== 6) {
+
+            await ctx.reply(
+`❌ INVALID ORDER FORMAT
+
+Use:
+
+/order NIFTY 23300 CE 1 120
+
+Example:
+
+📊 Symbol     : NIFTY
+🎯 Strike     : 23300
+📈 Option     : CE
+📦 Lots       : 1
+💰 Limit Price: 120`
+            );
+
+            return;
+        }
+
+
+        // =====================================
+        // READ ORDER
+        // =====================================
+
+        const symbol =
+            String(args[1])
+                .trim()
+                .toUpperCase();
+
+        const strike =
+            Number(args[2]);
+
+        const optionType =
+            String(args[3])
+                .trim()
+                .toUpperCase();
+
+        const lots =
+            Number(args[4]);
+
+        const price =
+            Number(args[5]);
+
+
+        // =====================================
+        // VALIDATION
+        // =====================================
+
+        if (
+            !["NIFTY", "BANKNIFTY", "SENSEX",
+              "CRUDEOIL", "CRUDEOIL_MINI",
+              "NATURALGAS", "NATURALGAS_MINI"]
+                .includes(symbol)
+        ) {
+
+            throw new Error(
+                "Invalid symbol"
+            );
+
+        }
+
+
+        if (
+            !Number.isFinite(strike) ||
+            strike <= 0
+        ) {
+
+            throw new Error(
+                "Invalid strike"
+            );
+
+        }
+
+
+        if (
+            !["CE", "PE"].includes(optionType)
+        ) {
+
+            throw new Error(
+                "Option must be CE or PE"
+            );
+
+        }
+
+
+        if (
+            !Number.isInteger(lots) ||
+            lots <= 0
+        ) {
+
+            throw new Error(
+                "Lots must be a positive whole number"
+            );
+
+        }
+
+
+        if (
+            !Number.isFinite(price) ||
+            price <= 0
+        ) {
+
+            throw new Error(
+                "Invalid LIMIT price"
+            );
+
+        }
+
+
+        // =====================================
+        // SHOW CONFIRMATION
+        // =====================================
+
+        await ctx.reply(
+`📝 MANUAL NORMAL LIMIT ORDER
+
+━━━━━━━━━━━━━━━━━━
+
+📊 Symbol : ${symbol}
+🎯 Strike : ${strike}
+📈 Option : ${optionType}
+📦 Lots   : ${lots}
+💰 Price  : ₹${price}
+
+━━━━━━━━━━━━━━━━━━
+
+⚠️ NORMAL LIMIT ORDER
+🧪 Currently DRY RUN
+
+No Dhan order will be placed.
+
+━━━━━━━━━━━━━━━━━━
+
+Sending to Normal Order Server...`
+        );
+
+
+        // =====================================
+        // SEND TO NORMAL SERVER
+        // =====================================
+
+        const response =
+            await fetch(
+                "http://localhost:3002/manual-order",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            symbol,
+
+                            strike,
+
+                            optionType,
+
+                            lots,
+
+                            price,
+
+                            expiry: null
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        // =====================================
+        // SERVER ERROR
+        // =====================================
+
+        if (!response.ok ||
+            !result.success) {
+
+            throw new Error(
+                result.error ||
+                "Normal order server failed"
+            );
+
+        }
+
+
+        // =====================================
+        // SUCCESS
+        // =====================================
+
+        const instrument =
+            result.instrument || {};
+
+
+        await ctx.reply(
+`✅ NORMAL ORDER TEST SUCCESS
+
+━━━━━━━━━━━━━━━━━━
+
+📊 ${symbol}
+🎯 ${strike} ${optionType}
+
+📦 Lots     : ${lots}
+📦 Quantity : ${result.quantity}
+
+💰 Limit    : ₹${result.price}
+
+━━━━━━━━━━━━━━━━━━
+
+🔹 Trading Symbol
+${instrument.tradingSymbol || "-"}
+
+🔹 Security ID
+${instrument.securityId || "-"}
+
+🔹 Exchange
+${instrument.exchange || "-"}
+
+━━━━━━━━━━━━━━━━━━
+
+🧪 DRY RUN : ON
+🚫 DHAN ORDER : NOT PLACED`
+        );
+
+
+        console.log(
+            "✅ Telegram Manual Order Dry Run:",
+            {
+                symbol,
+                strike,
+                optionType,
+                lots,
+                price
+            }
+        );
+
+
+    } catch (err) {
+
+        console.error(
+            "❌ MANUAL ORDER ERROR:",
+            err
+        );
+
+        await ctx.reply(
+`❌ MANUAL ORDER FAILED
+
+${err.message}`
+        );
+
+    }
+
+});
+
+// ==========================
 // HELP
 // ==========================
 
@@ -1015,7 +1293,7 @@ bot.command("help", async (ctx) => {
 🧹 /reset
 📊 /status
 ⚙️ /ordermode
-
+📝 /order NIFTY 23300 CE 1 120
 ━━━━━━━━━━━━━━━━━━
 
 📈 CE LIMIT BUFFER
