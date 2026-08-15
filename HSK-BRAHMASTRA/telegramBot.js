@@ -1144,46 +1144,67 @@ No Dhan order will be placed.
 Sending to Normal Order Server...`
         );
 
+// =====================================
+// SEND TO NORMAL SERVER
+// =====================================
 
-        // =====================================
-        // SEND TO NORMAL SERVER
-        // =====================================
-
-        const response =
-            await fetch(
-                "http://localhost:3002/manual-order",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            symbol,
-
-                            strike,
-
-                            optionType,
-
-                            lots,
-
-                            price,
-
-                            expiry: null
-
-                        })
-
-                }
-            );
+const NORMAL_ORDER_URL =
+    process.env.NORMAL_ORDER_URL ||
+    "http://localhost:3002";
 
 
-        const result =
-            await response.json();
+console.log(
+    "================================"
+);
 
+console.log(
+    "📡 NORMAL ORDER SERVER"
+);
+
+console.log(
+    "URL :",
+    NORMAL_ORDER_URL
+);
+
+console.log(
+    "================================"
+);
+
+
+const response =
+    await fetch(
+        `${NORMAL_ORDER_URL}/manual-order`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body:
+                JSON.stringify({
+
+                    symbol,
+
+                    strike,
+
+                    optionType,
+
+                    lots,
+
+                    price,
+
+                    expiry: null
+
+                })
+
+        }
+    );
+
+
+const result =
+    await response.json();
 
         // =====================================
         // SERVER ERROR
