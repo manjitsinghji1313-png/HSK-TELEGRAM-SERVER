@@ -1282,6 +1282,280 @@ ${instrument.exchange || "-"}
 });
 
 // ==========================
+// MANUAL MARKET ORDER
+// ==========================
+
+bot.command("mo", async (ctx) => {
+
+    try {
+
+        const args =
+            ctx.message.text.trim().split(/\s+/);
+
+        // =====================================
+        // USAGE
+        // /mo NIFTY 24800 CE 1
+        // =====================================
+
+        if (args.length !== 5) {
+
+            await ctx.reply(
+`❌ INVALID MARKET ORDER FORMAT
+
+Use:
+
+/mo NIFTY 24800 CE 1
+
+Example:
+
+📊 Symbol     : NIFTY
+🎯 Strike     : 24800
+📈 Option     : CE
+📦 Lots       : 1
+
+⚡ MARKET PRICE
+💰 No price required`
+            );
+
+            return;
+        }
+
+        // =====================================
+        // READ ORDER
+        // =====================================
+
+        const symbol =
+            String(args[1])
+                .trim()
+                .toUpperCase();
+
+        const strike =
+            Number(args[2]);
+
+        const optionType =
+            String(args[3])
+                .trim()
+                .toUpperCase();
+
+        const lots =
+            Number(args[4]);
+
+        // =====================================
+        // VALIDATION
+        // =====================================
+
+        if (
+            ![
+                "NIFTY",
+                "BANKNIFTY",
+                "SENSEX",
+                "CRUDEOIL",
+                "CRUDEOIL_MINI",
+                "NATURALGAS",
+                "NATURALGAS_MINI"
+            ].includes(symbol)
+        ) {
+
+            throw new Error(
+                "Invalid symbol"
+            );
+
+        }
+
+        if (
+            !Number.isFinite(strike) ||
+            strike <= 0
+        ) {
+
+            throw new Error(
+                "Invalid strike"
+            );
+
+        }
+
+        if (
+            !["CE", "PE"].includes(optionType)
+        ) {
+
+            throw new Error(
+                "Option must be CE or PE"
+            );
+
+        }
+
+        if (
+            !Number.isInteger(lots) ||
+            lots <= 0
+        ) {
+
+            throw new Error(
+                "Lots must be a positive whole number"
+            );
+
+        }
+
+        // =====================================
+        // CONFIRMATION
+        // =====================================
+
+        await ctx.reply(
+`⚡ MANUAL MARKET ORDER
+
+━━━━━━━━━━━━━━━━━━
+
+📊 Symbol : ${symbol}
+🎯 Strike : ${strike}
+📈 Option : ${optionType}
+📦 Lots   : ${lots}
+
+━━━━━━━━━━━━━━━━━━
+
+🔵 MARKET BUY
+🚀 Sending to Dhan...`
+        );
+
+        // =====================================
+        // NORMAL ORDER SERVER
+        // =====================================
+
+        const NORMAL_ORDER_URL =
+            process.env.NORMAL_ORDER_URL ||
+            "http://localhost:3002";
+
+        console.log(
+            "================================"
+        );
+
+        console.log(
+            "📡 MARKET ORDER SERVER"
+        );
+
+        console.log(
+            "URL :",
+            NORMAL_ORDER_URL
+        );
+
+        console.log(
+            "================================"
+        );
+
+        // =====================================
+        // SEND MARKET ORDER
+        // =====================================
+
+        const response =
+            await fetch(
+                `${NORMAL_ORDER_URL}/manual-market-order`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            symbol,
+
+                            strike,
+
+                            optionType,
+
+                            lots,
+
+                            expiry: null
+
+                        })
+                }
+            );
+
+        const result =
+            await response.json();
+
+        // =====================================
+        // SERVER ERROR
+        // =====================================
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            throw new Error(
+                result.error ||
+                "Market order server failed"
+            );
+
+        }
+
+        // =====================================
+        // SUCCESS
+        // =====================================
+
+        const instrument =
+            result.instrument || {};
+
+        await ctx.reply(
+`✅ MARKET ORDER SUCCESS
+
+━━━━━━━━━━━━━━━━━━
+
+📊 ${symbol}
+🎯 ${strike} ${optionType}
+
+📦 Lots     : ${lots}
+📦 Quantity : ${result.quantity}
+
+━━━━━━━━━━━━━━━━━━
+
+🔹 Trading Symbol
+${instrument.tradingSymbol || "-"}
+
+🔹 Security ID
+${instrument.securityId || "-"}
+
+🔹 Exchange
+${instrument.exchange || "-"}
+
+━━━━━━━━━━━━━━━━━━
+
+🔵 MARKET ORDER : ON
+✅ DHAN ORDER : PLACED
+🆔 Order ID : ${result.orderId || "-"}
+
+📊 Status : ${result.orderStatus || "-"}`
+        );
+
+        console.log(
+            "✅ Telegram Market Order:",
+            {
+                symbol,
+                strike,
+                optionType,
+                lots
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MARKET ORDER ERROR:",
+            err
+        );
+
+        await ctx.reply(
+`❌ MARKET ORDER FAILED
+
+${err.message}`
+        );
+
+    }
+
+});
+
+// ==========================
 // HELP
 // ==========================
 
