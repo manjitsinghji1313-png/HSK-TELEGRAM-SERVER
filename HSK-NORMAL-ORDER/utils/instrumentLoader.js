@@ -265,6 +265,16 @@ function parseInstruments() {
 // =====================================
 
 async function loadInstruments() {
+        // =====================================
+    // ALREADY LOADED
+    // DO NOT DOWNLOAD AGAIN
+    // =====================================
+
+    if (instruments.length > 0) {
+
+        return;
+
+    }
 
     try {
 
