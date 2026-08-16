@@ -28,6 +28,10 @@ const {
     manualNormalBuy
 } = require("./services/manualOrder");
 
+const {
+    manualMarketBuy
+} = require("./services/marketOrder");
+
 
 const app = express();
 
@@ -606,6 +610,204 @@ app.post("/manual-order", async (req, res) => {
                 err.message,
 
             orderPlaced: false
+
+        });
+
+    }
+
+});
+
+// ======================================================
+// MANUAL MARKET ORDER
+// ======================================================
+
+app.post("/manual-market-order", async (req, res) => {
+
+    try {
+
+        console.log("================================");
+        console.log("📩 MANUAL MARKET ORDER RECEIVED");
+        console.log("================================");
+
+        console.log(
+            JSON.stringify(
+                req.body,
+                null,
+                2
+            )
+        );
+
+        // =====================================
+        // READ MARKET ORDER DATA
+        // =====================================
+
+        const data =
+            req.body;
+
+        const symbol =
+            String(
+                data.symbol || ""
+            )
+                .trim()
+                .toUpperCase();
+
+        const strike =
+            Number(
+                data.strike
+            );
+
+        const optionType =
+            String(
+                data.optionType || ""
+            )
+                .trim()
+                .toUpperCase();
+
+        const lots =
+            Number(
+                data.lots
+            );
+
+        const expiry =
+            data.expiry ||
+            null;
+
+        // =====================================
+        // VALIDATE SYMBOL
+        // =====================================
+
+        if (!symbol) {
+
+            throw new Error(
+                "Symbol is required"
+            );
+
+        }
+
+        // =====================================
+        // VALIDATE STRIKE
+        // =====================================
+
+        if (
+            !Number.isFinite(strike) ||
+            strike <= 0
+        ) {
+
+            throw new Error(
+                "Invalid strike"
+            );
+
+        }
+
+        // =====================================
+        // VALIDATE CE / PE
+        // =====================================
+
+        if (
+            !["CE", "PE"].includes(
+                optionType
+            )
+        ) {
+
+            throw new Error(
+                "Option type must be CE or PE"
+            );
+
+        }
+
+        // =====================================
+        // VALIDATE LOTS
+        // =====================================
+
+        if (
+            !Number.isFinite(lots) ||
+            lots <= 0
+        ) {
+
+            throw new Error(
+                "Invalid lots"
+            );
+
+        }
+
+        // =====================================
+        // LOAD INSTRUMENT MASTER
+        // =====================================
+
+        await loadInstruments();
+
+        // =====================================
+        // MANUAL MARKET BUY
+        // =====================================
+
+        const result =
+            await manualMarketBuy({
+
+                symbol,
+
+                strike,
+
+                optionType,
+
+                lots,
+
+                expiry
+
+            });
+
+        // =====================================
+        // RESPONSE
+        // =====================================
+
+        return res.status(200).json({
+
+            success: true,
+
+            message:
+                "Manual MARKET order placed successfully",
+
+            orderPlaced:
+                true,
+
+            orderId:
+                result.orderId,
+
+            orderStatus:
+                result.orderStatus,
+
+            instrument:
+                result.instrument,
+
+            quantity:
+                result.quantity,
+
+            orderType:
+                "MARKET",
+
+            productType:
+                "INTRADAY"
+
+        });
+
+    } catch (err) {
+
+        console.log("================================");
+        console.log("❌ MANUAL MARKET ORDER ERROR");
+        console.log("================================");
+
+        console.log(
+            err.message
+        );
+
+        return res.status(400).json({
+
+            success: false,
+
+            error:
+                err.message,
+
+            orderPlaced:
+                false
 
         });
 
