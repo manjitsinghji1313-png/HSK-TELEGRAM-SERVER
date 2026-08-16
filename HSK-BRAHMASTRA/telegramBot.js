@@ -1120,8 +1120,7 @@ Example:
         // =====================================
         // SHOW CONFIRMATION
         // =====================================
-
-        await ctx.reply(
+await ctx.reply(
 `📝 MANUAL NORMAL LIMIT ORDER
 
 ━━━━━━━━━━━━━━━━━━
@@ -1134,11 +1133,8 @@ Example:
 
 ━━━━━━━━━━━━━━━━━━
 🟢 NORMAL LIMIT ORDER
-🚀 Sending to Dhan...
-
-
+🚀 Sending to Dhan...`
 );
-
 // =====================================
 // SEND TO NORMAL SERVER
 // =====================================
@@ -1278,7 +1274,7 @@ ${instrument.exchange || "-"}
         await ctx.reply(
 `❌ MANUAL ORDER FAILED
 
-${err.message}`
+    ${err.message}`
         );
 
     }
