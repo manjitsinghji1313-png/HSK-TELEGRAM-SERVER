@@ -814,6 +814,19 @@ app.post("/manual-market-order", async (req, res) => {
     }
 
 });
+// =====================================
+// RENDER KEEP ALIVE
+// =====================================
+
+app.get("/status", (req, res) => {
+
+    res.status(200).json({
+        status: "ok",
+        service: "HSK-NORMAL-ORDER"
+    });
+
+});
+
 
 // ======================================================
 // SERVER
