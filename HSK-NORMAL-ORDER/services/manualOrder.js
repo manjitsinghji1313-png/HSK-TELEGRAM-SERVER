@@ -162,9 +162,6 @@ async function manualNormalBuy({
             correlationId:
                 `MANUAL_${Date.now()}`,
 
-            dryRun:
-                true
-
         });
 
     // =====================================

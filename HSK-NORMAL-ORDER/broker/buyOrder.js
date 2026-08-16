@@ -9,8 +9,7 @@ async function executeBuyOrder({
     exchange,
     quantity,
     price,
-    correlationId,
-    dryRun = false
+    correlationId
 }) {
 
     // =====================================
@@ -91,27 +90,6 @@ async function executeBuyOrder({
     );
 
     console.log("================================");
-
-
-    // =====================================
-    // DRY RUN
-    // =====================================
-
-    if (dryRun) {
-
-        console.log("================================");
-        console.log("🧪 DRY RUN - NO DHAN ORDER");
-        console.log("================================");
-
-        return {
-
-            dryRun: true,
-
-            order: orderPayload
-
-        };
-
-    }
 
 
     // =====================================
