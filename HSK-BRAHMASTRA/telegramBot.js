@@ -1133,16 +1133,11 @@ Example:
 💰 Price  : ₹${price}
 
 ━━━━━━━━━━━━━━━━━━
+🟢 NORMAL LIMIT ORDER
+🚀 Sending to Dhan...
 
-⚠️ NORMAL LIMIT ORDER
-🧪 Currently DRY RUN
 
-No Dhan order will be placed.
-
-━━━━━━━━━━━━━━━━━━
-
-Sending to Normal Order Server...`
-        );
+);
 
 // =====================================
 // SEND TO NORMAL SERVER
@@ -1195,7 +1190,8 @@ const response =
 
                     price,
 
-                    expiry: null
+                    expiry: null,
+                    dryRun: false
 
                 })
 
@@ -1230,7 +1226,7 @@ const result =
 
 
         await ctx.reply(
-`✅ NORMAL ORDER TEST SUCCESS
+`✅ NORMAL ORDER SUCCESS
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -1255,10 +1251,10 @@ ${instrument.exchange || "-"}
 
 ━━━━━━━━━━━━━━━━━━
 
-🧪 DRY RUN : ON
-🚫 DHAN ORDER : NOT PLACED`
-        );
-
+🟢 LIVE ORDER : ON
+✅ DHAN ORDER : PLACED
+🆔 Order ID : ${result.orderId || "-"}`
+);
 
         console.log(
             "✅ Telegram Manual Order Dry Run:",
