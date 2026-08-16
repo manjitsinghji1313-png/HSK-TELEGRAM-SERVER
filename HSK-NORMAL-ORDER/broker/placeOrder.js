@@ -67,43 +67,72 @@ async function placeOrder(orderData) {
 
     } catch (err) {
 
+    console.log("================================");
+    console.log("❌ NORMAL BUY ORDER FAILED");
+    console.log("================================");
+
+    if (err.response) {
+
+        const dhanError =
+            err.response.data || {};
+
+        const errorCode =
+            dhanError.errorCode ||
+            "UNKNOWN";
+
+        const errorMessage =
+            dhanError.errorMessage ||
+            err.message ||
+            "Dhan order failed";
+
+        console.log(
+            "STATUS :",
+            err.response.status
+        );
+
+        console.log(
+            "ERROR CODE :",
+            errorCode
+        );
+
+        console.log(
+            "ERROR MESSAGE :",
+            errorMessage
+        );
+
+        console.log(
+            "DHAN RESPONSE :"
+        );
+
+        console.log(
+            JSON.stringify(
+                dhanError,
+                null,
+                2
+            )
+        );
+
         console.log("================================");
-        console.log("❌ NORMAL BUY ORDER FAILED");
-        console.log("================================");
 
-        if (err.response) {
-
-            console.log(
-                "STATUS :",
-                err.response.status
-            );
-
-            console.log(
-                "DHAN RESPONSE :"
-            );
-
-            console.log(
-                JSON.stringify(
-                    err.response.data,
-                    null,
-                    2
-                )
-            );
-
-        } else {
-
-            console.log(
-                "ERROR :",
-                err.message
-            );
-
-        }
-
-        console.log("================================");
-
-        throw err;
+        throw new Error(
+            `Dhan Order Failed\n\n` +
+            `Status : ${err.response.status}\n` +
+            `Error Code : ${errorCode}\n` +
+            `Error Message : ${errorMessage}`
+        );
 
     }
+
+    console.log(
+        "ERROR :",
+        err.message
+    );
+
+    console.log("================================");
+
+    throw err;
+
+}
 
 }
 
