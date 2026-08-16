@@ -1,5 +1,5 @@
 const { findInstrument } = require("../utils/instrumentFinder");
-const { placeBuyOrder } = require("../broker/buyOrder");
+const { executeBuyOrder } = require("../broker/buyOrder");
 
 // =====================================
 // MANUAL NORMAL LIMIT BUY
@@ -145,7 +145,7 @@ async function manualNormalBuy({
     // =====================================
 
     const result =
-        await placeBuyOrder({
+        await executeBuyOrder({
 
             securityId:
                 instrument.securityId,
