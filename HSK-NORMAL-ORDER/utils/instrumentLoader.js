@@ -16,6 +16,15 @@ const TEMP_FILE =
     "./data/instruments.tmp.csv";
 
 // =====================================
+// ENSURE DATA DIRECTORY EXISTS
+// =====================================
+
+fs.mkdirSync(
+    "./data",
+    { recursive: true }
+);    
+
+// =====================================
 // MEMORY
 // =====================================
 
