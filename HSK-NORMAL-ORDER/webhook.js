@@ -555,36 +555,36 @@ app.post("/manual-order", async (req, res) => {
         // RESPONSE
         // =====================================
 
-        return res.status(200).json({
+    return res.status(200).json({
 
-            success: true,
+    success: true,
 
-            message:
-                "Manual normal LIMIT dry run successful",
+    message:
+        "Manual normal LIMIT order placed successfully",
 
-            orderPlaced: false,
+    orderPlaced: true,
 
-            dryRun: true,
+    dryRun: false,
 
-            instrument:
-                result.instrument,
+    orderId:
+        result.orderId,
 
-            quantity:
-                result.quantity,
+    instrument:
+        result.instrument,
 
-            price:
-                result.price,
+    quantity:
+        result.quantity,
 
-            orderType:
-                "LIMIT",
+    price:
+        result.price,
 
-            productType:
-                "INTRADAY",
+    orderType:
+        "LIMIT",
 
-            order:
-                result.order
+    productType:
+        "INTRADAY"
 
-        });
+});
 
 
     } catch (err) {
