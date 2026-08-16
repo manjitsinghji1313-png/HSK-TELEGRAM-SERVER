@@ -1,4 +1,5 @@
 const dhan = require("./dhanApi");
+const config = require("../config/config");
 
 // =====================================
 // BUY NORMAL ORDER
@@ -38,6 +39,8 @@ async function executeBuyOrder({
     // =====================================
 
     const orderPayload = {
+
+        dhanClientId: config.CLIENT_ID,
 
         transactionType: "BUY",
 
