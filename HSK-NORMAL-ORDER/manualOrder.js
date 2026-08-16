@@ -116,8 +116,12 @@ async function manualNormalBuy({
     // =================================
 
     const result =
-        await executeBuyOrder(orderData);
-
+    await executeBuyOrder(
+        orderData,
+        {
+            dryRun: false
+        }
+    );
     console.log("================================");
     console.log("✅ MANUAL NORMAL ORDER SUCCESS");
     console.log("ORDER ID :", result.orderId);
