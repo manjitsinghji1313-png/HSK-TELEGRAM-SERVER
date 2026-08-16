@@ -10,7 +10,7 @@ async function placeBuyOrder({
     quantity,
     price,
     correlationId,
-    dryRun = true
+    dryRun = false
 }) {
 
     // =====================================
