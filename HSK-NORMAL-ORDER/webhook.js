@@ -10,7 +10,7 @@ const {
 
 const {
     loadInstruments
-} = require("./optionchain/instrumentLoader");
+} = require("./utils/instrumentLoader");
 
 const {
     getMarketLots
