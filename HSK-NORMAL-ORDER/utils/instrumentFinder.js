@@ -1,5 +1,4 @@
-const { getInstruments } = require("../optionchain/instrumentLoader");
-
+const { getInstruments } = require("./instrumentLoader");
 async function findInstrument(
     symbol,
     strike,
