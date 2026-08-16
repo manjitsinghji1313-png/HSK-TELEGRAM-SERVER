@@ -4,7 +4,7 @@ const dhan = require("./dhanApi");
 // BUY NORMAL ORDER
 // =====================================
 
-async function placeBuyOrder({
+async function executeBuyOrder({
     securityId,
     exchange,
     quantity,
@@ -155,5 +155,5 @@ async function placeBuyOrder({
 // =====================================
 
 module.exports = {
-    placeBuyOrder
+    executeBuyOrder
 };
