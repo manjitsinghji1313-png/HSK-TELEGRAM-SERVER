@@ -173,11 +173,9 @@ bot.command("buffer", async (ctx) => {
 `📊 HSK BRAHM||||BRAHMASTRA
 
 ━━━━━━━━━━━━━━━━━━
-
-📈 CE LIMIT BUFFER
+📈 CE / PE LIMIT BUFFER
 
 💰 Current Buffer : ${displayBuffer}
-
 ━━━━━━━━━━━━━━━━━━
 
 Positive Buffer:
@@ -247,12 +245,12 @@ Allowed range:
 
 ━━━━━━━━━━━━━━━━━━
 
-📈 CE LIMIT BUFFER
+📈 CE / PE LIMIT BUFFER
 💰 Buffer : ${status}
 
 ━━━━━━━━━━━━━━━━━━
 
-🎯 Only CE LIMIT Entry
+🎯 CE / PE LIMIT Entry
 🛑 SL / TG unchanged
 
 ━━━━━━━━━━━━━━━━━━
@@ -261,8 +259,8 @@ Dhan Entry Buffer Updated`
         );
 
         console.log(
-            `✅ CE Entry Buffer Set: ₹${buffer}`
-        );
+    `✅ CE / PE Entry Buffer Set: ₹${buffer}`
+);
 
     } catch (err) {
 
@@ -1709,7 +1707,7 @@ bot.command("help", async (ctx) => {
 📝 /order NIFTY 23300 CE 1 120
 ━━━━━━━━━━━━━━━━━━
 
-📈 CE LIMIT BUFFER
+📈 CE / PE LIMIT BUFFER
 
 💰 /buffer
 💰 /buffer 0
