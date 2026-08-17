@@ -376,16 +376,17 @@ if (!targetPrice || !stopLossPrice) {
     );
 }
 
-
 // =====================================
-// CE LIMIT ENTRY BUFFER ONLY
+// CE / PE LIMIT ENTRY BUFFER
 // =====================================
 
-const isCEEntry =
+const isOptionEntry =
     data.cmd === "CE_ENTRY" ||
-    (data.cmd === "BUY" && optionType === "CE");
+    data.cmd === "PE_ENTRY" ||
+    (data.cmd === "BUY" &&
+        (optionType === "CE" || optionType === "PE"));
 
-const entryBuffer = isCEEntry
+const entryBuffer = isOptionEntry
     ? await systemService.getEntryBuffer()
     : 0;
 
@@ -429,7 +430,8 @@ const result = await placeSuperOrder({
 
     stopLossPrice,
 
-    trailingJump: 0
+    trailingJump:
+    await systemService.getTrailingJump()
 
 });
 

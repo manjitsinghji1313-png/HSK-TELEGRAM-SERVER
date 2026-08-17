@@ -62,6 +62,7 @@ async function setPaperMode(status) {
 
     return true;
 }
+
 // ==========================
 // SET CE ENTRY BUFFER
 // ==========================
@@ -113,6 +114,58 @@ async function getEntryBuffer() {
     return Number(data.entry_buffer || 0);
 }
 
+// ==========================
+// SET TRAILING SL
+// ==========================
+
+async function setTrailingJump(value) {
+
+    const trailingJump = Number(value);
+
+    if (
+        !Number.isInteger(trailingJump) ||
+        trailingJump < 0 ||
+        trailingJump > 5
+    ) {
+        throw new Error(
+            "Trailing SL must be between 0 and 5"
+        );
+    }
+
+    const { error } = await supabase
+        .from("system_settings")
+        .update({
+            trailing_jump: trailingJump,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
+
+    if (error) {
+        throw error;
+    }
+
+    return true;
+}
+
+
+// ==========================
+// GET TRAILING SL
+// ==========================
+
+async function getTrailingJump() {
+
+    const { data, error } = await supabase
+        .from("system_settings")
+        .select("trailing_jump")
+        .eq("id", 1)
+        .single();
+
+    if (error) {
+        throw error;
+    }
+
+    return Number(data.trailing_jump || 0);
+}
 // ==========================
 // GET ORDER MODE
 // ==========================
@@ -326,6 +379,9 @@ module.exports = {
 
     setEntryBuffer,
     getEntryBuffer,
+
+    setTrailingJump,
+    getTrailingJump,
 
     getOrderMode,
     setOrderMode,

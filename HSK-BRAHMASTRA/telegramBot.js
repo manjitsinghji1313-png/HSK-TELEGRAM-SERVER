@@ -277,6 +277,132 @@ Dhan Entry Buffer Updated`
 });
 
 // ==========================
+// TRAILING STOP LOSS
+// ==========================
+
+bot.command("tsl", async (ctx) => {
+
+    try {
+
+        const args =
+            ctx.message.text.trim().split(/\s+/);
+
+        // /tsl → show current setting
+        if (args.length === 1) {
+
+            const trailingJump =
+                await systemService.getTrailingJump();
+
+            const status =
+                trailingJump === 0
+                    ? "🔴 OFF"
+                    : `🟢 ${trailingJump} POINT${trailingJump > 1 ? "S" : ""}`;
+
+            await ctx.reply(
+`🤖 HSK BRAHMĀSTRA
+
+━━━━━━━━━━━━━━━━━━
+
+📉 TRAILING STOP LOSS
+
+Current : ${status}
+
+━━━━━━━━━━━━━━━━━━
+
+/tsl off → OFF
+/tsl 1   → 1 Point
+/tsl 2   → 2 Points
+/tsl 3   → 3 Points
+/tsl 4   → 4 Points
+/tsl 5   → 5 Points
+
+━━━━━━━━━━━━━━━━━━`
+            );
+
+            return;
+        }
+
+        const value =
+            args[1].toLowerCase();
+
+        // OFF
+        if (value === "off") {
+
+            await systemService.setTrailingJump(0);
+
+            await ctx.reply(
+`✅ TRAILING SL UPDATED
+
+━━━━━━━━━━━━━━━━━━
+
+📉 Trailing SL : 🔴 OFF
+📊 Trailing Jump : 0
+
+━━━━━━━━━━━━━━━━━━`
+            );
+
+            return;
+        }
+
+        const trailingJump =
+            Number(value);
+
+        if (
+            !Number.isInteger(trailingJump) ||
+            trailingJump < 1 ||
+            trailingJump > 5
+        ) {
+
+            await ctx.reply(
+`❌ INVALID TRAILING SL
+
+Allowed:
+
+/tsl off
+/tsl 1
+/tsl 2
+/tsl 3
+/tsl 4
+/tsl 5`
+            );
+
+            return;
+        }
+
+        await systemService.setTrailingJump(
+            trailingJump
+        );
+
+        await ctx.reply(
+`✅ TRAILING SL UPDATED
+
+━━━━━━━━━━━━━━━━━━
+
+📉 Trailing SL : 🟢 ON
+📊 Trailing Jump : ${trailingJump} Point${trailingJump > 1 ? "s" : ""}
+
+━━━━━━━━━━━━━━━━━━`
+        );
+
+        console.log(
+            `✅ Trailing SL Set: ${trailingJump}`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ TRAILING SL ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ TRAILING SL UPDATE FAILED\n\n${err.message}`
+        );
+    }
+
+});
+
+// ==========================
 // MEMBER JOIN
 // ==========================
 
