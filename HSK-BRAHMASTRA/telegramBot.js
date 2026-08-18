@@ -834,7 +834,7 @@ Database Updated Successfully`
 // LIMIT SUPER ORDER ONLY
 // ==========================
 
-bot.hears(/^w3(?:\s+(on|off))?$/i, async (ctx) => {
+bot.hears(/^\/w3(?:\s+(on|off))?$/i, async (ctx) => {
 
     try {
 
@@ -908,7 +908,7 @@ Status : ${status ? "🟢 ON" : "🔴 OFF"}
             await systemService.setW3Wait(false);
 
             await ctx.reply(
-`🔴 W3 WAIT DISABLED
+`🔴 W3 WAIT DISABLED 
 
 ━━━━━━━━━━━━━━━━━━
 ⏱️ 3 Minute Pending Check : OFF
