@@ -346,6 +346,54 @@ async function setMarketLots(market, lots) {
     return true;
 }
 // ==========================
+// SET W3 WAIT
+// ==========================
+
+async function setW3Wait(status) {
+
+    const value = Boolean(status);
+
+    const { error } = await supabase
+        .from("system_settings")
+        .update({
+            w3_wait: value,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", 1);
+
+    if (error) {
+        throw error;
+    }
+
+    console.log("================================");
+    console.log("✅ W3 WAIT UPDATED");
+    console.log("W3 WAIT :", value ? "ON" : "OFF");
+    console.log("================================");
+
+    return value;
+}
+
+
+// ==========================
+// GET W3 WAIT
+// ==========================
+
+async function getW3Wait() {
+
+    const { data, error } = await supabase
+        .from("system_settings")
+        .select("w3_wait")
+        .eq("id", 1)
+        .single();
+
+    if (error) {
+        throw error;
+    }
+
+    return data.w3_wait !== false;
+}
+
+// ==========================
 // GET SETTINGS
 // ==========================
 
@@ -390,6 +438,9 @@ module.exports = {
 
     getMarketLots,
     setMarketLots,
+
+    setW3Wait,
+    getW3Wait,
 
     getSettings
 

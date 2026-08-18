@@ -3,7 +3,7 @@ const buildSuperOrder = require("./buildSuperOrder");
 const tradeService = require("../services/tradeService");
 const cancelSuperOrder = require("./cancelSuperOrder");
 const getSuperOrderStatus = require("./getSuperOrderStatus");
-
+const systemService = require("../services/systemService");
 // =====================================
 // LIVE SUPER ORDER STATUS MONITOR
 // =====================================
@@ -401,45 +401,69 @@ async function monitorSuperOrder(orderId, orderType) {
 
         console.log("================================");
 
+// =====================================
+// W3 WAIT CHECK
+// LIMIT SUPER ORDER ONLY
+// =====================================
 
-        // =====================================
-        // CANCEL ONLY IF PENDING
-        // =====================================
+const w3Enabled =
+    await systemService.getW3Wait();
 
-        if (finalStatus === "PENDING") {
-
-            console.log("================================");
-            console.log("❌ ORDER STILL PENDING");
-            console.log("================================");
-
-            console.log(
-                "🚫 CANCELLING SUPER ORDER"
-            );
+console.log("================================");
+console.log("⏱️ W3 WAIT STATUS");
+console.log("W3 :", w3Enabled ? "ON" : "OFF");
+console.log("================================");
 
 
-            await cancelSuperOrder(orderId);
+// =====================================
+// CANCEL ONLY IF W3 ON + PENDING
+// =====================================
 
+if (finalStatus === "PENDING" && w3Enabled) {
 
-            console.log("================================");
-            console.log(
-                "✅ PENDING SUPER ORDER CANCELLED"
-            );
-            console.log("================================");
+    console.log("================================");
+    console.log("❌ ORDER STILL PENDING");
+    console.log("================================");
 
-        } else {
+    console.log(
+        "🚫 W3 ON → CANCELLING SUPER ORDER"
+    );
 
-            console.log("================================");
-            console.log(
-                "✅ ORDER IS NO LONGER PENDING"
-            );
-            console.log("================================");
+    await cancelSuperOrder(orderId);
 
-            console.log(
-                "Final Status :",
-                finalStatus
-            );
-        }
+    console.log("================================");
+    console.log(
+        "✅ PENDING SUPER ORDER CANCELLED"
+    );
+    console.log("================================");
 
+} else if (finalStatus === "PENDING" && !w3Enabled) {
+
+    console.log("================================");
+    console.log("⏸️ W3 WAIT IS OFF");
+    console.log("================================");
+
+    console.log(
+        "✅ PENDING LIMIT ORDER WILL NOT BE CANCELLED"
+    );
+
+    console.log("================================");
+
+} else {
+
+    console.log("================================");
+    console.log(
+        "✅ ORDER IS NO LONGER PENDING"
+    );
+    console.log("================================");
+
+    console.log(
+        "Final Status :",
+        finalStatus
+    );
+
+    console.log("================================");
+}
 
     } catch (err) {
 

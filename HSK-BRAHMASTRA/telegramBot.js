@@ -828,6 +828,116 @@ Database Updated Successfully`
     });
 
 }
+
+// ==========================
+// W3 WAIT CONTROL
+// LIMIT SUPER ORDER ONLY
+// ==========================
+
+bot.hears(/^w3(?:\s+(on|off))?$/i, async (ctx) => {
+
+    try {
+
+        const args = ctx.message.text
+            .trim()
+            .toLowerCase()
+            .split(/\s+/);
+
+        // ==========================
+        // W3 STATUS
+        // ==========================
+
+        if (args.length === 1) {
+
+            const status =
+                await systemService.getW3Wait();
+
+            await ctx.reply(
+`⏱️ HSK BRAHMASTRA
+
+━━━━━━━━━━━━━━━━━━
+📌 W3 WAIT STATUS
+
+Status : ${status ? "🟢 ON" : "🔴 OFF"}
+
+━━━━━━━━━━━━━━━━━━
+🟢 w3 on
+🔴 w3 off
+━━━━━━━━━━━━━━━━━━
+
+📌 LIMIT SUPER ORDER ONLY`
+            );
+
+            return;
+        }
+
+
+        // ==========================
+        // W3 ON
+        // ==========================
+
+        if (args[1] === "on") {
+
+            await systemService.setW3Wait(true);
+
+            await ctx.reply(
+`🟢 W3 WAIT ENABLED
+
+━━━━━━━━━━━━━━━━━━
+⏱️ 3 Minute Pending Check : ON
+🚫 Pending LIMIT Order → CANCEL
+━━━━━━━━━━━━━━━━━━
+
+📌 LIMIT SUPER ORDER ONLY`
+            );
+
+            console.log(
+                "🟢 W3 WAIT : ON"
+            );
+
+            return;
+        }
+
+
+        // ==========================
+        // W3 OFF
+        // ==========================
+
+        if (args[1] === "off") {
+
+            await systemService.setW3Wait(false);
+
+            await ctx.reply(
+`🔴 W3 WAIT DISABLED
+
+━━━━━━━━━━━━━━━━━━
+⏱️ 3 Minute Pending Check : OFF
+✅ Pending LIMIT Order will NOT be cancelled by W3
+━━━━━━━━━━━━━━━━━━
+
+📌 LIMIT SUPER ORDER ONLY`
+            );
+
+            console.log(
+                "🔴 W3 WAIT : OFF"
+            );
+
+            return;
+        }
+
+    } catch (err) {
+
+        console.error(
+            "❌ W3 COMMAND ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ W3 UPDATE FAILED\n\n${err.message}`
+        );
+    }
+
+});
 // ==========================
 // ORDER MODE
 // ==========================
