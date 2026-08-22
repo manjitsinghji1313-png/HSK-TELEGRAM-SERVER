@@ -3,7 +3,7 @@ const bot = require("./telegramBot");
 
 const express = require("express");
 const { loadInstruments } = require("./optionchain/instrumentLoader");
-const memberDhanRoutes = require("./routes/memberDhanRoutes");
+
 const axios = require("axios");
 const http = require("http");
 const path = require("path");
@@ -50,7 +50,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // ==============================
 
 app.use("/api/auth", authRoutes);
-app.use("/member-dhan", memberDhanRoutes);
+
 app.use("/api", dashboardRoutes);
 app.use("/webhook", webhookRoutes);
 
