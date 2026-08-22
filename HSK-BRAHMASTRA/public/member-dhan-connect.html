@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>HSK BRAHMASTRA - Connect Dhan</title>
+</head>
+
+<body>
+
+    <h2>🤖 HSK BRAHMASTRA</h2>
+
+    <h3>Connect Your Dhan Account</h3>
+
+    <form id="dhanConnectForm">
+
+        <label>Dhan Client ID</label>
+        <br>
+
+        <input
+            type="text"
+            id="dhanClientId"
+            placeholder="Enter Dhan Client ID"
+            required
+        >
+
+        <br><br>
+
+        <label>Dhan Access Token</label>
+        <br>
+
+        <input
+            type="password"
+            id="dhanAccessToken"
+            placeholder="Enter Dhan Access Token"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Connect Dhan
+        </button>
+
+    </form>
+
+<script>
+
+const form =
+    document.getElementById(
+        "dhanConnectForm"
+    );
+
+form.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const dhanClientId =
+            document.getElementById(
+                "dhanClientId"
+            ).value.trim();
+
+        const dhanAccessToken =
+            document.getElementById(
+                "dhanAccessToken"
+            ).value.trim();
+
+        const telegramId =
+            window.location.pathname
+                .split("/")
+                .pop();
+
+        try {
+
+            const response =
+                await fetch(
+                    `/member-dhan/connect/${telegramId}`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            dhanClientId,
+                            dhanAccessToken
+                        })
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result.message ||
+                    "Connection failed"
+                );
+
+            }
+
+            alert(
+                "✅ Dhan account connected successfully!"
+            );
+
+            // Clear token after successful save
+            document.getElementById(
+                "dhanAccessToken"
+            ).value = "";
+
+        } catch (err) {
+
+            alert(
+                `❌ ${err.message}`
+            );
+
+        }
+
+    }
+);
+
+</script>    
+
+</body>
+</html>

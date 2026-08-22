@@ -111,6 +111,17 @@ bot.command("connectdhan", async (ctx) => {
             );
         }
 
+        const serverUrl = process.env.SERVER_URL;
+
+        if (!serverUrl) {
+            throw new Error(
+                "SERVER_URL is not configured"
+            );
+        }
+
+        const connectLink =
+            `${serverUrl}/member-dhan/connect/${telegramId}`;
+
         await ctx.reply(
 `🤖 DHAN ACCOUNT CONNECTION
 
@@ -118,18 +129,22 @@ bot.command("connectdhan", async (ctx) => {
 
 👤 Member : ${member.name}
 
-To connect your personal Dhan account,
-a secure connection link/setup will be
-provided here.
+🔐 Open the secure connection page:
+
+${connectLink}
 
 ⚠️ Do not send your Dhan Access Token
 directly in the Telegram chat.
 
 ━━━━━━━━━━━━━━━━━━
 
-🔐 Connection setup coming next...`
+🔗 Open the link above to connect
+your personal Dhan account.`
         );
 
+        console.log(
+            `🔐 MEMBER DHAN CONNECT REQUEST: ${member.name}`
+        );
         console.log(
             `🔐 MEMBER DHAN CONNECT REQUEST: ${member.name}`
         );
