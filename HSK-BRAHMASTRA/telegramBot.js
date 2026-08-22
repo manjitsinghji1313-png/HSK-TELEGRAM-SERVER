@@ -83,6 +83,73 @@ bot.command("mdhanstatus", async (ctx) => {
 });
 
 // ==========================================
+// MEMBER DHAN CONNECT - START
+// ==========================================
+
+bot.command("connectdhan", async (ctx) => {
+
+    try {
+
+        const telegramId =
+            String(ctx.from.id);
+
+        const member =
+            await memberService
+                .getMemberByTelegramId(
+                    telegramId
+                );
+
+        if (!member) {
+            throw new Error(
+                "Member not found"
+            );
+        }
+
+        if (member.status !== "ACTIVE") {
+            throw new Error(
+                "Only ACTIVE members can connect Dhan"
+            );
+        }
+
+        await ctx.reply(
+`🤖 DHAN ACCOUNT CONNECTION
+
+━━━━━━━━━━━━━━━━━━
+
+👤 Member : ${member.name}
+
+To connect your personal Dhan account,
+a secure connection link/setup will be
+provided here.
+
+⚠️ Do not send your Dhan Access Token
+directly in the Telegram chat.
+
+━━━━━━━━━━━━━━━━━━
+
+🔐 Connection setup coming next...`
+        );
+
+        console.log(
+            `🔐 MEMBER DHAN CONNECT REQUEST: ${member.name}`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER DHAN CONNECT ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ ${err.message}`
+        );
+
+    }
+
+});
+
+// ==========================================
 // MEMBER AUTO TRADING - START
 // ==========================================
 
