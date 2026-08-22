@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const buildSuperOrder =
-    require("../dhan/buildSuperOrder");
+    require("../broker/buildSuperOrder");
 
 const memberDhanService =
     require("./memberDhanService");
