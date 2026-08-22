@@ -32,7 +32,7 @@ async function getMemberDhan(telegramId) {
 
 
 // ==========================================
-// SAVE MEMBER DHAN CONNECTION
+// SAVE / UPDATE MEMBER DHAN
 // ==========================================
 
 async function saveMemberDhan(
@@ -42,19 +42,77 @@ async function saveMemberDhan(
     tokenExpiry = null
 ) {
 
+    // ======================================
+    // GET EXISTING MEMBER
+    // ======================================
+
+    const existingMember =
+        await getMemberDhan(telegramId);
+
+
+    if (!existingMember) {
+
+        throw new Error(
+            "Member not found"
+        );
+
+    }
+
+
+    if (existingMember.status !== "ACTIVE") {
+
+        throw new Error(
+            "Member is not ACTIVE"
+        );
+
+    }
+
+
+    // ======================================
+    // BUILD UPDATE DATA
+    // ======================================
+
+    const updateData = {
+
+        dhan_access_token:
+            String(dhanAccessToken),
+
+        dhan_token_expiry:
+            tokenExpiry,
+
+        dhan_connected:
+            true
+
+    };
+
+
+    // ======================================
+    // SAVE CLIENT ID ONLY FIRST TIME
+    // ======================================
+
+    if (!existingMember.dhan_client_id) {
+
+        if (!dhanClientId) {
+
+            throw new Error(
+                "Dhan Client ID is required"
+            );
+
+        }
+
+        updateData.dhan_client_id =
+            String(dhanClientId);
+
+    }
+
+
+    // ======================================
+    // UPDATE MEMBER
+    // ======================================
+
     const { data, error } = await supabase
         .from("members")
-        .update({
-
-            dhan_client_id: String(dhanClientId),
-
-            dhan_access_token: String(dhanAccessToken),
-
-            dhan_token_expiry: tokenExpiry,
-
-            dhan_connected: true
-
-        })
+        .update(updateData)
         .eq("telegram_id", String(telegramId))
         .eq("status", "ACTIVE")
         .select(`
@@ -65,15 +123,20 @@ async function saveMemberDhan(
         `)
         .maybeSingle();
 
+
     if (error) {
         throw error;
     }
 
+
     if (!data) {
+
         throw new Error(
             "Active member not found"
         );
+
     }
+
 
     return data;
 
@@ -110,15 +173,20 @@ async function disconnectMemberDhan(
         `)
         .maybeSingle();
 
+
     if (error) {
         throw error;
     }
 
+
     if (!data) {
+
         throw new Error(
             "Active member not found"
         );
+
     }
+
 
     return data;
 

@@ -59,6 +59,82 @@ router.get("/connect/:telegramId", async (req, res) => {
 
 });
 
+
+// ==========================================
+// GET MEMBER DHAN INFO
+// ==========================================
+
+router.get("/info/:telegramId", async (req, res) => {
+
+    try {
+
+        const telegramId =
+            String(req.params.telegramId);
+
+        const member =
+            await memberDhanService
+                .getMemberDhan(telegramId);
+
+        if (!member) {
+
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    message: "Member not found"
+                });
+
+        }
+
+        if (member.status !== "ACTIVE") {
+
+            return res
+                .status(403)
+                .json({
+                    success: false,
+                    message: "Member is not ACTIVE"
+                });
+
+        }
+
+        return res.json({
+
+            success: true,
+
+            member: {
+
+                name:
+                    member.name,
+
+                dhanClientId:
+                    member.dhan_client_id || null,
+
+                dhanConnected:
+                    member.dhan_connected || false
+
+            }
+
+        });
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER DHAN INFO ERROR:",
+            err
+        );
+
+        return res
+            .status(500)
+            .json({
+                success: false,
+                message: "Server error"
+            });
+
+    }
+
+});
+
+
 // ==========================================
 // SAVE MEMBER DHAN CONNECTION
 // ==========================================
@@ -79,6 +155,7 @@ router.post("/connect/:telegramId", async (req, res) => {
             !dhanClientId ||
             !dhanAccessToken
         ) {
+
             return res
                 .status(400)
                 .json({
@@ -86,6 +163,7 @@ router.post("/connect/:telegramId", async (req, res) => {
                     message:
                         "Dhan Client ID and Access Token are required"
                 });
+
         }
 
         const member =
@@ -97,13 +175,22 @@ router.post("/connect/:telegramId", async (req, res) => {
                 );
 
         return res.json({
+
             success: true,
+
             message:
                 "Dhan account connected successfully",
+
             member: {
-                name: member.name,
-                clientId: member.dhan_client_id
+
+                name:
+                    member.name,
+
+                clientId:
+                    member.dhan_client_id
+
             }
+
         });
 
     } catch (err) {
@@ -120,7 +207,10 @@ router.post("/connect/:telegramId", async (req, res) => {
                 message:
                     err.message
             });
+
     }
 
 });
+
+
 module.exports = router;
