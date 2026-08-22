@@ -5,7 +5,8 @@ const router = express.Router();
 const memberDhanService =
     require("../services/memberDhanService");
 
-
+const memberSuperOrder =
+    require("../services/memberSuperOrder");
 // ==========================================
 // MEMBER DHAN CONNECTION PAGE
 // ==========================================
@@ -254,6 +255,86 @@ router.post("/connect/:telegramId", async (req, res) => {
     }
 
 });
+// ==========================================
+// TEST MEMBER DHAN CREDENTIALS
+// ==========================================
 
+router.get(
+    "/test-credentials/:telegramId",
+
+    async (req, res) => {
+
+        try {
+
+            const telegramId =
+                String(
+                    req.params.telegramId
+                );
+
+
+            const member =
+                await memberDhanService
+                    .getMemberDhanCredentials(
+                        telegramId
+                    );
+
+
+            console.log(
+                `✅ MEMBER DHAN TEST: ${member.name}`
+            );
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Member Dhan credentials verified successfully",
+
+                member: {
+
+                    id:
+                        member.id,
+
+                    name:
+                        member.name,
+
+                    telegramId:
+                        member.telegram_id,
+
+                    dhanClientId:
+                        member.dhan_client_id,
+
+                    dhanConnected:
+                        member.dhan_connected
+
+                }
+
+            });
+
+        } catch (err) {
+
+            console.error(
+                "❌ MEMBER DHAN TEST ERROR:",
+                err.message
+            );
+
+
+            return res
+                .status(400)
+                .json({
+
+                    success: false,
+
+                    message:
+                        err.message
+
+                });
+
+        }
+
+    }
+
+);
 
 module.exports = router;
