@@ -6,10 +6,169 @@ const {
 } = require("./routes/orderMode");
 
 const systemService = require("./services/systemService");
+const memberService = require("./services/memberService");
 const supabase = require("./config/supabase");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const tradeService = require("./services/tradeService");
+
+// ==========================================
+// MEMBER AUTO TRADING - START
+// ==========================================
+
+bot.command("mstart", async (ctx) => {
+
+    try {
+
+        const telegramId =
+            String(ctx.from.id);
+
+        const member =
+            await memberService
+                .setMemberAutoTrading(
+                    telegramId,
+                    true
+                );
+
+        await ctx.reply(
+`🟢 MEMBER AUTO TRADING ENABLED
+
+👤 Member : ${member.name}
+🤖 Broker : DHAN
+📈 Status : ACTIVE
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Your Auto Trading is ON`
+        );
+
+        console.log(
+            `✅ MEMBER AUTO ON: ${member.name}`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER AUTO START ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ ${err.message}`
+        );
+    }
+
+});
+
+
+// ==========================================
+// MEMBER AUTO TRADING - STOP
+// ==========================================
+
+bot.command("mstop", async (ctx) => {
+
+    try {
+
+        const telegramId =
+            String(ctx.from.id);
+
+        const member =
+            await memberService
+                .setMemberAutoTrading(
+                    telegramId,
+                    false
+                );
+
+        await ctx.reply(
+`🔴 MEMBER AUTO TRADING DISABLED
+
+👤 Member : ${member.name}
+🤖 Broker : DHAN
+📉 Status : STOPPED
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Your Auto Trading is OFF`
+        );
+
+        console.log(
+            `⛔ MEMBER AUTO OFF: ${member.name}`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER AUTO STOP ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ ${err.message}`
+        );
+    }
+
+});
+
+
+// ==========================================
+// MEMBER AUTO STATUS
+// ==========================================
+
+bot.command("mstatus", async (ctx) => {
+
+    try {
+
+        const telegramId =
+            String(ctx.from.id);
+
+        const member =
+            await memberService
+                .getMemberByTelegramId(
+                    telegramId
+                );
+
+        if (!member) {
+            throw new Error(
+                "Member not found"
+            );
+        }
+
+        if (member.status !== "ACTIVE") {
+            throw new Error(
+                "Member is not ACTIVE"
+            );
+        }
+
+        const autoStatus =
+            member.auto_trading
+                ? "🟢 ON"
+                : "🔴 OFF";
+
+        await ctx.reply(
+`🤖 HSK BRAHMASTRA MEMBER
+
+━━━━━━━━━━━━━━━━━━
+
+👤 Member : ${member.name}
+
+Auto Trading : ${autoStatus}
+
+━━━━━━━━━━━━━━━━━━`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER STATUS ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ ${err.message}`
+        );
+    }
+
+});
 // ==========================
 // START
 // ==========================
