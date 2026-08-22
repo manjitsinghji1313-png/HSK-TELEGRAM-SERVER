@@ -7,10 +7,80 @@ const {
 
 const systemService = require("./services/systemService");
 const memberService = require("./services/memberService");
+const memberDhanService = require("./services/memberDhanService");
 const supabase = require("./config/supabase");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const tradeService = require("./services/tradeService");
+// ==========================================
+// MEMBER DHAN STATUS
+// ==========================================
+
+bot.command("mdhanstatus", async (ctx) => {
+
+    try {
+
+        const telegramId =
+            String(ctx.from.id);
+
+        const memberDhan =
+            await memberDhanService
+                .getMemberDhan(
+                    telegramId
+                );
+
+        if (!memberDhan) {
+            throw new Error(
+                "Member not found"
+            );
+        }
+
+        if (memberDhan.status !== "ACTIVE") {
+            throw new Error(
+                "Member is not ACTIVE"
+            );
+        }
+
+        const dhanStatus =
+            memberDhan.dhan_connected
+                ? "🟢 CONNECTED"
+                : "🔴 NOT CONNECTED";
+
+        const clientId =
+            memberDhan.dhan_client_id
+                ? memberDhan.dhan_client_id
+                : "Not Connected";
+
+        await ctx.reply(
+`🤖 HSK BRAHMASTRA MEMBER
+
+━━━━━━━━━━━━━━━━━━
+
+👤 Member : ${memberDhan.name}
+
+🤖 Broker : DHAN
+
+📊 Connection : ${dhanStatus}
+
+🆔 Client ID : ${clientId}
+
+━━━━━━━━━━━━━━━━━━`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ MEMBER DHAN STATUS ERROR:",
+            err
+        );
+
+        await ctx.reply(
+            `❌ ${err.message}`
+        );
+
+    }
+
+});
 
 // ==========================================
 // MEMBER AUTO TRADING - START
