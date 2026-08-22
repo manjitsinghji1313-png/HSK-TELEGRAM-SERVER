@@ -22,11 +22,52 @@ async function getMemberDhan(telegramId) {
         .eq("telegram_id", String(telegramId))
         .maybeSingle();
 
+
     if (error) {
+
         throw error;
+
     }
 
+
     return data;
+
+}
+
+
+// ==========================================
+// CHECK VALID DHAN CLIENT ID
+// ==========================================
+
+function hasValidClientId(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return false;
+
+    }
+
+
+    const clientId =
+        String(value)
+            .trim();
+
+
+    if (
+        !clientId ||
+        clientId.toLowerCase() === "null" ||
+        clientId.toLowerCase() === "undefined"
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
 
 }
 
@@ -75,7 +116,8 @@ async function saveMemberDhan(
     const updateData = {
 
         dhan_access_token:
-            String(dhanAccessToken),
+            String(dhanAccessToken)
+                .trim(),
 
         dhan_token_expiry:
             tokenExpiry,
@@ -87,12 +129,26 @@ async function saveMemberDhan(
 
 
     // ======================================
-    // SAVE CLIENT ID ONLY FIRST TIME
+    // CHECK EXISTING CLIENT ID
     // ======================================
 
-    if (!existingMember.dhan_client_id) {
+    const clientIdExists =
+        hasValidClientId(
+            existingMember.dhan_client_id
+        );
 
-        if (!dhanClientId) {
+
+    // ======================================
+    // SAVE CLIENT ID IF NOT ALREADY VALID
+    // ======================================
+
+    if (!clientIdExists) {
+
+        if (
+            !hasValidClientId(
+                dhanClientId
+            )
+        ) {
 
             throw new Error(
                 "Dhan Client ID is required"
@@ -100,10 +156,46 @@ async function saveMemberDhan(
 
         }
 
+
         updateData.dhan_client_id =
-            String(dhanClientId);
+            String(dhanClientId)
+                .trim();
 
     }
+
+
+    // ======================================
+    // DEBUG
+    // ======================================
+
+    console.log(
+        "💾 EXISTING CLIENT ID:",
+        existingMember.dhan_client_id
+    );
+
+
+    console.log(
+        "💾 CLIENT ID EXISTS:",
+        clientIdExists
+    );
+
+
+    console.log(
+        "💾 NEW CLIENT ID:",
+        dhanClientId
+    );
+
+
+    console.log(
+        "📤 UPDATE DATA:",
+        {
+            dhan_client_id:
+                updateData.dhan_client_id,
+
+            dhan_connected:
+                updateData.dhan_connected
+        }
+    );
 
 
     // ======================================
@@ -118,6 +210,7 @@ async function saveMemberDhan(
         .select(`
             id,
             name,
+            telegram_id,
             dhan_client_id,
             dhan_connected
         `)
@@ -125,7 +218,14 @@ async function saveMemberDhan(
 
 
     if (error) {
+
+        console.error(
+            "❌ SUPABASE DHAN UPDATE ERROR:",
+            error
+        );
+
         throw error;
+
     }
 
 
@@ -136,6 +236,12 @@ async function saveMemberDhan(
         );
 
     }
+
+
+    console.log(
+        "✅ SAVED MEMBER DHAN DATA:",
+        data
+    );
 
 
     return data;
@@ -175,7 +281,9 @@ async function disconnectMemberDhan(
 
 
     if (error) {
+
         throw error;
+
     }
 
 
