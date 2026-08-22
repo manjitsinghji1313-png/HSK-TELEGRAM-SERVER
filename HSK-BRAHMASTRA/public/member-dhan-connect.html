@@ -19,6 +19,7 @@
 
     <h2>🤖 HSK BRAHMASTRA</h2>
 
+
     <h3 id="pageTitle">
         Connect Your Dhan Account
     </h3>
@@ -29,6 +30,7 @@
         Loading member information...
 
     </div>
+
 
     <br>
 
@@ -64,7 +66,9 @@
         <!-- ================================= -->
 
         <label id="tokenLabel">
+
             Dhan Access Token
+
         </label>
 
         <br>
@@ -95,6 +99,7 @@
 
     <script>
 
+
         // ==========================================
         // GET TELEGRAM ID FROM URL
         // ==========================================
@@ -104,6 +109,10 @@
                 .split("/")
                 .pop();
 
+
+        // ==========================================
+        // ELEMENTS
+        // ==========================================
 
         const form =
             document.getElementById(
@@ -141,10 +150,41 @@
             );
 
 
-        const clientIdSection =
-            document.getElementById(
-                "clientIdSection"
-            );
+        // ==========================================
+        // CHECK VALID DHAN CLIENT ID
+        // ==========================================
+
+        function hasValidClientId(value) {
+
+            if (
+                value === null ||
+                value === undefined
+            ) {
+
+                return false;
+
+            }
+
+
+            const clientId =
+                String(value)
+                    .trim();
+
+
+            if (
+                !clientId ||
+                clientId.toLowerCase() === "null" ||
+                clientId.toLowerCase() === "undefined"
+            ) {
+
+                return false;
+
+            }
+
+
+            return true;
+
+        }
 
 
         // ==========================================
@@ -183,51 +223,82 @@
                 // SHOW MEMBER NAME
                 // ==================================
 
-                memberInfo.innerHTML =
+                memberInfo.textContent =
                     `👤 Member : ${member.name}`;
 
 
                 // ==================================
-                // EXISTING DHAN CLIENT ID
+                // CHECK EXISTING CLIENT ID
                 // ==================================
 
-                if (member.dhanClientId) {
+                const validClientId =
+                    hasValidClientId(
+                        member.dhanClientId
+                    );
 
-                    pageTitle.innerHTML =
+
+                // ==================================
+                // CLIENT ID EXISTS
+                // ==================================
+
+                if (validClientId) {
+
+                    pageTitle.textContent =
                         "Update Today's Dhan Token";
 
 
                     dhanClientIdInput.value =
-                        member.dhanClientId;
+                        String(
+                            member.dhanClientId
+                        ).trim();
 
 
                     dhanClientIdInput.readOnly =
                         true;
 
 
-                    // Client ID cannot be changed
                     dhanClientIdInput.style.backgroundColor =
                         "#eeeeee";
 
 
-                    submitButton.innerHTML =
+                    submitButton.textContent =
                         "Update Token";
 
 
-                } else {
+                }
 
-                    pageTitle.innerHTML =
+                // ==================================
+                // NO CLIENT ID
+                // ==================================
+
+                else {
+
+                    pageTitle.textContent =
                         "Connect Your Dhan Account";
 
 
-                    submitButton.innerHTML =
+                    dhanClientIdInput.value =
+                        "";
+
+
+                    dhanClientIdInput.readOnly =
+                        false;
+
+
+                    dhanClientIdInput.style.backgroundColor =
+                        "";
+
+
+                    submitButton.textContent =
                         "Connect Dhan";
 
                 }
 
-            } catch (err) {
+            }
 
-                memberInfo.innerHTML =
+            catch (err) {
+
+                memberInfo.textContent =
                     `❌ ${err.message}`;
 
             }
@@ -236,7 +307,7 @@
 
 
         // ==========================================
-        // LOAD MEMBER INFO ON PAGE OPEN
+        // LOAD MEMBER INFO
         // ==========================================
 
         loadMemberInfo();
@@ -247,6 +318,7 @@
         // ==========================================
 
         form.addEventListener(
+
             "submit",
 
             async function (event) {
@@ -266,10 +338,33 @@
                         .trim();
 
 
+                // ==================================
+                // VALIDATE CLIENT ID
+                // ==================================
+
+                if (
+                    !hasValidClientId(
+                        dhanClientId
+                    )
+                ) {
+
+                    alert(
+                        "Please enter a valid Dhan Client ID"
+                    );
+
+                    return;
+
+                }
+
+
+                // ==================================
+                // VALIDATE TOKEN
+                // ==================================
+
                 if (!dhanAccessToken) {
 
                     alert(
-                        "Please enter Dhan Access Token"
+                        "Please enter Today's Dhan Access Token"
                     );
 
                     return;
@@ -283,12 +378,13 @@
                         true;
 
 
-                    submitButton.innerHTML =
+                    submitButton.textContent =
                         "Please wait...";
 
 
                     const response =
                         await fetch(
+
                             `/member-dhan/connect/${telegramId}`,
 
                             {
@@ -308,6 +404,7 @@
                                     JSON.stringify({
 
                                         dhanClientId,
+
                                         dhanAccessToken
 
                                     })
@@ -324,8 +421,10 @@
                     if (!response.ok) {
 
                         throw new Error(
+
                             result.message ||
                             "Connection failed"
+
                         );
 
                     }
@@ -345,17 +444,21 @@
                         "";
 
 
-                    // Reload member information
-                    loadMemberInfo();
+                    // Reload latest member info
+                    await loadMemberInfo();
 
 
-                } catch (err) {
+                }
+
+                catch (err) {
 
                     alert(
                         `❌ ${err.message}`
                     );
 
-                } finally {
+                }
+
+                finally {
 
                     submitButton.disabled =
                         false;
@@ -365,6 +468,7 @@
             }
 
         );
+
 
     </script>
 
