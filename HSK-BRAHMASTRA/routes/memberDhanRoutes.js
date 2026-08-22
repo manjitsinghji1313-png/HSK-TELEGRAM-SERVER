@@ -146,10 +146,37 @@ router.post("/connect/:telegramId", async (req, res) => {
         const telegramId =
             String(req.params.telegramId);
 
+
+        // ======================================
+        // DEBUG: CHECK COMPLETE REQUEST BODY
+        // ======================================
+
+        console.log(
+            "📥 DHAN REQUEST BODY:",
+            req.body
+        );
+
+
         const {
             dhanClientId,
             dhanAccessToken
         } = req.body;
+
+
+        // ======================================
+        // DEBUG: CHECK RECEIVED VALUES
+        // ======================================
+
+        console.log(
+            "👤 DHAN CLIENT ID RECEIVED:",
+            dhanClientId
+        );
+
+        console.log(
+            "🔑 DHAN TOKEN RECEIVED:",
+            !!dhanAccessToken
+        );
+
 
         if (
             !dhanClientId ||
@@ -166,6 +193,11 @@ router.post("/connect/:telegramId", async (req, res) => {
 
         }
 
+
+        // ======================================
+        // SAVE DHAN DETAILS
+        // ======================================
+
         const member =
             await memberDhanService
                 .saveMemberDhan(
@@ -173,6 +205,17 @@ router.post("/connect/:telegramId", async (req, res) => {
                     dhanClientId,
                     dhanAccessToken
                 );
+
+
+        // ======================================
+        // DEBUG: CHECK SAVED DATA
+        // ======================================
+
+        console.log(
+            "✅ SAVED MEMBER DHAN DATA:",
+            member
+        );
+
 
         return res.json({
 
