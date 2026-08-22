@@ -248,7 +248,72 @@ async function saveMemberDhan(
 
 }
 
+// ==========================================
+// GET ACTIVE MEMBER DHAN CREDENTIALS
+// ==========================================
 
+async function getMemberDhanCredentials(
+    telegramId
+) {
+
+    const { data, error } = await supabase
+        .from("members")
+        .select(`
+            id,
+            name,
+            telegram_id,
+            dhan_client_id,
+            dhan_access_token,
+            dhan_connected
+        `)
+        .eq(
+            "telegram_id",
+            String(telegramId)
+        )
+        .eq(
+            "status",
+            "ACTIVE"
+        )
+        .eq(
+            "dhan_connected",
+            true
+        )
+        .maybeSingle();
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    if (!data) {
+
+        throw new Error(
+            "Active Dhan account not connected"
+        );
+
+    }
+
+
+    if (
+        !hasValidClientId(
+            data.dhan_client_id
+        ) ||
+        !data.dhan_access_token
+    ) {
+
+        throw new Error(
+            "Dhan credentials are incomplete"
+        );
+
+    }
+
+
+    return data;
+
+}
 // ==========================================
 // DISCONNECT MEMBER DHAN
 // ==========================================
@@ -300,12 +365,77 @@ async function disconnectMemberDhan(
 
 }
 
+// ==========================================
+// GET ACTIVE MEMBER DHAN CREDENTIALS
+// ==========================================
 
+async function getMemberDhanCredentials(
+    telegramId
+) {
+
+    const { data, error } = await supabase
+        .from("members")
+        .select(`
+            id,
+            name,
+            telegram_id,
+            dhan_client_id,
+            dhan_access_token,
+            dhan_connected
+        `)
+        .eq(
+            "telegram_id",
+            String(telegramId)
+        )
+        .eq(
+            "status",
+            "ACTIVE"
+        )
+        .eq(
+            "dhan_connected",
+            true
+        )
+        .maybeSingle();
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    if (!data) {
+
+        throw new Error(
+            "Active Dhan account not connected"
+        );
+
+    }
+
+
+    if (
+        !data.dhan_client_id ||
+        !data.dhan_access_token
+    ) {
+
+        throw new Error(
+            "Dhan credentials are incomplete"
+        );
+
+    }
+
+
+    return data;
+
+}
 module.exports = {
 
     getMemberDhan,
 
     saveMemberDhan,
+
+    getMemberDhanCredentials,
 
     disconnectMemberDhan
 
