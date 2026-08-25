@@ -37,6 +37,26 @@ const app = express();
 
 app.use(express.json());
 
+// =====================================
+// INITIAL INSTRUMENT LOAD
+// =====================================
+
+loadInstruments()
+    .then(() => {
+
+        console.log(
+            "✅ INSTRUMENTS LOADED AT STARTUP"
+        );
+
+    })
+    .catch(error => {
+
+        console.error(
+            "❌ INITIAL INSTRUMENT LOAD FAILED:",
+            error.message
+        );
+
+    });
 
 // ======================================================
 // TRADINGVIEW WEBHOOK
