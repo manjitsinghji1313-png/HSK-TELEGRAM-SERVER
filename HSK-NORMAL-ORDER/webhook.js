@@ -131,14 +131,6 @@ app.post("/webhook", async (req, res) => {
 
         }
 
-
-        // =====================================
-        // LOAD INSTRUMENT MASTER
-        // =====================================
-
-        await loadInstruments();
-
-
         // =====================================
         // PARSE TRADINGVIEW SYMBOL
         // =====================================
@@ -527,13 +519,6 @@ app.post("/manual-order", async (req, res) => {
 
 
         // =====================================
-        // LOAD INSTRUMENT MASTER
-        // =====================================
-
-        await loadInstruments();
-
-
-        // =====================================
         // MANUAL NORMAL LIMIT BUY
         // =====================================
 
@@ -730,11 +715,7 @@ app.post("/manual-market-order", async (req, res) => {
 
         }
 
-        // =====================================
-        // LOAD INSTRUMENT MASTER
-        // =====================================
-
-        await loadInstruments();
+        
 
         // =====================================
         // MANUAL MARKET BUY
