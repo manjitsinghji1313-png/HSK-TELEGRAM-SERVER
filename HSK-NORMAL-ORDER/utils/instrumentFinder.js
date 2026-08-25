@@ -27,13 +27,10 @@ async function findInstrument(
         NATURALGAS_MINI: "NATGASMINT"
     };
 
-
     const searchSymbol =
         symbolMap[symbol] || symbol;
 
-
     const rows = getInstruments();
-
 
     console.log("================================");
     console.log("🔎 FIND INSTRUMENT");
@@ -51,7 +48,6 @@ async function findInstrument(
 
     const options = [];
 
-
     for (const row of rows) {
 
         if (
@@ -68,19 +64,35 @@ async function findInstrument(
             String(
                 row.SEM_OPTION_TYPE || ""
             ).toUpperCase() ===
-                String(optionType).toUpperCase()
+                String(optionType).toUpperCase() &&
+
+            // =====================================
+            // ENSURE MCX ROW FOR COMMODITIES
+            // =====================================
+
+            (
+                [
+                    "CRUDEOIL",
+                    "CRUDEOILM",
+                    "NATURALGAS",
+                    "NATGASMINT"
+                ].includes(searchSymbol)
+
+                    ? String(
+                        row.SEM_EXM_EXCH_ID || ""
+                    ).toUpperCase() === "MCX"
+
+                    : true
+            )
 
         ) {
 
             // =====================================
             // EXPIRY
-            // Example:
-            // 2026-08-11 14:30:00
             // =====================================
 
             const rawExpiry =
                 row.SEM_EXPIRY_DATE || "";
-
 
             const expiryDateOnly =
                 rawExpiry.substring(0, 10);
@@ -190,17 +202,12 @@ async function findInstrument(
             );
 
 
-        // =====================================
-        // EXACT EXPIRY FOUND
-        // =====================================
-
         if (expiryMatch.length > 0) {
 
             expiryMatch.sort(
                 (a, b) =>
                     a.expiry - b.expiry
             );
-
 
             const selected =
                 expiryMatch[0];
@@ -252,7 +259,6 @@ async function findInstrument(
 
             console.log("================================");
 
-
             return selected;
 
         }
@@ -288,10 +294,7 @@ async function findInstrument(
 
         console.log("================================");
 
-        console.log(
-            "Available Expiries:"
-        );
-
+        console.log("Available Expiries:");
 
         const availableExpiries =
             [
@@ -301,7 +304,6 @@ async function findInstrument(
                     )
                 )
             ];
-
 
         availableExpiries
             .sort()
@@ -316,11 +318,8 @@ async function findInstrument(
                 }
             );
 
-
         console.log("================================");
 
-
-        // Do not select another expiry
         return null;
 
     }
@@ -333,7 +332,6 @@ async function findInstrument(
 
     const today =
         new Date();
-
 
     today.setHours(
         0,
@@ -351,13 +349,11 @@ async function findInstrument(
                     return false;
                 }
 
-
                 const expiryDate =
                     new Date(
                         x.expiryDate +
                         "T00:00:00"
                     );
-
 
                 return expiryDate >= today;
 
@@ -380,13 +376,11 @@ async function findInstrument(
                         "T00:00:00"
                     );
 
-
                 const dateB =
                     new Date(
                         b.expiryDate +
                         "T00:00:00"
                     );
-
 
                 return dateA - dateB;
 
@@ -445,19 +439,42 @@ async function findInstrument(
         console.log("================================");
 
 
+        // =====================================
+        // RAW CSV ROW
+        // MATCH BY TRADING SYMBOL + EXCHANGE
+        // =====================================
+
         console.log("================================");
         console.log("RAW CSV ROW");
+
         console.log(
             rows.find(
                 r =>
                     String(
-                        r.SEM_SMST_SECURITY_ID
+                        r.SEM_TRADING_SYMBOL
                     ) ===
                     String(
-                        selected.securityId
+                        selected.tradingSymbol
+                    ) &&
+
+                    (
+                        selected.exchange === "MCX_COMM"
+                            ? String(
+                                r.SEM_EXM_EXCH_ID || ""
+                            ).toUpperCase() === "MCX"
+
+                            : selected.exchange === "BSE_FNO"
+                                ? String(
+                                    r.SEM_EXM_EXCH_ID || ""
+                                ).toUpperCase() === "BSE"
+
+                                : String(
+                                    r.SEM_EXM_EXCH_ID || ""
+                                ).toUpperCase() === "NSE"
                     )
             )
         );
+
         console.log("================================");
 
 
@@ -489,11 +506,7 @@ async function findInstrument(
         optionType
     );
 
-
-    console.log(
-        "Available contracts:"
-    );
-
+    console.log("Available contracts:");
 
     options
         .sort(
@@ -531,7 +544,6 @@ async function findInstrument(
 
 
     console.log("================================");
-
 
     return null;
 
