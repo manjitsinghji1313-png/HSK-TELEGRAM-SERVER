@@ -346,17 +346,17 @@ async function setMarketLots(market, lots) {
     return true;
 }
 // ==========================
-// SET W3 WAIT
+// SET 6 WAIT
 // ==========================
 
-async function setW3Wait(status) {
+async function setW6Wait(status) {
 
     const value = Boolean(status);
 
     const { error } = await supabase
         .from("system_settings")
         .update({
-            w3_wait: value,
+            w6_wait: value,
             updated_at: new Date().toISOString()
         })
         .eq("id", 1);
@@ -366,8 +366,8 @@ async function setW3Wait(status) {
     }
 
     console.log("================================");
-    console.log("✅ W3 WAIT UPDATED");
-    console.log("W3 WAIT :", value ? "ON" : "OFF");
+    console.log("✅ W6 WAIT UPDATED");
+    console.log("W6 WAIT :", value ? "ON" : "OFF");
     console.log("================================");
 
     return value;
@@ -375,14 +375,14 @@ async function setW3Wait(status) {
 
 
 // ==========================
-// GET W3 WAIT
+// GET W6 WAIT
 // ==========================
 
-async function getW3Wait() {
+async function getW6Wait() {
 
     const { data, error } = await supabase
         .from("system_settings")
-        .select("w3_wait")
+        .select("w6_wait")
         .eq("id", 1)
         .single();
 
@@ -390,7 +390,7 @@ async function getW3Wait() {
         throw error;
     }
 
-    return data.w3_wait !== false;
+    return data.w6_wait !== false;
 }
 
 // ==========================
@@ -439,8 +439,8 @@ module.exports = {
     getMarketLots,
     setMarketLots,
 
-    setW3Wait,
-    getW3Wait,
+    setW6Wait,
+    getW6Wait,
 
     getSettings
 

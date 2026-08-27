@@ -844,25 +844,25 @@ bot.hears(/^\/w6(?:\s+(on|off))?$/i, async (ctx) => {
             .split(/\s+/);
 
         // ==========================
-        // W3 STATUS
+        // W6 STATUS
         // ==========================
 
         if (args.length === 1) {
 
             const status =
-                await systemService.getW3Wait();
+                await systemService.getW6Wait();
 
             await ctx.reply(
 `⏱️ HSK BRAHMASTRA
 
 ━━━━━━━━━━━━━━━━━━
-📌 W3 WAIT STATUS
+📌 W6 WAIT STATUS
 
 Status : ${status ? "🟢 ON" : "🔴 OFF"}
 
 ━━━━━━━━━━━━━━━━━━
-🟢 w3 on
-🔴 w3 off
+🟢 w6 on
+🔴 w6 off
 ━━━━━━━━━━━━━━━━━━
 
 📌 LIMIT SUPER ORDER ONLY`
@@ -873,18 +873,18 @@ Status : ${status ? "🟢 ON" : "🔴 OFF"}
 
 
         // ==========================
-        // W3 ON
+        // 6 ON
         // ==========================
 
         if (args[1] === "on") {
 
-            await systemService.setW3Wait(true);
+            await systemService.setW6Wait(true);
 
             await ctx.reply(
-`🟢 W3 WAIT ENABLED
+`🟢 W6 WAIT ENABLED
 
 ━━━━━━━━━━━━━━━━━━
-⏱️ 3 Minute Pending Check : ON
+⏱️ 6 Minute Pending Check : ON
 🚫 Pending LIMIT Order → CANCEL
 ━━━━━━━━━━━━━━━━━━
 
@@ -892,7 +892,7 @@ Status : ${status ? "🟢 ON" : "🔴 OFF"}
             );
 
             console.log(
-                "🟢 W3 WAIT : ON"
+                "🟢 W6 WAIT : ON"
             );
 
             return;
@@ -900,26 +900,26 @@ Status : ${status ? "🟢 ON" : "🔴 OFF"}
 
 
         // ==========================
-        // W3 OFF
+        // W6 OFF
         // ==========================
 
         if (args[1] === "off") {
 
-            await systemService.setW3Wait(false);
+            await systemService.setW6Wait(false);
 
             await ctx.reply(
-`🔴 W3 WAIT DISABLED 
+`🔴 W6 WAIT DISABLED 
 
 ━━━━━━━━━━━━━━━━━━
-⏱️ 3 Minute Pending Check : OFF
-✅ Pending LIMIT Order will NOT be cancelled by W3
+⏱️ 6 Minute Pending Check : OFF
+✅ Pending LIMIT Order will NOT be cancelled by W6
 ━━━━━━━━━━━━━━━━━━
 
 📌 LIMIT SUPER ORDER ONLY`
             );
 
             console.log(
-                "🔴 W3 WAIT : OFF"
+                "🔴 W6 WAIT : OFF"
             );
 
             return;
@@ -928,12 +928,12 @@ Status : ${status ? "🟢 ON" : "🔴 OFF"}
     } catch (err) {
 
         console.error(
-            "❌ W3 COMMAND ERROR:",
+            "❌ W6 COMMAND ERROR:",
             err
         );
 
         await ctx.reply(
-            `❌ W3 UPDATE FAILED\n\n${err.message}`
+            `❌ W6 UPDATE FAILED\n\n${err.message}`
         );
     }
 
