@@ -402,31 +402,31 @@ async function monitorSuperOrder(orderId, orderType) {
         console.log("================================");
 
 // =====================================
-// W6 WAIT CHECK
+// W3 WAIT CHECK
 // LIMIT SUPER ORDER ONLY
 // =====================================
 
-const w6Enabled =
-    await systemService.getW6Wait();
+const w3Enabled =
+    await systemService.getW3Wait();
 
 console.log("================================");
-console.log("⏱️ W6 WAIT STATUS");
-console.log("W6 :", w6Enabled ? "ON" : "OFF");
+console.log("⏱️ W3 WAIT STATUS");
+console.log("W3 :", w3Enabled ? "ON" : "OFF");
 console.log("================================");
 
 
 // =====================================
-// CANCEL ONLY IF W6 ON + PENDING
+// CANCEL ONLY IF W3 ON + PENDING
 // =====================================
 
-if (finalStatus === "PENDING" && w6Enabled) {
+if (finalStatus === "PENDING" && w3Enabled) {
 
     console.log("================================");
     console.log("❌ ORDER STILL PENDING");
     console.log("================================");
 
     console.log(
-        "🚫 W6 ON → CANCELLING SUPER ORDER"
+        "🚫 W3 ON → CANCELLING SUPER ORDER"
     );
 
     await cancelSuperOrder(orderId);
@@ -440,7 +440,7 @@ if (finalStatus === "PENDING" && w6Enabled) {
 } else if (finalStatus === "PENDING" && !w6Enabled) {
 
     console.log("================================");
-    console.log("⏸️ W6 WAIT IS OFF");
+    console.log("⏸️ W3 WAIT IS OFF");
     console.log("================================");
 
     console.log(
