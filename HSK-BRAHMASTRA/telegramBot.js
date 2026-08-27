@@ -830,11 +830,11 @@ Database Updated Successfully`
 }
 
 // ==========================
-// W3 WAIT CONTROL
+// W6 WAIT CONTROL
 // LIMIT SUPER ORDER ONLY
 // ==========================
 
-bot.hears(/^\/w3(?:\s+(on|off))?$/i, async (ctx) => {
+bot.hears(/^\/w6(?:\s+(on|off))?$/i, async (ctx) => {
 
     try {
 
