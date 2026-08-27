@@ -28,8 +28,8 @@ async function monitorSuperOrder(orderId, orderType) {
     // Check every 10 seconds
     const intervalMs = 10 * 1000;
 
-    // Maximum monitoring time = 3 minutes
-    const maxTimeMs = 3 * 60 * 1000;
+    // Maximum monitoring time = 6 minutes
+    const maxTimeMs = 6 * 60 * 1000;
 
     const startTime = Date.now();
 
@@ -39,7 +39,7 @@ async function monitorSuperOrder(orderId, orderType) {
     console.log("Order ID   :", orderId);
     console.log("Order Type :", orderType);
     console.log("Interval   : 10 seconds");
-    console.log("Max Time   : 3 minutes");
+    console.log("Max Time   : 6 minutes");
     console.log("================================");
 
 
@@ -348,11 +348,11 @@ async function monitorSuperOrder(orderId, orderType) {
 
 
     // =====================================
-    // 3 MINUTES COMPLETED
+    // 6 MINUTES COMPLETED
     // =====================================
 
     console.log("================================");
-    console.log("⏱️ 3 MINUTES COMPLETED");
+    console.log("⏱️ 6 MINUTES COMPLETED");
     console.log("================================");
 
     console.log(
@@ -437,7 +437,7 @@ if (finalStatus === "PENDING" && w3Enabled) {
     );
     console.log("================================");
 
-} else if (finalStatus === "PENDING" && !w6Enabled) {
+} else if (finalStatus === "PENDING" && !w3Enabled) {
 
     console.log("================================");
     console.log("⏸️ W3 WAIT IS OFF");
