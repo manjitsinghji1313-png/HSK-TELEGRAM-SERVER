@@ -5,6 +5,7 @@ const express = require("express");
 const { loadInstruments } = require("./optionchain/instrumentLoader");
 const memberDhanRoutes = require("./routes/memberDhanRoutes");
 const axios = require("axios");
+const crypto = require("crypto");
 const http = require("http");
 const path = require("path");
 const cors = require("cors");
@@ -168,6 +169,28 @@ app.get("/api/check-ip", async (req, res) => {
         );
 
     }
+
+});
+
+// ==============================
+// SAFE DHAN ENV CHECK
+// ==============================
+
+app.get("/api/dhan-env-check", (req, res) => {
+
+    const token = config.ACCESS_TOKEN || "";
+    const clientId = config.CLIENT_ID || "";
+
+    const tokenFingerprint = token
+        ? crypto.createHash("sha256").update(token).digest("hex")
+        : null;
+
+    res.json({
+        clientId: clientId,
+        tokenExists: !!token,
+        tokenLength: token.length,
+        tokenFingerprint: tokenFingerprint
+    });
 
 });
 
